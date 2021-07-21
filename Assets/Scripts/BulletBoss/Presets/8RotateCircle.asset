@@ -1,0 +1,26 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5e0fcba773e904fc2b3acb0bb0b6f43b, type: 3}
+  m_Name: 8RotateCircle
+  m_EditorClassIdentifier: 
+  on: 0
+  bulletStreams: 2
+  bulletArrays: 4
+  arrayOffset: 90
+  fireRate: 0.1
+  startAngle: -90
+  endAngle: 30
+  rotateBackAndForth: 0
+  rotateCircle: 1
+  rotateAngle: 30
+  rotationSpeed: 5
+  speed: 0
