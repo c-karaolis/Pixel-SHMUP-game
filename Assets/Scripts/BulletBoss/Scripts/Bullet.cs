@@ -64,6 +64,16 @@ namespace Foxlair.Bullets
             CancelInvoke();
         }
 
+        /// <summary>
+        /// Changes the tag according who fired the bullet. 
+        /// Makes bullet script reusable from everyone as is without inheriting bullet scripts.
+        /// </summary>
+        /// <param name="newTag"> Desired new tag name. Defaults to Player</param>
+        public void ChangeTag(string newTag = "Player")
+        {
+            tag = newTag;
+        }
+
         //The bullet IS the trigger. When it hits a collider this function is called. It checks to see 
         //if the collider is the player. ***This will only work if your player object has a tag "Player"***
         void OnTriggerEnter2D(Collider2D collider)
