@@ -10,6 +10,8 @@ public class PlayerMovement : MonoBehaviour
 
     private float playerWidth;
     private float playerHeight;
+    public float boundsOffsetWidth;
+    public float boundsOffsetHeight;
 
     public float inputSmoothness = 0.01f;
 
@@ -32,8 +34,8 @@ public class PlayerMovement : MonoBehaviour
         mousePos = Camera.main.ScreenToWorldPoint(Input.mousePosition);
 
         mousePos = new Vector2(
-            Mathf.Clamp(mousePos.x, screenBounds.x * -1 + playerWidth , screenBounds.x - playerWidth),
-            Mathf.Clamp(mousePos.y, screenBounds.y * -1 + playerHeight, screenBounds.y - playerHeight)
+            Mathf.Clamp(mousePos.x, screenBounds.x * -1 + playerWidth - boundsOffsetWidth, screenBounds.x - playerWidth + boundsOffsetWidth),
+            Mathf.Clamp(mousePos.y, screenBounds.y * -1 + playerHeight - boundsOffsetHeight, screenBounds.y - playerHeight + boundsOffsetHeight)
             );
 
         Vector3 viewPos = transform.position;
