@@ -69,7 +69,7 @@ namespace ND_VariaBULLET
         public override void InitialSet()
         {
             transform.parent = Emitter;
-            transform.localPosition = new Vector2(ExitPoint, 0);
+            transform.localPosition = new Vector2(0, ExitPoint);
             transform.rotation = Emitter.rotation;
         }
 
