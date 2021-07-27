@@ -11,6 +11,8 @@ namespace Foxlair.Player
         private BulletEmitter activeMainWeapon = null;
         private BulletEmitter activeSpecialWeapon = null;
 
+        private int activeMainWeaponIndex = 0;
+
 
         #region Getters
         GameObject MainWeaponsParentObject
@@ -48,16 +50,23 @@ namespace Foxlair.Player
 
         void Start()
         {
-            ActivateMainWeapon(MainWeapons[0]);
+            ActivateMainWeapon(MainWeapons[activeMainWeaponIndex]);
         }
 
-        public void ActivateMainWeapon(BulletEmitter bulletEmitter)
+        public void UpgradeMainWeapon()
+        {
+            DeactivateMainWeapon(MainWeapons[activeMainWeaponIndex]);
+            activeMainWeaponIndex++;
+            ActivateMainWeapon(MainWeapons[activeMainWeaponIndex]);
+        }
+
+        private void ActivateMainWeapon(BulletEmitter bulletEmitter)
         {
             activeMainWeapon = bulletEmitter;
             bulletEmitter.Play();
         }
 
-        public void DeactivateMainWeapon(BulletEmitter bulletEmitter)
+        private void DeactivateMainWeapon(BulletEmitter bulletEmitter)
         {
             bulletEmitter.Stop();
             if (activeMainWeapon == bulletEmitter)
@@ -70,6 +79,12 @@ namespace Foxlair.Player
         {
             activeSpecialWeapon = bulletEmitter;
             bulletEmitter.Play();
+        }
+
+        public void ActivateSpecialWeapon(string specialWeaponName)
+        {
+            activeSpecialWeapon = SpecialWeaponsParentObject.transform.Find(specialWeaponName).GetComponent<BulletEmitter>();
+            activeSpecialWeapon?.Play();
         }
 
         public void DeactivateSpecialWeapon(BulletEmitter bulletEmitter)
