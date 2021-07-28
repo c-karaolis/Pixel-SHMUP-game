@@ -1,12 +1,13 @@
 using BulletPro;
+using Foxlair.Enums;
 using Sirenix.OdinInspector;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 
-namespace Foxlair.Player
+namespace Foxlair.Player.Weapons
 {
-    public class SpaceshipWeapons : MonoBehaviour
+    public class SpaceshipWeapons : SerializedMonoBehaviour
     {
         #region Fields
         [ReadOnly] public BulletEmitter activeMainWeapon = null;
@@ -15,17 +16,26 @@ namespace Foxlair.Player
         [SerializeField] [Required] private GameObject mainWeaponsParentObject = null;
         [SerializeField] [Required] private GameObject specialWeaponsParentObject = null;
         [SerializeField] private bool activateWeaponsOnStart = true;
-        [SerializeField] BulletEmitter[] mainWeapons;
-        [SerializeField] private List<BulletEmitter> specialWeapons;
-        //Dictionary<string,BulletEmitter> 
+        [SerializeField] private BulletEmitter[] mainWeapons;
+        [SerializeField] private List<BulletEmitter> availableSpecialWeapons;
         [SerializeField] [ReadOnly] private int activeMainWeaponIndex = 0;
+        [SerializeField] [ReadOnly] private Dictionary<SpecialWeaponTypes, BulletEmitter> specialWeapons;
+
         #endregion
 
         private void OnValidate()
         {
+            specialWeapons = new Dictionary<SpecialWeaponTypes, BulletEmitter>();
+
             mainWeapons = mainWeaponsParentObject.GetComponentsInChildren<BulletEmitter>();
-            specialWeapons = specialWeaponsParentObject.GetComponentsInChildren<BulletEmitter>().ToList();
+            availableSpecialWeapons = specialWeaponsParentObject.GetComponentsInChildren<BulletEmitter>().ToList();
+
+            for (int i = 0; i < availableSpecialWeapons.Count; i++)
+            {
+                specialWeapons.Add((SpecialWeaponTypes)i, availableSpecialWeapons[i]);
+            }
         }
+
         void Start()
         {
             if (activateWeaponsOnStart)
@@ -40,57 +50,60 @@ namespace Foxlair.Player
         {
             if (activeMainWeaponIndex + 1 < mainWeapons.Length)
             {
-                DeactivateMainWeapon(mainWeapons[activeMainWeaponIndex]);
+                DeactivateMainWeapon();
                 activeMainWeaponIndex++;
-                ActivateMainWeapon(mainWeapons[activeMainWeaponIndex]);
+
+                ActivateMainWeapon(mainWeapons[activeMainWeaponIndex], !activeSpecialWeapon);
             }
         }
 
-        private void ActivateMainWeapon(BulletEmitter mainWeapon)
+        private void ActivateMainWeapon(BulletEmitter mainWeapon, bool playOnActivate = true)
         {
             activeMainWeapon = mainWeapon;
-            mainWeapon.Play();
-        }
-
-        private void DeactivateMainWeapon(BulletEmitter mainWeapon)
-        {
-            mainWeapon.Stop();
-            if (activeMainWeapon == mainWeapon)
+            if (playOnActivate)
             {
-                activeMainWeapon = null;
+                mainWeapon.Play();
             }
         }
 
-        public void ActivateSpecialWeapon(BulletEmitter specialWeapon)
+        private void DeactivateMainWeapon()
         {
-            activeSpecialWeapon = specialWeapon;
-            specialWeapon.Play();
+            if (activeMainWeapon != null)
+            {
+                activeMainWeapon.Stop();
+            }
+
+            activeMainWeapon = null;
         }
 
-        public void ActivateSpecialWeapon(string specialWeaponName)
+        [Button]
+        public void ActivateSpecialWeapon(SpecialWeaponTypes specialWeaponType)
         {
-            if(activeSpecialWeapon != null)
+            if ((int)specialWeaponType <= availableSpecialWeapons.Count)
+            {
+                DeactivateSpecialWeapon();
+                activeMainWeapon.Stop();
+                activeSpecialWeapon = specialWeapons[specialWeaponType];
+                activeSpecialWeapon.Play();
+            }
+        }
+
+        [Button]
+        private void DeactivateSpecialWeapon()
+        {
+            if (activeSpecialWeapon != null)
             {
                 activeSpecialWeapon.Stop();
-                activeSpecialWeapon = null;
             }
-            activeSpecialWeapon = specialWeaponsParentObject.transform.Find(specialWeaponName).GetComponent<BulletEmitter>();
-            activeSpecialWeapon.Play();
-        }
 
-        public void DeactivateSpecialWeapon(BulletEmitter specialWeapon)
-        {
-            specialWeapon.Stop();
-            if (activeSpecialWeapon == specialWeapon)
-            {
-                activeSpecialWeapon = null;
-            }
+            activeSpecialWeapon = null;
+            activeMainWeapon.Play();
         }
 
         [Button]
         public void ResetMainWeapon()
         {
-            DeactivateMainWeapon(mainWeapons[activeMainWeaponIndex]);
+            DeactivateMainWeapon();
             activeMainWeaponIndex = 0;
             ActivateMainWeapon(mainWeapons[activeMainWeaponIndex]);
         }
