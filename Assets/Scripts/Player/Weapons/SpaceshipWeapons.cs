@@ -1,4 +1,5 @@
 using BulletPro;
+using Sirenix.OdinInspector;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
@@ -8,31 +9,20 @@ namespace Foxlair.Player
     public class SpaceshipWeapons : MonoBehaviour
     {
         #region Fields
-        public BulletEmitter activeMainWeapon = null;
-        public BulletEmitter activeSpecialWeapon = null;
+        [ReadOnly] public BulletEmitter activeMainWeapon = null;
+        [ReadOnly] public BulletEmitter activeSpecialWeapon = null;
 
-        [SerializeField]
-        private GameObject mainWeaponsParentObject = null;
-        [SerializeField]
-        private GameObject specialWeaponsParentObject = null;
-        [SerializeField]
-        private bool activateWeaponsOnStart = true;
-        [SerializeField]
-        BulletEmitter[] mainWeapons;
-        [SerializeField]
-        private List<BulletEmitter> specialWeapons;
-
-        private int activeMainWeaponIndex = 0;
+        [SerializeField] [Required] private GameObject mainWeaponsParentObject = null;
+        [SerializeField] [Required] private GameObject specialWeaponsParentObject = null;
+        [SerializeField] private bool activateWeaponsOnStart = true;
+        [SerializeField] BulletEmitter[] mainWeapons;
+        [SerializeField] private List<BulletEmitter> specialWeapons;
+        //Dictionary<string,BulletEmitter> 
+        [SerializeField] [ReadOnly] private int activeMainWeaponIndex = 0;
         #endregion
 
         private void OnValidate()
         {
-            if (mainWeaponsParentObject == null || specialWeaponsParentObject == null)
-            {
-                Debug.LogError("Make sure to map the weapon parent objects for this game object");
-                return;
-            }
-
             mainWeapons = mainWeaponsParentObject.GetComponentsInChildren<BulletEmitter>();
             specialWeapons = specialWeaponsParentObject.GetComponentsInChildren<BulletEmitter>().ToList();
         }
@@ -40,15 +30,20 @@ namespace Foxlair.Player
         {
             if (activateWeaponsOnStart)
             {
+                activeMainWeaponIndex = 0;
                 ActivateMainWeapon(mainWeapons[activeMainWeaponIndex]);
             }
         }
 
+        [Button]
         public void UpgradeMainWeapon()
         {
-            DeactivateMainWeapon(mainWeapons[activeMainWeaponIndex]);
-            activeMainWeaponIndex++;
-            ActivateMainWeapon(mainWeapons[activeMainWeaponIndex]);
+            if (activeMainWeaponIndex + 1 < mainWeapons.Length)
+            {
+                DeactivateMainWeapon(mainWeapons[activeMainWeaponIndex]);
+                activeMainWeaponIndex++;
+                ActivateMainWeapon(mainWeapons[activeMainWeaponIndex]);
+            }
         }
 
         private void ActivateMainWeapon(BulletEmitter mainWeapon)
@@ -74,6 +69,11 @@ namespace Foxlair.Player
 
         public void ActivateSpecialWeapon(string specialWeaponName)
         {
+            if(activeSpecialWeapon != null)
+            {
+                activeSpecialWeapon.Stop();
+                activeSpecialWeapon = null;
+            }
             activeSpecialWeapon = specialWeaponsParentObject.transform.Find(specialWeaponName).GetComponent<BulletEmitter>();
             activeSpecialWeapon.Play();
         }
@@ -87,9 +87,12 @@ namespace Foxlair.Player
             }
         }
 
+        [Button]
         public void ResetMainWeapon()
         {
+            DeactivateMainWeapon(mainWeapons[activeMainWeaponIndex]);
             activeMainWeaponIndex = 0;
+            ActivateMainWeapon(mainWeapons[activeMainWeaponIndex]);
         }
 
         public void ResetSpecialWeapon()
