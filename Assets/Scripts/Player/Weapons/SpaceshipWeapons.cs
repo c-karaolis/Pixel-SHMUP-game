@@ -1,4 +1,5 @@
 using BulletPro;
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -10,16 +11,20 @@ namespace Foxlair.Player
 
         private BulletEmitter activeMainWeapon = null;
         private BulletEmitter activeSpecialWeapon = null;
-
         private int activeMainWeaponIndex = 0;
+       
+        private GameObject m_mainWeaponsParentObject = null;
+        private GameObject m_specialnWeaponsParentObject = null;
 
+        [SerializeField]
+        private bool activateWeaponsOnStart = true;
 
         #region Getters
         GameObject MainWeaponsParentObject
         {
             get
             {
-                return transform.Find("Main Weapons").gameObject;
+                return m_mainWeaponsParentObject;
             }
         }
 
@@ -27,7 +32,7 @@ namespace Foxlair.Player
         {
             get
             {
-                return transform.Find("Special Weapons").gameObject;
+                return m_specialnWeaponsParentObject;
             }
         }
 
@@ -48,9 +53,24 @@ namespace Foxlair.Player
         #endregion
         //TODO maybe add on enable add to list in editor. Bring in Odin?
 
+        private void OnValidate()
+        {
+            try
+            {
+                m_mainWeaponsParentObject = transform.Find("Main Weapons").gameObject;
+                m_specialnWeaponsParentObject = transform.Find("Special Weapons").gameObject;
+            }
+            catch (Exception e)
+            {
+                Debug.LogWarning($"Failed to fetch weapon arrays with error: {e.Message}. \n Make sure Main Weapons and Special Weapons game objects exist under player ship.");
+            }
+        }
         void Start()
         {
-            ActivateMainWeapon(MainWeapons[activeMainWeaponIndex]);
+            if (activateWeaponsOnStart)
+            {
+                ActivateMainWeapon(MainWeapons[activeMainWeaponIndex]);
+            }
         }
 
         public void UpgradeMainWeapon()
@@ -60,40 +80,50 @@ namespace Foxlair.Player
             ActivateMainWeapon(MainWeapons[activeMainWeaponIndex]);
         }
 
-        private void ActivateMainWeapon(BulletEmitter bulletEmitter)
+        private void ActivateMainWeapon(BulletEmitter mainWeapon)
         {
-            activeMainWeapon = bulletEmitter;
-            bulletEmitter.Play();
+            activeMainWeapon = mainWeapon;
+            mainWeapon.Play();
         }
 
-        private void DeactivateMainWeapon(BulletEmitter bulletEmitter)
+        private void DeactivateMainWeapon(BulletEmitter mainWeapon)
         {
-            bulletEmitter.Stop();
-            if (activeMainWeapon == bulletEmitter)
+            mainWeapon.Stop();
+            if (activeMainWeapon == mainWeapon)
             {
                 activeMainWeapon = null;
             }
         }
 
-        public void ActivateSpecialWeapon(BulletEmitter bulletEmitter)
+        public void ActivateSpecialWeapon(BulletEmitter specialWeapon)
         {
-            activeSpecialWeapon = bulletEmitter;
-            bulletEmitter.Play();
+            activeSpecialWeapon = specialWeapon;
+            specialWeapon.Play();
         }
 
         public void ActivateSpecialWeapon(string specialWeaponName)
         {
             activeSpecialWeapon = SpecialWeaponsParentObject.transform.Find(specialWeaponName).GetComponent<BulletEmitter>();
-            activeSpecialWeapon?.Play();
+            activeSpecialWeapon.Play();
         }
 
-        public void DeactivateSpecialWeapon(BulletEmitter bulletEmitter)
+        public void DeactivateSpecialWeapon(BulletEmitter specialWeapon)
         {
-            bulletEmitter.Stop();
-            if (activeSpecialWeapon == bulletEmitter)
+            specialWeapon.Stop();
+            if (activeSpecialWeapon == specialWeapon)
             {
                 activeSpecialWeapon = null;
             }
+        }
+
+        public void ResetMainWeapon()
+        {
+            activeMainWeaponIndex = 0;
+        }
+
+        public void ResetSpecialWeapon()
+        {
+            activeSpecialWeapon = null;
         }
     }
 

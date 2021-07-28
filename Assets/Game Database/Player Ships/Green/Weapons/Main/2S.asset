@@ -13,12 +13,12 @@ MonoBehaviour:
   m_Name: Pattern 0
   m_EditorClassIdentifier: 
   parameterType: 2
-  uniqueIndex: 8580030
+  uniqueIndex: 10969055
   profile: {fileID: 11400000}
-  parent: {fileID: 114671512830859702}
+  parent: {fileID: 0}
   children:
   - {fileID: -2022822443911407892}
-  isInRecycleBin: 0
+  isInRecycleBin: 1
   index: 4
   foldout: 1
   patternTags: []
@@ -17441,11 +17441,11 @@ MonoBehaviour:
   m_Name: Bullet 0
   m_EditorClassIdentifier: 
   parameterType: 0
-  uniqueIndex: 11147152
+  uniqueIndex: 16343360
   profile: {fileID: 11400000}
   parent: {fileID: -2022822443911407892}
   children: []
-  isInRecycleBin: 0
+  isInRecycleBin: 1
   index: 6
   foldout: 1
   hasBeenSerializedOnce: 1
@@ -24440,12 +24440,12 @@ MonoBehaviour:
   m_Name: Shot 0
   m_EditorClassIdentifier: 
   parameterType: 1
-  uniqueIndex: 10512153
+  uniqueIndex: 331178
   profile: {fileID: 11400000}
   parent: {fileID: -6236665240254266992}
   children:
   - {fileID: -4743130651170123333}
-  isInRecycleBin: 0
+  isInRecycleBin: 1
   index: 5
   foldout: 1
   bulletParams:
@@ -35441,7 +35441,7 @@ MonoBehaviour:
   foldoutExport: 1
   foldoutEmptyBin: 1
   foldoutCompactMode: 0
-  currentParamsSelected: {fileID: 0}
+  currentParamsSelected: {fileID: 114671512830859702}
   numberOfSubAssets: 4
 --- !u!114 &114027673760526898
 MonoBehaviour:
@@ -35456,7 +35456,7 @@ MonoBehaviour:
   m_Name: Bullet
   m_EditorClassIdentifier: 
   parameterType: 0
-  uniqueIndex: 874869
+  uniqueIndex: 16225829
   profile: {fileID: 11400000}
   parent: {fileID: 114201774248674550}
   children: []
@@ -37392,7 +37392,7 @@ MonoBehaviour:
     requiredComponentName: 
   foldoutVFX: 1
   hideSpriteList: 0
-  currentlyDisplayedModule: 1
+  currentlyDisplayedModule: 5
   canMove: 1
   canCollide: 1
   isVisible: 1
@@ -42455,7 +42455,7 @@ MonoBehaviour:
   m_Name: Shot
   m_EditorClassIdentifier: 
   parameterType: 1
-  uniqueIndex: 5658217
+  uniqueIndex: 9159586
   profile: {fileID: 11400000}
   parent: {fileID: 114917193883442684}
   children:
@@ -53437,12 +53437,11 @@ MonoBehaviour:
   m_Name: Root Emitter
   m_EditorClassIdentifier: 
   parameterType: 0
-  uniqueIndex: 14764223
+  uniqueIndex: 14574168
   profile: {fileID: 11400000}
   parent: {fileID: 0}
   children:
   - {fileID: 114917193883442684}
-  - {fileID: -6236665240254266992}
   isInRecycleBin: 0
   index: 0
   foldout: 1
@@ -55375,7 +55374,7 @@ MonoBehaviour:
     requiredComponentName: 
   foldoutVFX: 0
   hideSpriteList: 0
-  currentlyDisplayedModule: 0
+  currentlyDisplayedModule: 5
   canMove: 0
   canCollide: 0
   isVisible: 0
@@ -59578,115 +59577,6 @@ MonoBehaviour:
         relativeTo: 0
         parameterName: 
       defaultValue: {fileID: 114917193883442684}
-  - valueTree:
-    - settings:
-        valueType: 0
-        interpolationValue:
-          interpolationFactor: 0
-          repartitionCurve:
-            serializedVersion: 2
-            m_Curve: []
-            m_PreInfinity: 2
-            m_PostInfinity: 2
-            m_RotationOrder: 4
-          shareValueBetweenInstances: 0
-          rerollFrequency: 0
-          interpolationFactorFromShot: 0
-          interpolationFactorFromPattern: 0
-          interpolationFactorFromBullet: 0
-          relativeTo: 0
-          parameterName: 
-          loopDepth: 0
-          useComplexRerollSequence: 0
-          checkEveryNLoops: 0
-          loopSequence: 0
-          period: 0
-          wrapMode: 0
-          sortMode: 0
-          sortDirection: 0
-          repartitionTexture: {fileID: 0}
-          centerX: 0
-          centerY: 0
-          radius: 0
-          wrapPoint: 0
-          countClockwise: 0
-          differentValuesPerShot: 0
-        combinedInterpolationFactors: 0
-        index: 0
-        indexOfParent: 0
-        indexOfFrom: 0
-        indexOfTo: 0
-        indexOfBlendedChildren: 
-        weight: 0
-        headerTitle: 
-        blendColor: {r: 0, g: 0, b: 0, a: 0}
-        parameterType: 0
-        relativeTo: 0
-        parameterName: 
-      defaultValue: {fileID: 0}
-    - settings:
-        valueType: 0
-        interpolationValue:
-          interpolationFactor: 0
-          repartitionCurve:
-            serializedVersion: 2
-            m_Curve:
-            - serializedVersion: 3
-              time: 0
-              value: 0
-              inSlope: 0
-              outSlope: 1
-              tangentMode: 0
-              weightedMode: 0
-              inWeight: 0
-              outWeight: 0
-            - serializedVersion: 3
-              time: 1
-              value: 1
-              inSlope: 1
-              outSlope: 0
-              tangentMode: 0
-              weightedMode: 0
-              inWeight: 0
-              outWeight: 0
-            m_PreInfinity: 2
-            m_PostInfinity: 2
-            m_RotationOrder: 4
-          shareValueBetweenInstances: 0
-          rerollFrequency: 0
-          interpolationFactorFromShot: 0
-          interpolationFactorFromPattern: 0
-          interpolationFactorFromBullet: 0
-          relativeTo: 0
-          parameterName: 
-          loopDepth: 0
-          useComplexRerollSequence: 0
-          checkEveryNLoops: 0
-          loopSequence: 0
-          period: 0
-          wrapMode: 0
-          sortMode: 0
-          sortDirection: 0
-          repartitionTexture: {fileID: 0}
-          centerX: 0
-          centerY: 0
-          radius: 0
-          wrapPoint: 0
-          countClockwise: 0
-          differentValuesPerShot: 0
-        combinedInterpolationFactors: 0
-        index: 1
-        indexOfParent: 0
-        indexOfFrom: 0
-        indexOfTo: 0
-        indexOfBlendedChildren: 
-        weight: 0
-        headerTitle: 
-        blendColor: {r: 0, g: 0, b: 0, a: 0}
-        parameterType: 0
-        relativeTo: 0
-        parameterName: 
-      defaultValue: {fileID: -6236665240254266992}
   dieWhenAllPatternsAreDone: 1
   behaviourPrefabs: []
   delaySpawn: 0
@@ -60046,7 +59936,7 @@ MonoBehaviour:
   m_Name: Pattern
   m_EditorClassIdentifier: 
   parameterType: 2
-  uniqueIndex: 6383693
+  uniqueIndex: 12953366
   profile: {fileID: 11400000}
   parent: {fileID: 114671512830859702}
   children:
