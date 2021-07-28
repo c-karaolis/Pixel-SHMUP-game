@@ -2,7 +2,7 @@ namespace Foxlair.Enums
 {
     public enum SpecialWeaponTypes
     {
-        Super,
+        Default,
         LowTier,
         HighTier,
         Deluxe

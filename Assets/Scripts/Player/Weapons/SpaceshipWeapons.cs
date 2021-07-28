@@ -38,11 +38,10 @@ namespace Foxlair.Player.Weapons
 
         void Start()
         {
-            if (activateWeaponsOnStart)
-            {
-                activeMainWeaponIndex = 0;
-                ActivateMainWeapon(mainWeapons[activeMainWeaponIndex]);
-            }
+            activeMainWeaponIndex = 0;
+
+            ActivateMainWeapon(mainWeapons[activeMainWeaponIndex], activateWeaponsOnStart);
+
         }
 
         [Button]
@@ -105,7 +104,7 @@ namespace Foxlair.Player.Weapons
         {
             DeactivateMainWeapon();
             activeMainWeaponIndex = 0;
-            ActivateMainWeapon(mainWeapons[activeMainWeaponIndex]);
+            ActivateMainWeapon(mainWeapons[activeMainWeaponIndex], !activeSpecialWeapon);
         }
 
         public void ResetSpecialWeapon()
