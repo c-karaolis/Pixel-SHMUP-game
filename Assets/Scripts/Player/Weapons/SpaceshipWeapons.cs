@@ -1,83 +1,54 @@
 using BulletPro;
-using System;
-using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 
 namespace Foxlair.Player
 {
     public class SpaceshipWeapons : MonoBehaviour
     {
-
-        private BulletEmitter activeMainWeapon = null;
-        private BulletEmitter activeSpecialWeapon = null;
-        private int activeMainWeaponIndex = 0;
-       
-        private GameObject m_mainWeaponsParentObject = null;
-        private GameObject m_specialnWeaponsParentObject = null;
+        #region Fields
+        public BulletEmitter activeMainWeapon = null;
+        public BulletEmitter activeSpecialWeapon = null;
 
         [SerializeField]
+        private GameObject mainWeaponsParentObject = null;
+        [SerializeField]
+        private GameObject specialWeaponsParentObject = null;
+        [SerializeField]
         private bool activateWeaponsOnStart = true;
+        [SerializeField]
+        BulletEmitter[] mainWeapons;
+        [SerializeField]
+        private List<BulletEmitter> specialWeapons;
 
-        #region Getters
-        GameObject MainWeaponsParentObject
-        {
-            get
-            {
-                return m_mainWeaponsParentObject;
-            }
-        }
-
-        GameObject SpecialWeaponsParentObject
-        {
-            get
-            {
-                return m_specialnWeaponsParentObject;
-            }
-        }
-
-        BulletEmitter[] MainWeapons
-        {
-            get
-            {
-                return MainWeaponsParentObject.GetComponentsInChildren<BulletEmitter>();
-            }
-        }
-        BulletEmitter[] SpecialWeapons
-        {
-            get
-            {
-                return SpecialWeaponsParentObject.GetComponentsInChildren<BulletEmitter>();
-            }
-        }
+        private int activeMainWeaponIndex = 0;
         #endregion
-        //TODO maybe add on enable add to list in editor. Bring in Odin?
 
         private void OnValidate()
         {
-            try
+            if (mainWeaponsParentObject == null || specialWeaponsParentObject == null)
             {
-                m_mainWeaponsParentObject = transform.Find("Main Weapons").gameObject;
-                m_specialnWeaponsParentObject = transform.Find("Special Weapons").gameObject;
+                Debug.LogError("Make sure to map the weapon parent objects for this game object");
+                return;
             }
-            catch (Exception e)
-            {
-                Debug.LogWarning($"Failed to fetch weapon arrays with error: {e.Message}. \n Make sure Main Weapons and Special Weapons game objects exist under player ship.");
-            }
+
+            mainWeapons = mainWeaponsParentObject.GetComponentsInChildren<BulletEmitter>();
+            specialWeapons = specialWeaponsParentObject.GetComponentsInChildren<BulletEmitter>().ToList();
         }
         void Start()
         {
             if (activateWeaponsOnStart)
             {
-                ActivateMainWeapon(MainWeapons[activeMainWeaponIndex]);
+                ActivateMainWeapon(mainWeapons[activeMainWeaponIndex]);
             }
         }
 
         public void UpgradeMainWeapon()
         {
-            DeactivateMainWeapon(MainWeapons[activeMainWeaponIndex]);
+            DeactivateMainWeapon(mainWeapons[activeMainWeaponIndex]);
             activeMainWeaponIndex++;
-            ActivateMainWeapon(MainWeapons[activeMainWeaponIndex]);
+            ActivateMainWeapon(mainWeapons[activeMainWeaponIndex]);
         }
 
         private void ActivateMainWeapon(BulletEmitter mainWeapon)
@@ -103,7 +74,7 @@ namespace Foxlair.Player
 
         public void ActivateSpecialWeapon(string specialWeaponName)
         {
-            activeSpecialWeapon = SpecialWeaponsParentObject.transform.Find(specialWeaponName).GetComponent<BulletEmitter>();
+            activeSpecialWeapon = specialWeaponsParentObject.transform.Find(specialWeaponName).GetComponent<BulletEmitter>();
             activeSpecialWeapon.Play();
         }
 

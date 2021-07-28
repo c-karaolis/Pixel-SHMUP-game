@@ -220,4 +220,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: eee3c77866afff042bb4433a9c9f6811, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  activeMainWeapon: {fileID: 0}
+  activeSpecialWeapon: {fileID: 0}
+  mainWeaponsParentObject: {fileID: 75913062}
+  specialWeaponsParentObject: {fileID: 1833093971}
   activateWeaponsOnStart: 1
+  mainWeapons:
+  - {fileID: 1547231850}
+  specialWeapons: []
