@@ -44,7 +44,7 @@ MonoBehaviour:
   m_Name: Bullet
   m_EditorClassIdentifier: 
   parameterType: 0
-  uniqueIndex: 4884402
+  uniqueIndex: 8870709
   profile: {fileID: 11400000}
   parent: {fileID: 114201774248674550}
   children: []
@@ -2439,7 +2439,7 @@ MonoBehaviour:
   animationMovementSpace: 0
   animationTexture: {fileID: 0}
   collisionTags:
-    tagList: 1
+    tagList: 22
   colliders:
   - colliderType: 0
     size: 1.71
@@ -2448,7 +2448,7 @@ MonoBehaviour:
     lineEnd: {x: 0, y: 0}
   dieOnCollision: 1
   shapeFoldout: 0
-  collisionTagsFoldout: 0
+  collisionTagsFoldout: 1
   homing: 0
   homingTags:
     tagList: 1
@@ -6917,7 +6917,7 @@ MonoBehaviour:
   m_Name: Shot
   m_EditorClassIdentifier: 
   parameterType: 1
-  uniqueIndex: 11312394
+  uniqueIndex: 1011305
   profile: {fileID: 11400000}
   parent: {fileID: 114917193883442684}
   children:
@@ -11463,7 +11463,7 @@ MonoBehaviour:
   m_Name: Root Emitter
   m_EditorClassIdentifier: 
   parameterType: 0
-  uniqueIndex: 8424939
+  uniqueIndex: 3707040
   profile: {fileID: 11400000}
   parent: {fileID: 0}
   children:
@@ -17962,7 +17962,7 @@ MonoBehaviour:
   m_Name: Pattern
   m_EditorClassIdentifier: 
   parameterType: 2
-  uniqueIndex: 1818457
+  uniqueIndex: 7902283
   profile: {fileID: 11400000}
   parent: {fileID: 114671512830859702}
   children:

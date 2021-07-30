@@ -1,3 +1,5 @@
+using Foxlair.Tools.Events;
+
 namespace Foxlair.Enemies
 {
     public class EnemySpaceship : Spaceship
@@ -7,19 +9,20 @@ namespace Foxlair.Enemies
             throw new System.NotImplementedException();
         }
 
-        public override void OnSpaceshipDeath()
+        public override void OnDeath()
         {
             throw new System.NotImplementedException();
         }
 
-        public override void OnSpaceshipHealthGained(float healAmount)
+        public override void OnHealthGained(float healAmount)
         {
             throw new System.NotImplementedException();
         }
 
-        public override void OnSpaceshipHealthLost(float damage)
+        public override void OnHealthLost(float damage)
         {
-            throw new System.NotImplementedException();
+            //TODO: do X amount of damage to Enemies.
+            //FoxlairEventManager.Instance.EnemyHealthSystem_OnHealthLost_Event(damage);
         }
     }
 }

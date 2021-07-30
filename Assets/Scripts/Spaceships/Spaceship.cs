@@ -1,17 +1,16 @@
-using System.Collections;
-using System.Collections.Generic;
+using Foxlair.Interfaces;
 using UnityEngine;
 
 namespace Foxlair
 {
-    public abstract class Spaceship : MonoBehaviour
+    public abstract class Spaceship : MonoBehaviour, IHealthOwner
     {
 
-        public abstract void OnSpaceshipHealthLost(float damage);
+        public abstract void OnHealthLost(float damage);
 
-        public abstract void OnSpaceshipHealthGained(float healAmount);
+        public abstract void OnHealthGained(float healAmount);
 
-        public abstract void OnSpaceshipDeath();
+        public abstract void OnDeath();
 
         public abstract void Die();
     }

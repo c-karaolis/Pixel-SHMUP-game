@@ -1,5 +1,5 @@
-using System.Collections;
-using System.Collections.Generic;
+using Foxlair.Interfaces;
+using Sirenix.OdinInspector;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -8,30 +8,31 @@ namespace Foxlair
     public class HealthSystem : MonoBehaviour
     {
 
-        float health;
-        public float maxHealth;
+        [SerializeField] [ReadOnly] float health;
+        [Required] [SerializeField] float maxHealth;
 
         [Header("Min/Max damage and armor")]
-        public float minDamageCanReceive = 1f;
-        public float maxDamageCanReceive = 999f;
-        public float armor;
+        [Required] [SerializeField] float minDamageCanReceive = 1f;
+        [Required] [SerializeField] float maxDamageCanReceive = 999f;
+        [Required] [SerializeField] float armor = 0f;
 
         [Header("Customisation per unit")]
-        public bool unitRegeneratesHealth = false;
-        public bool unitHasHealthbar = false;
-        public float healthRegeneration;
-
-
-        Spaceship spaceship;
-
+        [SerializeField] bool unitRegeneratesHealth = false;
+        [ShowIf("unitRegeneratesHealth")]
+        [SerializeField] float healthRegeneration;
+        [SerializeField] bool unitHasHealthbar = false;
+        [ShowIf("unitHasHealthbar")]
         public Image healthBar;
 
+
+
+        IHealthOwner healthOwner;
+
+      
         private void Start()
         {
-            spaceship = GetComponent<Spaceship>();
-            maxHealth = 50f;
+            healthOwner = GetComponent<IHealthOwner>();
             health = maxHealth;
-            healthRegeneration = 0.1f;
         }
 
 
@@ -45,18 +46,18 @@ namespace Foxlair
             {
                 health = 0;
 
-                spaceship.OnSpaceshipHealthLost(damage);
+                healthOwner.OnHealthLost(damage);
                 Die();
             }
             else
             {
                 health -= damage;
-                spaceship.OnSpaceshipHealthLost(damage);
+                healthOwner.OnHealthLost(damage);
             }
         }
 
 
-        public void TakeDamage(float damage, Spaceship _spaceship)
+        public void TakeDamage(float damage, IHealthOwner _spaceship)
         {
             damage -= armor;
 
@@ -64,13 +65,13 @@ namespace Foxlair
             {
                 health = 0;
 
-                spaceship.OnSpaceshipHealthLost(damage);
+                healthOwner.OnHealthLost(damage);
                 Die();
             }
             else
             {
                 health -= damage;
-                spaceship.OnSpaceshipHealthLost(damage);
+                healthOwner.OnHealthLost(damage);
                 //spaceship.lastAttacker = _spaceship;
             }
 
@@ -81,19 +82,19 @@ namespace Foxlair
             if (health + healAmount <= maxHealth)
             {
                 health += healAmount;
-                spaceship.OnSpaceshipHealthGained(healAmount);
+                healthOwner.OnHealthGained(healAmount);
             }
             else
             {
                 health = maxHealth;
-                spaceship.OnSpaceshipHealthGained(healAmount);
+                healthOwner.OnHealthGained(healAmount);
             }
         }
 
         protected void Die()
         {
-            spaceship.OnSpaceshipDeath();
-            spaceship.Die();
+            healthOwner.OnDeath();
+            healthOwner.Die();
             //Debug.Log($"Actor({actor.name}) Died");
             //Destroy(gameObject);
         }
@@ -140,7 +141,7 @@ namespace Foxlair
                 health += healthRegeneration * Time.deltaTime;
             }
 
-            spaceship.OnSpaceshipHealthGained(regeneratedAmount);
+            healthOwner.OnHealthGained(regeneratedAmount);
 
         }
     }
