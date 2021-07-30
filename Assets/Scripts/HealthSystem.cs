@@ -5,7 +5,7 @@ using UnityEngine.UI;
 
 namespace Foxlair
 {
-    public class HealthSystem : MonoBehaviour
+    public class HealthSystem : SerializedMonoBehaviour
     {
 
         [SerializeField] [ReadOnly] float health;
@@ -26,16 +26,21 @@ namespace Foxlair
 
 
 
-        IHealthOwner healthOwner;
+        [SerializeField] [ReadOnly] IHealthOwner healthOwner;
 
-      
-        private void Start()
+        private void OnValidate()
         {
             healthOwner = GetComponent<IHealthOwner>();
-            health = maxHealth;
+
+            if (maxHealth == 0f)
+            {
+                maxHealth = 50f;
+            }
+            if(health == 0f)
+            {
+                health = maxHealth;
+            }
         }
-
-
 
         public void TakeDamage(float damage)
         {
