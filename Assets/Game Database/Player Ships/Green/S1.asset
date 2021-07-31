@@ -44,7 +44,7 @@ MonoBehaviour:
   m_Name: Bullet
   m_EditorClassIdentifier: 
   parameterType: 0
-  uniqueIndex: 5839997
+  uniqueIndex: 13286993
   profile: {fileID: 11400000}
   parent: {fileID: 114201774248674550}
   children: []
@@ -1967,7 +1967,7 @@ MonoBehaviour:
         indexOfTo: 0
         indexOfBlendedChildren: 
         weight: 0
-        headerTitle: 
+        headerTitle: Custom Death VFX
         blendColor: {r: 0, g: 0, b: 0, a: 0}
         parameterType: 0
         relativeTo: 0
@@ -2442,17 +2442,17 @@ MonoBehaviour:
     tagList: 22
   colliders:
   - colliderType: 0
-    size: 1.71
-    offset: {x: 0, y: 0, z: 0}
+    size: 0.44
+    offset: {x: 0, y: 0.26, z: 0}
     lineStart: {x: 0, y: 0}
     lineEnd: {x: 0, y: 0}
   dieOnCollision: 1
   shapeFoldout: 0
-  collisionTagsFoldout: 1
+  collisionTagsFoldout: 0
   homing: 0
   homingTags:
-    tagList: 1
-  useSameTagsAsCollision: 1
+    tagList: 2
+  useSameTagsAsCollision: 0
   lookAtTargetAtSpawn:
     valueTree:
     - settings:
@@ -2901,7 +2901,7 @@ MonoBehaviour:
         parameterType: 0
         relativeTo: 0
         parameterName: 
-      defaultValue: 0
+      defaultValue: 1
     enumTypeName: BulletPro.PreferredTarget, Assembly-CSharp, Version=0.0.0.0, Culture=neutral,
       PublicKeyToken=null
     enumOptions:
@@ -3023,7 +3023,7 @@ MonoBehaviour:
     useSlider: 0
     sliderMin: 0
     sliderMax: 0
-  homingTagsFoldout: 0
+  homingTagsFoldout: 1
   lifespan:
     valueTree:
     - settings:
@@ -6917,7 +6917,7 @@ MonoBehaviour:
   m_Name: Shot
   m_EditorClassIdentifier: 
   parameterType: 1
-  uniqueIndex: 1820823
+  uniqueIndex: 4884663
   profile: {fileID: 11400000}
   parent: {fileID: 114917193883442684}
   children:
@@ -11463,7 +11463,7 @@ MonoBehaviour:
   m_Name: Root Emitter
   m_EditorClassIdentifier: 
   parameterType: 0
-  uniqueIndex: 814849
+  uniqueIndex: 2923657
   profile: {fileID: 11400000}
   parent: {fileID: 0}
   children:
@@ -17962,7 +17962,7 @@ MonoBehaviour:
   m_Name: Pattern
   m_EditorClassIdentifier: 
   parameterType: 2
-  uniqueIndex: 14207233
+  uniqueIndex: 12071927
   profile: {fileID: 11400000}
   parent: {fileID: 114671512830859702}
   children:

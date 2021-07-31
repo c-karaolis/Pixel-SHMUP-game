@@ -12,9 +12,9 @@ namespace Foxlair
         [Required] [SerializeField] float maxHealth;
 
         [Header("Min/Max damage and armor")]
-        [Required] [SerializeField] float minDamageCanReceive = 1f;
-        [Required] [SerializeField] float maxDamageCanReceive = 999f;
-        [Required] [SerializeField] float armor = 0f;
+        [Required] [SerializeField] private readonly float minDamageCanReceive = 1f;
+        [Required] [SerializeField] private readonly float maxDamageCanReceive = 999f;
+        [Required] [SerializeField] private readonly float armor = 0f;
 
         [Header("Customisation per unit")]
         [SerializeField] bool unitRegeneratesHealth = false;
@@ -36,17 +36,16 @@ namespace Foxlair
             {
                 maxHealth = 50f;
             }
-            if(health == 0f)
-            {
+            
                 health = maxHealth;
-            }
+            
         }
 
         public void TakeDamage(float damage)
         {
             damage -= armor;
             if (damage < minDamageCanReceive) { damage = minDamageCanReceive; }
-
+            if (damage > maxDamageCanReceive) { damage = maxDamageCanReceive; }
             if (health - damage <= 0)
             {
                 health = 0;
