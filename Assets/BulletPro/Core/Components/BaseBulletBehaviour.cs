@@ -26,6 +26,10 @@ namespace BulletPro
 		[HideInInspector]
 		public Transform defaultParent;
 
+		// Tells whether to reset pooling at Awake() or not.
+		[Tooltip("Leave unchecked for regular use.\nIf checked, this object won't be fully linked to its pool during Awake, its Transform will not be reset, and the object will be active without the need of a parent bullet.\nThis enables isolated use, like testing your prefab without having to shoot a bullet.")]
+		public bool startIsolatedFromBullet;
+
 		// When the bullet dies, this script get destroyed along with its whole gameobject.
 		[Tooltip("When the bullet dies, you can delay the behaviour's death by a set amount of seconds.")]
 		public float lifetimeAfterBulletDeath;
@@ -35,7 +39,18 @@ namespace BulletPro
 		protected bool isDestructing;
 
 		// When starting the scene, these behaviours shouldn't be in use.
-		void Awake() { OnBehaviourDeath(); }
+		public virtual void Awake()
+		{
+			// If the prefab is somehow meant to be used outside the pools (ie. for testing), full OnBehaviourDeath isn't suitable
+			if (startIsolatedFromBullet)
+			{
+				isDestructing = false;
+				isAvailableInPool = true;
+				if (self == null) self = transform;
+			}
+
+			else OnBehaviourDeath();
+		}
 
 		// Always called when the bullet gets spawned. Some other things can be added to this callback.
 		public virtual void OnBulletBirth()

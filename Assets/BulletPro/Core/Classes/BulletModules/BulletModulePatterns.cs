@@ -183,7 +183,8 @@ namespace BulletPro
 			{
 				// Root bullet is already registered.
 				if (!bullet.isRootBullet)
-					bullet.emitter.subEmitters.Add(bullet);
+					if (bullet.emitter)
+						bullet.emitter.subEmitters.Add(bullet);
 				
 				didRegisterAsSubEmitter = true;
 			}
@@ -243,14 +244,24 @@ namespace BulletPro
 
 			// Get a bullet from pool
 			Bullet b = null;
-			if (bp.renderMode == BulletRenderMode.Sprite) b = poolManager.GetFreeBulletLocal();
-			else b = poolManager.GetFree3DBulletLocal();
+			if (bp.renderMode == BulletRenderMode.Sprite)
+			{
+				b = poolManager.GetFreeBulletLocal();
+				if ((!b) && (!bp.isVisible))
+					b = poolManager.GetFree3DBulletLocal();
+			}
+			else
+			{
+				b = poolManager.GetFree3DBulletLocal();
+				if ((!b) && (!bp.isVisible))
+					b = poolManager.GetFreeBulletLocal();
+			}
 			if (!b) return;
 
 			Transform self = bullet.self;
 
 			// Set position and orientation, except orientation delta from ShotParams which will be set later
-			b.self.position = self.position + self.up * delta.y + self.right * delta.x;
+			b.self.position = self.position;// + self.up * delta.y + self.right * delta.x;
 			b.self.eulerAngles = self.eulerAngles; // and not "+delta.z"
 
 			// Setup inherited data for dynamic parameters
@@ -273,7 +284,8 @@ namespace BulletPro
 			// if (bp.hasPatterns) bullet.emitter.subEmitters.Add(b);
 			b.subEmitter = bullet;
 			emittedBullets.Add(b);
-			bullet.emitter.bullets.Add(b);
+			if (bullet.emitter)
+				bullet.emitter.bullets.Add(b);
 
 			// Apply BulletParams (it's done before handling parenting so isChildOfEmitter can depend on custom params)
 			b.ApplyBulletParams(bp);
@@ -289,25 +301,31 @@ namespace BulletPro
 					b.self.SetParent(bullet.poolManager.meshPoolRoot);
 			}			
 
-			// If delayed spawn from homing bullets, rotation from ShotParams will only be applied at Prepare().
-			bool dontApplyRotationNow = false;
-
-			// Set orientation if homing
+			// Set position and orientation if homing
 			BulletModuleHoming mh = b.moduleHoming;
 			if (mh.isEnabled)
 			{
 				BulletModuleSpawn ms = b.moduleSpawn;
+				
+				// Case 1 : If delayed spawn from homing bullets, delta from ShotParams will only be applied at Prepare().
 				if (ms.isEnabled && ms.timeBeforeSpawn > 0)
-				{
-					ms.MemorizeSpawnRotation(delta.z);
-					dontApplyRotationNow = true;
-				}
-				else mh.LookAtTarget(mh.homingSpawnRate);
-			}
+					ms.MemorizeSpawnDelta(delta);
 
-			// Set orientation delta from ShotParams - it's done here because it shouldn't get overridden by homing.
-			if (!dontApplyRotationNow)
+				// Case 2 : apply homing delta then spawn delta now (in this order)
+				else
+				{
+					mh.MoveToTarget(mh.spawnOnTarget);
+					b.self.position = b.self.position + self.up * delta.y + self.right * delta.x;
+					mh.LookAtTarget(mh.homingSpawnRate);
+					b.moduleMovement.Rotate(delta.z);
+				}
+			}
+			// If not homing, just apply spawn delta now
+			else 
+			{
+				b.self.position = b.self.position + self.up * delta.y + self.right * delta.x;
 				b.moduleMovement.Rotate(delta.z);
+			}
 
 			// Add additional behaviour if needed.
 			// Done here instead of ApplyBulletParams() to avoid behaviour stacking if one calls ChangeBulletParams().

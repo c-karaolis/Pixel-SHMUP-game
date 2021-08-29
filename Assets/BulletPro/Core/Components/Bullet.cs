@@ -27,6 +27,7 @@ namespace BulletPro
 		public BulletModuleLifespan moduleLifespan;
 		public BulletModuleSpawn moduleSpawn;
 		public BulletModuleParameters moduleParameters;
+		public BulletModuleVFX moduleVFX;
 		public DynamicParameterSolver dynamicSolver; // works as a module but treats dynamic parameters upon bullet birth
 
 		// Pooling availability
@@ -98,7 +99,6 @@ namespace BulletPro
 			Matrix4x4 oldMat = Gizmos.matrix;
 			Gizmos.matrix = self.localToWorldMatrix;
 			Gizmos.color = gizmoColor;
-			float mScale = moduleCollision.scale;
 			foreach (BulletCollider bc in bcs)
 			{
 				if (bc.colliderType == BulletColliderType.Line)
@@ -109,7 +109,7 @@ namespace BulletPro
 				}
 				else if (bc.size > 0)
 				{
-					Vector3 orig = bc.offset * mScale;
+					Vector3 orig = bc.offset;
 					Gizmos.DrawWireSphere(orig, bc.size);
 				}
 			}
@@ -157,6 +157,9 @@ namespace BulletPro
 			moduleParameters = new BulletModuleParameters();
 			moduleParameters.bullet = this;
 
+			moduleVFX = new BulletModuleVFX();
+			moduleVFX.bullet = this;
+
 			dynamicSolver = new DynamicParameterSolver();
 			dynamicSolver.bullet = this;
 
@@ -168,6 +171,7 @@ namespace BulletPro
 			moduleLifespan.Awake();
 			moduleSpawn.Awake();
 			moduleParameters.Awake();
+			moduleVFX.Awake();
 			dynamicSolver.Awake();
 
 			// Get references to managers
@@ -195,19 +199,12 @@ namespace BulletPro
 			moduleLifespan.GetManagers();
 			moduleSpawn.GetManagers();
 			moduleParameters.GetManagers();
+			moduleVFX.GetManagers();
 		}
 
 		// Update is divided into a few sub-updates, depending on the intended behaviour.
 		void Update()
 		{
-			// debug
-			/* *
-			if (Input.GetKeyDown(KeyCode.Y))
-			{
-				microActions.Add(new MicroActionRotate(this, 0.4f, AnimationCurve.Linear(0,0,1,1), 90));
-			}
-			/* */
-
 			if (emitter.allBulletsPaused) return;
 
 			timeSinceAlive += Time.deltaTime;
@@ -226,6 +223,7 @@ namespace BulletPro
 			if (modulePatterns.isEnabled)	modulePatterns.Update();
 			if (moduleLifespan.isEnabled)	moduleLifespan.Update();
 			// moduleParameters is not updated
+			// moduleVFX is not either
 
 			// update micro-actions
 			if (microActions.Count > 0)
@@ -284,30 +282,47 @@ namespace BulletPro
 			timeSinceAlive = 0;
 
 			// Handle VFX
-			if (spawnFX && moduleRenderer.isEnabled && moduleRenderer.playVFXOnBirth)
-				moduleRenderer.SpawnFX(true);
+			if (!spawnFX) return;
+			for (int i = 0; i < moduleVFX.availableVFX.Count; i++)
+			{
+				BulletVFXTrigger trig = moduleVFX.availableVFX[i].onBulletBirth;
+				if (!moduleVFX.AskPermission(trig)) continue;
+				if (trig.behaviour == BulletVFXBehaviour.Play) moduleVFX.PlayVFX(i);
+				else if (trig.behaviour == BulletVFXBehaviour.Stop) moduleVFX.StopVFX(i);
+			}
 		}
 
-		// Make this bullet die, thus eligible to pooling again.
-		void Die(bool spawnFX, bool useSelfPositionForFX=true, Vector3 customFXPosition=default(Vector3))
+		// Overload 1 : Make this bullet die, thus eligible to pooling again.
+		public void Die(Vector3 vfxPosition)
 		{
 			// this double check ensures that any kill function (such as BulletInitiator.KillAllBullets()) can't kill it twice
 			if (isAvailableInPool) return;
 
+			Death_BeforeVFX();
+			moduleVFX.Die(vfxPosition);
+			Death_AfterVFX();
+		}
+
+		// Overload 2 : Setting the argument to false disallows VFX. "true" launches VFX at bullet position.
+		public void Die(bool spawnFX=true)
+		{
+			// this double check ensures that any kill function (such as BulletInitiator.KillAllBullets()) can't kill it twice
+			if (isAvailableInPool) return;
+
+			Death_BeforeVFX();
+			moduleVFX.Die(spawnFX);
+			Death_AfterVFX();			
+		}
+
+		// Component of the Die() function
+		void Death_BeforeVFX()
+		{
 			// Updating the manager
 			poolManager.currentAmountOfBullets--;
 
 			// Flush micro-actions
 			microActions.Clear();
 			microActions.TrimExcess();
-
-			// FX, feedbacks
-			if (spawnFX && moduleRenderer.isEnabled && moduleRenderer.playVFXOnDeath)
-			{
-				if (useSelfPositionForFX)
-					moduleRenderer.SpawnFX(false);
-				else moduleRenderer.SpawnFX(customFXPosition, false);
-			}
 
 			// Bullet shutdown
 			isAvailableInPool = true;
@@ -323,10 +338,15 @@ namespace BulletPro
 
 			// Simpler modules
 			moduleMovement.Disable();
+			moduleMovement.Die();
 			moduleLifespan.Disable();
 			moduleSpawn.Die();
 			dynamicSolver.Die();
-			
+		}
+
+		// Component of the Die() function
+		void Death_AfterVFX()
+		{
 			// Collision module
 			if (moduleCollision.isEnabled)
 	            collisionManager.RemoveBulletLocal(this);
@@ -365,13 +385,6 @@ namespace BulletPro
 					}
 		}
 
-		// Overload that controls spawned FX position
-		public void Die(Vector3 customFXPosition) {	Die(true, false, customFXPosition); }
-		// Overload that controls whether there must be a VFX
-		public void Die(bool spawnFX) { Die(spawnFX, true); }
-		// Simplest overload
-		public void Die() { Die(true); }
-
 		#endregion
 
 		#region copying values from BulletParams into the modules
@@ -391,6 +404,7 @@ namespace BulletPro
 			modulePatterns.ApplyBulletParams(bp);
 			moduleSpawn.ApplyBulletParams(bp);
 			moduleRenderer.ApplyBulletParams(bp);
+			moduleVFX.ApplyBulletParams(bp); // applying VFX after Renderer so it knows whether Renderer is enabled or not
 
 			// BulletBehaviours are not handled here but in emitter's ModulePatterns. This avoids behaviour stacking if one calls ChangeBulletParams().
 			// But PREVIOUS Behaviours (from the bullet's previous lives) are flushed here.
@@ -425,6 +439,9 @@ namespace BulletPro
 
 			if ((bpm & BulletParamMask.Parameters) == BulletParamMask.Parameters)
 				moduleRenderer.ApplyBulletParams(bp);
+
+			if ((bpm & BulletParamMask.VFX) == BulletParamMask.VFX)
+				moduleVFX.ApplyBulletParams(bp);
 		}
 
 		// Change BulletParams during the bullet's life, without killing it

@@ -12,25 +12,25 @@ namespace BulletPro.EditorScripts
 	[CustomEditor(typeof(BulletParams))]
 	public class BulletParamInspector : EmissionParamsInspector
 	{
-
 		#region SerializedProperties
 
 		SerializedProperty sprite, sortingOrder, sortingLayerName;
 		SerializedProperty hasLifespan, lifespan;
-		SerializedProperty playVFXOnBirth, playVFXOnDeath, vfxParticleSize;
+		SerializedProperty hasLimitedRange, maxTravellableDistance;
+		SerializedProperty playVFXOnBirth, playVFXOnDeath, vfxParams, vfxParticleSize, vfxOpened;
 		SerializedProperty mesh, renderMode, material;
-		SerializedProperty useCustomBirthVFX, useCustomDeathVFX, customBirthVFX, customDeathVFX;
 		SerializedProperty color, evolutionBlendWithBaseColor, colorEvolution;
 		SerializedProperty animated, sprites, animationFramerate, animationWrapMode, animationTexture;
-		SerializedProperty foldoutVFX, hideSpriteList;
+		SerializedProperty hideSpriteList;
 		SerializedProperty forwardSpeed, angularSpeed, startScale;
 		SerializedProperty speedCurve, angularSpeedCurve, scaleCurve, colorCurve, alphaCurve, homingCurve;
 		SerializedProperty canMove, isVisible, canCollide;
 		SerializedProperty isChildOfEmitter;
 		SerializedProperty patternsShot, dieWhenAllPatternsAreDone;
 		SerializedProperty collisionTags, dieOnCollision, colliders;
+		SerializedProperty maxSimultaneousCollisionsPerFrame, deathTiming;
 		SerializedProperty preview, shapeFoldout, collisionTagsFoldout;
-		SerializedProperty homing, homingAngularSpeed, lookAtTargetAtSpawn, targetRefreshInterval, preferredTarget, homingAngleThreshold;
+		SerializedProperty homing, homingAngularSpeed, lookAtTargetAtSpawn, spawnOnTarget, targetRefreshInterval, preferredTarget, homingAngleThreshold;
 		SerializedProperty homingTags, useSameTagsAsCollision, homingTagsFoldout;
 		SerializedProperty behaviourPrefabs;
 		SerializedProperty delaySpawn, timeBeforeSpawn, playAudioAtSpawn, audioClip;
@@ -65,8 +65,12 @@ namespace BulletPro.EditorScripts
 		// bullet collider list
 		ReorderableList colliderList;
 
-		Color baseGUIColor, boxColor, enabledButtonColor;
+		// list of processed BulletVFXParams
+		List<BulletVFXParamInspector> vfxInspectors;
 
+		// styling
+		Color baseGUIColor, boxColor, enabledButtonColor, disabledButtonColor;
+		Color currentButtonColor, currentDisabledButtonColor; // unused for now, but might be
 		FontStyle defaultLabelStyle;
 
 		// used by every sub-inspector as temp variable
@@ -103,14 +107,14 @@ namespace BulletPro.EditorScripts
 			
 			hasLifespan = serializedObject.FindProperty("hasLifespan");
 			lifespan = serializedObject.FindProperty("lifespan");
+			hasLimitedRange = serializedObject.FindProperty("hasLimitedRange");
+			maxTravellableDistance = serializedObject.FindProperty("maxTravellableDistance");
 
 			playVFXOnBirth = serializedObject.FindProperty("playVFXOnBirth");
 			playVFXOnDeath = serializedObject.FindProperty("playVFXOnDeath");
+			vfxParams = serializedObject.FindProperty("vfxParams");
 			vfxParticleSize = serializedObject.FindProperty("vfxParticleSize");
-			useCustomBirthVFX = serializedObject.FindProperty("useCustomBirthVFX");
-			customBirthVFX = serializedObject.FindProperty("customBirthVFX");
-			useCustomDeathVFX = serializedObject.FindProperty("useCustomDeathVFX");
-			customDeathVFX = serializedObject.FindProperty("customDeathVFX");
+			vfxOpened = serializedObject.FindProperty("vfxOpened");
 
 			animated = serializedObject.FindProperty("animated");
 			sprites = serializedObject.FindProperty("sprites");
@@ -125,7 +129,6 @@ namespace BulletPro.EditorScripts
 			material = serializedObject.FindProperty("material");
 			mesh = serializedObject.FindProperty("mesh");
 			renderMode = serializedObject.FindProperty("renderMode");
-			foldoutVFX = serializedObject.FindProperty("foldoutVFX");
 			hideSpriteList = serializedObject.FindProperty("hideSpriteList");
 
 			forwardSpeed = serializedObject.FindProperty("forwardSpeed");
@@ -158,6 +161,8 @@ namespace BulletPro.EditorScripts
 
 			collisionTags = serializedObject.FindProperty("collisionTags");
 			dieOnCollision = serializedObject.FindProperty("dieOnCollision");
+			maxSimultaneousCollisionsPerFrame = serializedObject.FindProperty("maxSimultaneousCollisionsPerFrame");
+			deathTiming = serializedObject.FindProperty("deathTiming");
 			colliders = serializedObject.FindProperty("colliders");
 
 			preview = serializedObject.FindProperty("preview");
@@ -167,6 +172,7 @@ namespace BulletPro.EditorScripts
 			homing = serializedObject.FindProperty("homing");
 			homingAngularSpeed = serializedObject.FindProperty("homingAngularSpeed");
 			lookAtTargetAtSpawn = serializedObject.FindProperty("lookAtTargetAtSpawn");
+			spawnOnTarget = serializedObject.FindProperty("spawnOnTarget");
 			targetRefreshInterval = serializedObject.FindProperty("targetRefreshInterval");
 			preferredTarget = serializedObject.FindProperty("preferredTarget");
 			homingAngleThreshold = serializedObject.FindProperty("homingAngleThreshold");
@@ -331,7 +337,7 @@ namespace BulletPro.EditorScripts
 			/* */
 
 			#endregion
-			
+						
 			bp = target as BulletParams;
 
 			// set custom default values
@@ -345,23 +351,36 @@ namespace BulletPro.EditorScripts
 			disabledModuleStyle = "Label";
 			enabledModuleStyle = "Box";
 			baseGUIColor = GUI.color;
-			enabledButtonColor = new Color(0.85f, 1f, 0.75f, 1f);
+			enabledButtonColor = EditorGUIUtility.isProSkin ? new Color(0f, 1.2f, 1f, 1f) : new Color(0.8f, 1f, 0.8f, 1f);
+			disabledButtonColor = EditorGUIUtility.isProSkin ? new Color(1f, 0.95f, 0.95f, 1f) : new Color(0.8f, 0f, 0f, 1f);
+			currentButtonColor = EditorGUIUtility.isProSkin ? new Color(0.6f, 1f, 1.5f, 1f) : new Color(0.6f, 0.7f, 1f, 1f);
+			currentDisabledButtonColor = EditorGUIUtility.isProSkin ? new Color(1.1f, 0.7f, 1.2f, 1f) : new Color(0.6f, 0f, 0.6f, 1f);
+			//enabledButtonColor = new Color(0.85f, 1f, 0.75f, 1f);
 			//enabledButtonColor = baseGUIColor; // cut this one
-			#if UNITY_2019_3_OR_NEWER
-			boxColor = new Color(baseGUIColor.r*0.95f, baseGUIColor.g, baseGUIColor.b, baseGUIColor.a); // identical for now, might change
-            #else
+			
 			boxColor = new Color(baseGUIColor.r*0.95f, baseGUIColor.g, baseGUIColor.b, baseGUIColor.a);
-            #endif
 
 			// collider preview
 			UpdatePreviewParams();
 			UpdatePreviewTexture();
 			mustRecalcTexture = false;
+
+			// VFX list setup
+			RebuildVFXInspectors();
+
+			Undo.undoRedoPerformed += OnUndoRedo;
 		}
 
 		public override void OnDisable()
 		{
 			OnUnselected();
+			Undo.undoRedoPerformed -= OnUndoRedo;
+			System.GC.Collect(); // mostly here for the vfxInspectors list
+		}
+
+		void OnUndoRedo()
+		{
+			RebuildVFXInspectors();
 		}
 
 		public override void OnUnselected()
@@ -393,15 +412,20 @@ namespace BulletPro.EditorScripts
 
 			GUIContent gotoGC = new GUIContent("Go to:", "A green button means something is enabled inside.");
 			EditorGUILayout.LabelField(gotoGC);
+
 			EditorGUILayout.BeginHorizontal();
-			DrawButton(ParamInspectorPart.Renderer, isVisible.boolValue, "Graphics");
+			DrawButton(ParamInspectorPart.Renderer, isVisible.boolValue, "Graphics (Sprite/Mesh)");
+			DrawButton(ParamInspectorPart.VFX, IsVFXButtonEnabled(), "Graphics (Particle Effects)");
+			EditorGUILayout.EndHorizontal();
+
+			EditorGUILayout.BeginHorizontal();
 			DrawButton(ParamInspectorPart.Movement, canMove.boolValue, "Speed & Size");
 			DrawButton(ParamInspectorPart.Collision, canCollide.boolValue, "Collision");
 			DrawButton(ParamInspectorPart.Homing, homing.boolValue, "Homing");
 			EditorGUILayout.EndHorizontal();
 
 			EditorGUILayout.BeginHorizontal();
-			bool spawnAndLifetimeEnabled = hasLifespan.boolValue || delaySpawn.boolValue || canBeChildOfEmitter || canPlayAudio;
+			bool spawnAndLifetimeEnabled = hasLifespan.boolValue || hasLimitedRange.boolValue || delaySpawn.boolValue || canBeChildOfEmitter || canPlayAudio;
 			DrawButton(ParamInspectorPart.SpawnAndLifetime, spawnAndLifetimeEnabled, "Spawn & Lifetime");
 			DrawButton(ParamInspectorPart.Emission, bp.hasPatterns, "Routines & Patterns");
 			EditorGUILayout.EndHorizontal();
@@ -425,6 +449,9 @@ namespace BulletPro.EditorScripts
 
 			if (currentlyDisplayedModule.enumValueIndex == (int)ParamInspectorPart.Renderer)
 				DrawRendererModuleInspector();
+
+			else if (currentlyDisplayedModule.enumValueIndex == (int)ParamInspectorPart.VFX)
+				DrawVFXModuleInspector();
 
 			else if (currentlyDisplayedModule.enumValueIndex == (int)ParamInspectorPart.SpawnAndLifetime)
 			{
@@ -469,17 +496,15 @@ namespace BulletPro.EditorScripts
 			GUIStyle btnStyle;
 			if (currentlyDisplayedModule.enumValueIndex == (int)paramPart) btnStyle = new GUIStyle(focusedButton);
 			else btnStyle = new GUIStyle(normalButton);
+
+			bool isCurrent = currentlyDisplayedModule.enumValueIndex == (int)paramPart;
+
+			// Commented out: less colors makes for a less confusing UI			
+			//if (isCurrent) GUI.color = containsEnabledStuff ? currentButtonColor : currentDisabledButtonColor;
+			//else
+			GUI.color = containsEnabledStuff ? enabledButtonColor : disabledButtonColor;
 			
-			GUI.color = containsEnabledStuff ? enabledButtonColor : baseGUIColor;
-			#if UNITY_2019_3_OR_NEWER
-			// compensate for the loss of EditorStyles.button.active
-			if (currentlyDisplayedModule.enumValueIndex == (int)paramPart)
-			{
-				GUI.color *= 0.7f;
-				GUI.color = new Color(GUI.color.r, GUI.color.g, GUI.color.b, 1f);
-			}
-			#endif
-			
+			EditorGUI.BeginDisabledGroup(isCurrent);
 			if (GUILayout.Button(btnText, btnStyle, GUILayout.Height(24)))
 			{
 				GUI.color = baseGUIColor;
@@ -496,6 +521,7 @@ namespace BulletPro.EditorScripts
 				else serializedObject.ApplyModifiedProperties();
 			}
 			else GUI.color = baseGUIColor;
+			EditorGUI.EndDisabledGroup();
 		}
 
 		void ApplyAll()
@@ -685,57 +711,6 @@ namespace BulletPro.EditorScripts
 					#endregion
 				}
 
-				#region VFX block
-
-				GUILayout.Space(12);
-
-				GUI.color = boxColor;
-				EditorGUILayout.BeginVertical(foldoutVFX.boolValue ? enabledModuleStyle : disabledModuleStyle);
-				GUI.color = baseGUIColor;
-
-				EditorStyles.label.fontStyle = FontStyle.Bold;
-				foldoutVFX.boolValue = EditorGUILayout.Toggle("Spawn/Death VFX", foldoutVFX.boolValue);
-				EditorStyles.label.fontStyle = defaultLabelStyle;
-				if (foldoutVFX.boolValue)
-				{
-					EditorGUI.indentLevel += 1;				
-
-					bool canPlayBirth = false;
-					bool canPlayDeath = false;
-
-					// VFX birth
-					EditorGUILayout.PropertyField(playVFXOnBirth);
-					canPlayBirth = DynamicParameterUtility.GetBool(playVFXOnBirth);
-					if (canPlayBirth)
-					{
-						EditorGUI.indentLevel += 1;
-						EditorGUILayout.PropertyField(useCustomBirthVFX);
-						if (useCustomBirthVFX.boolValue) EditorGUILayout.PropertyField(customBirthVFX, new GUIContent("Custom Birth VFX Prefab"));
-						EditorGUI.indentLevel -= 1;
-					}
-
-					// VFX death
-					EditorGUILayout.PropertyField(playVFXOnDeath);
-					canPlayDeath = DynamicParameterUtility.GetBool(playVFXOnDeath);
-					if (canPlayDeath)
-					{
-						EditorGUI.indentLevel += 1;
-						EditorGUILayout.PropertyField(useCustomDeathVFX);
-						if (useCustomDeathVFX.boolValue) EditorGUILayout.PropertyField(customDeathVFX, new GUIContent("Custom Death VFX Prefab"));
-						EditorGUI.indentLevel -= 1;
-					}
-
-					// Particle size for all effects
-					if (canPlayBirth || canPlayDeath)
-						EditorGUILayout.PropertyField(vfxParticleSize, new GUIContent("VFX Particle Size", "Size relative to the bullet's scale."));
-
-					EditorGUI.indentLevel -= 1;					
-				}
-
-				EditorGUILayout.EndVertical();
-
-				#endregion
-
 				#region color and alpha over lifetime
 
 				// Only for sprite mode, not mesh
@@ -759,6 +734,85 @@ namespace BulletPro.EditorScripts
 				#endregion
 			}
 			else EditorGUILayout.EndVertical();
+		}
+
+		void DrawVFXModuleInspector()
+		{
+			GUILayout.Space(12);
+
+			EditorGUILayout.HelpBox("This bullet currently contains "+vfxParams.arraySize+" VFX.\nOpen a VFX to start editing it.", MessageType.Info);
+			EditorGUILayout.BeginHorizontal();
+			if (GUILayout.Button("Create and open new VFX"))
+			{
+				vfxParams.arraySize++;
+				int newIndex = vfxParams.arraySize-1;
+				string newName = "VFX "+(newIndex).ToString();
+				SerializedProperty newProp = vfxParams.GetArrayElementAtIndex(newIndex);
+				newProp.FindPropertyRelative("tag").stringValue = newName;
+				vfxOpened.intValue = newIndex;
+
+				BulletVFXParamInspector insp = new BulletVFXParamInspector();
+				insp.Initialize(newProp);
+				vfxInspectors.Add(insp);
+
+			}
+			if (GUILayout.Button("Open existing VFX..."))
+			{
+				GenericMenu gm = new GenericMenu();
+				for (int i = 0; i < vfxParams.arraySize; i++)
+				{
+					gm.AddItem(new GUIContent("VFX "+i.ToString()), vfxOpened.intValue==i, OpenVFX, i);
+				}
+				gm.ShowAsContext();
+			}
+			EditorGUILayout.EndHorizontal();
+			
+			GUILayout.Space(8);
+
+			if (vfxParams.arraySize == 0)
+			{
+				EditorGUILayout.LabelField("This bullet has no VFX for now!");
+				EditorGUILayout.LabelField("Click above to create one.");
+			}
+			else
+			{
+				EditorGUILayout.BeginHorizontal();
+				if (vfxParams.arraySize > 1)
+					if (GUILayout.Button(new GUIContent("<<", "Open previous VFX")))
+					{
+						vfxOpened.intValue--;
+						if (vfxOpened.intValue < 0)
+							vfxOpened.intValue = vfxParams.arraySize-1;
+					}
+				GUIStyle centerStyle = new GUIStyle(EditorStyles.boldLabel);
+				centerStyle.alignment = TextAnchor.MiddleCenter;
+				centerStyle.fontSize = 16;
+				EditorGUILayout.LabelField("Currently opened : VFX #"+vfxOpened.intValue.ToString(), centerStyle);
+				if (vfxParams.arraySize > 1)
+					if (GUILayout.Button(new GUIContent(">>", "Open next VFX")))
+					{
+						vfxOpened.intValue++;
+						if (vfxOpened.intValue > vfxParams.arraySize-1)
+							vfxOpened.intValue = 0;
+					}
+				EditorGUILayout.EndHorizontal();
+				GUILayout.Space(12);
+				vfxInspectors[vfxOpened.intValue]?.DrawVFXInspector();
+
+				if (vfxParams.arraySize > 1)
+				{
+					GUILayout.Space(12);
+					if (GUILayout.Button("Delete this whole VFX"))
+					{
+                        if (EditorUtility.DisplayDialog("Delete this VFX as a whole ?", "Do you really want to delete this VFX ?\n\nA regular Ctrl+Z press will still be able to restore it.", "Delete", "Cancel"))					
+						{
+							vfxParams.DeleteArrayElementAtIndex(vfxOpened.intValue);
+							if (vfxOpened.intValue > 0) vfxOpened.intValue--;
+							RebuildVFXInspectors();
+						}
+					}
+				}
+			}
 		}
 
 		void DrawMovementModuleInspector()
@@ -979,10 +1033,21 @@ namespace BulletPro.EditorScripts
 				if (EditorGUI.EndChangeCheck())
 					mustRecalcTexture = true;
 
-				EditorGUILayout.PropertyField(dieOnCollision);
+				bool oldWrap = EditorStyles.label.wordWrap;
+				EditorStyles.label.wordWrap = false;
+				EditorGUILayout.PropertyField(maxSimultaneousCollisionsPerFrame, new GUIContent("Max Collisions Per Frame", "How many Receivers can get hit by this bullet in a single frame? Zero means infinity."));
+				if (maxSimultaneousCollisionsPerFrame.intValue < 0) maxSimultaneousCollisionsPerFrame.intValue = 0;
+				EditorStyles.label.wordWrap = true;
+				EditorGUILayout.PropertyField(dieOnCollision, new GUIContent(dieOnCollision.displayName, "If this is enabled and the bullet hits a Receiver that has \"Kill bullet on collision\", it will die."));
+				if (dieOnCollision.boolValue)
+				{
+					EditorGUI.indentLevel += 2;
+					EditorGUILayout.PropertyField(deathTiming, new GUIContent(deathTiming.displayName, "If the bullet automatically dies due to a collision, should it die on the spot or at the end of the frame? Immediate death will result in aborting subsequent other collisions."));
+					EditorGUI.indentLevel -= 2;
+				}
 
 				EditorGUILayout.BeginHorizontal();
-				collisionTagsFoldout.boolValue = EditorGUILayout.Foldout(collisionTagsFoldout.boolValue, "Collision Tags", true);
+				collisionTagsFoldout.boolValue = EditorGUILayout.Foldout(collisionTagsFoldout.boolValue, new GUIContent("Collision Tags", "A bullet will only collide with Receivers that share at least one Collision Tag with it."), true);
 				if (collisionTagsFoldout.boolValue)
 				{
 					GUI.color = new Color(0.6f, 1f, 1f, 1f);
@@ -1043,21 +1108,38 @@ namespace BulletPro.EditorScripts
 			{
 				EditorGUI.indentLevel += 1;
 
-				EditorGUILayout.PropertyField(preferredTarget);
-				EditorGUILayout.PropertyField(lookAtTargetAtSpawn, new GUIContent("Spawn Towards Target", "If negative, will look away from target.\nRotation from Shot applies AFTER this rotation."));
-				EditorGUILayout.PropertyField(homingAngularSpeed, new GUIContent("Homing Angular Speed", "How fast does the bullet turn to its target?"));
+				GUILayout.Space(12);
+				EditorGUI.indentLevel--;
+				EditorGUILayout.LabelField("Skew spawn position/rotation towards target :", EditorStyles.boldLabel);
+				EditorGUI.indentLevel++;
+				EditorGUILayout.PropertyField(spawnOnTarget, new GUIContent("Spawn Closer to Target", "Will skew spawn position towards target. It's an unclamped lerp, so 0 will have no effect, 1 will spawnkill, and negative values will drive the spawn point away.\nPosition from Shot applies AFTER this translation."));
+				EditorGUILayout.PropertyField(lookAtTargetAtSpawn, new GUIContent("Spawn Towards Target", "Can make the bullet spawn looking at its target from the beginning. If negative, will look away from target.\nRotation from Shot applies AFTER this rotation."));
 				
+				GUILayout.Space(12);
+				EditorGUI.indentLevel--;
+				EditorGUILayout.LabelField("Continuously chasing target :", EditorStyles.boldLabel);
+				EditorGUI.indentLevel++;
+				EditorGUILayout.PropertyField(homingAngularSpeed, new GUIContent("Homing Angular Speed", "How fast does the bullet turn to its target?"));
 				EditorGUI.BeginChangeCheck();
 				EditorGUILayout.PropertyField(homingAngleThreshold, new GUIContent("Homing Angle Threshold", "Below a certain delta, bullet will stop turning to its target, to avoid ugly shaking."));
 				if (EditorGUI.EndChangeCheck())
 					DynamicParameterUtility.ClampAboveZero(homingAngleThreshold);
 
+				GUILayout.Space(12);
+				EditorGUI.indentLevel--;
+				EditorGUILayout.LabelField("Picking a new target :", EditorStyles.boldLabel);
+				EditorGUI.indentLevel++;
+				EditorGUILayout.PropertyField(preferredTarget);
+
 				EditorGUI.BeginChangeCheck();
-				EditorGUILayout.PropertyField(targetRefreshInterval, new GUIContent("Target Refresh Interval", "How often should the bullet search for a new target?"));
+				EditorGUILayout.PropertyField(targetRefreshInterval, new GUIContent("Target Refresh Interval", "Bullet will search for a new target every X seconds. 0 means never."));
 				if (EditorGUI.EndChangeCheck())
 					DynamicParameterUtility.ClampAboveZero(targetRefreshInterval);
 				
+				bool oldWrap = EditorStyles.label.wordWrap;
+				EditorStyles.label.wordWrap = false;
 				EditorGUILayout.PropertyField(useSameTagsAsCollision, new GUIContent("Use Same Tags As Collision", "What Bullet Receivers can be tracked by this bullet?"));
+				EditorStyles.label.wordWrap = oldWrap;				
 				if (!useSameTagsAsCollision.boolValue)
 				{
 					EditorGUILayout.BeginHorizontal();
@@ -1120,7 +1202,7 @@ namespace BulletPro.EditorScripts
 
 		void DrawLifespanModuleInspector()
 		{
-			// Lifespan
+			// Lifespan - time
 			GUILayout.Space(12);
 			GUI.color = boxColor;
 			EditorGUILayout.BeginVertical(hasLifespan.boolValue ? enabledModuleStyle : disabledModuleStyle);
@@ -1136,6 +1218,26 @@ namespace BulletPro.EditorScripts
 				EditorGUI.BeginChangeCheck();
 				EditorGUILayout.PropertyField(lifespan);
 				if (EditorGUI.EndChangeCheck())	DynamicParameterUtility.ClampAboveZero(lifespan);
+				EditorGUI.indentLevel -= 1;
+			}
+			EditorGUILayout.EndVertical();
+
+			// Lifespan - space
+			GUILayout.Space(12);
+			GUI.color = boxColor;
+			EditorGUILayout.BeginVertical(hasLimitedRange.boolValue ? enabledModuleStyle : disabledModuleStyle);
+			GUI.color = baseGUIColor;
+			EditorStyles.label.fontStyle = FontStyle.Bold;
+			EditorGUI.BeginChangeCheck();
+			newVal = EditorGUILayout.Toggle("Limited Range (Distance)", hasLimitedRange.boolValue);
+			if (EditorGUI.EndChangeCheck()) hasLimitedRange.boolValue = newVal;
+			EditorStyles.label.fontStyle = defaultLabelStyle;
+			if (hasLimitedRange.boolValue)
+			{
+				EditorGUI.indentLevel += 1;
+				EditorGUI.BeginChangeCheck();
+				EditorGUILayout.PropertyField(maxTravellableDistance);
+				if (EditorGUI.EndChangeCheck())	DynamicParameterUtility.ClampAboveZero(maxTravellableDistance);
 				EditorGUI.indentLevel -= 1;
 			}
 			EditorGUILayout.EndVertical();
@@ -1222,6 +1324,10 @@ namespace BulletPro.EditorScripts
 			EditorGUILayout.HelpBox(infoStr, MessageType.Info);
 			GUILayout.Space(12);
 			behaviourList.DoLayoutList();
+			if (behaviourPrefabs.arraySize == 0) return;
+			GUILayout.Space(12);
+			infoStr = "Also, don't forget to register these prefabs into your Scene Setup's Bullet Behaviour Manager!\n(Click the Add Behaviour button, then unfold the arrow and drag your prefab.)";
+			EditorGUILayout.HelpBox(infoStr, MessageType.Info);
 		}
 
 		#endregion
@@ -1368,7 +1474,7 @@ namespace BulletPro.EditorScripts
 			if (!periodIsLifespan.boolValue)
 				RandomizableRelativeField(curve, "_period");
 			else if (!hasLS)
-				EditorGUILayout.HelpBox("This curve's period id set to match this bullet's lifespan, but it has no limited lifespan.", MessageType.Error);
+				EditorGUILayout.HelpBox("This curve's period id set to match this bullet's lifespan, but it has no limited lifetime.", MessageType.Error);
 
 			SerializedProperty actualCurve = curve.FindPropertyRelative("curve");
 			EditorGUILayout.PropertyField(actualCurve);
@@ -1724,6 +1830,46 @@ namespace BulletPro.EditorScripts
 
 		#endregion
 
+		#region VFX-related
+
+		// Used by the VFX opener GenericMenu
+		public void OpenVFX(object i)
+		{
+			vfxOpened.intValue = (int)i;
+			ApplyAll();
+		}
+
+		// Makes sure every VFX has its serialized properties stored in a corresponding object
+		public void RebuildVFXInspectors()
+		{
+			vfxInspectors = new List<BulletVFXParamInspector>();
+			if (vfxParams.arraySize == 0) return;
+			for (int i = 0; i < vfxParams.arraySize; i++)
+			{
+				BulletVFXParamInspector insp = new BulletVFXParamInspector();
+				insp.Initialize(vfxParams.GetArrayElementAtIndex(i));
+				vfxInspectors.Add(insp);
+			}
+		}
+
+		bool IsVFXButtonEnabled()
+		{
+			if (vfxParams.arraySize == 0) return false;
+			if (vfxParams.arraySize > 1) return true;
+			
+			SerializedProperty vfxProp = vfxParams.GetArrayElementAtIndex(0);
+			if (vfxProp.FindPropertyRelative("onBulletBirth").FindPropertyRelative("enabled").boolValue) return true;
+			if (vfxProp.FindPropertyRelative("onBulletDeath").FindPropertyRelative("enabled").boolValue) return true;
+			if (vfxProp.FindPropertyRelative("onCollision").FindPropertyRelative("enabled").boolValue) return true;
+			if (vfxProp.FindPropertyRelative("onPatternShoot").FindPropertyRelative("enabled").boolValue) return true;
+			if (vfxProp.FindPropertyRelative("onVisible").FindPropertyRelative("enabled").boolValue) return true;
+			if (vfxProp.FindPropertyRelative("onInvisible").FindPropertyRelative("enabled").boolValue) return true;
+
+			return false;
+		}
+
+		#endregion
+		
 		#region dynamic-related
 
 		void DrawDynamicCurveInspector(SerializedProperty curve)

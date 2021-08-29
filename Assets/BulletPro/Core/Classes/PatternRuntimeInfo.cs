@@ -19,7 +19,8 @@ namespace BulletPro
 		public CollisionTagAction collisionTagAction;
 		public PatternControlTarget patternControlTarget;
 		public CurvePeriodType newPeriodType;
-		public VFXPlayType vfxPlayType;
+		public VFXPlayType vfxPlayType; // deprecated in 1.2
+		public VFXFilterType vfxFilterType;
 
 		// solved dynamic
 		public float waitTime;
@@ -31,7 +32,9 @@ namespace BulletPro
 		public float speedValue;
 		public float scaleValue;
 		public float factor;
-		public ParticleSystem vfxToPlay;
+		public ParticleSystem vfxToPlay; // deprecated in 1.2
+		public int vfxIndex;
+		public string vfxTag;
 		public PreferredTarget preferredTarget;
 		public float turnIntensity;
 		public string collisionTag;
@@ -208,6 +211,15 @@ namespace BulletPro
 				for (int i = 0; i < bullet.additionalBehaviourScripts.Count; i++)
 					bullet.additionalBehaviourScripts[i].OnBulletShotAnotherBullet(patternIndex);
 				
+			// Handle VFX
+			for (int i = 0; i < bullet.moduleVFX.availableVFX.Count; i++)
+			{
+				BulletVFXTrigger trig = bullet.moduleVFX.availableVFX[i].onPatternShoot;
+				if (!bullet.moduleVFX.AskPermission(trig)) continue;
+				if (trig.behaviour == BulletVFXBehaviour.Play) bullet.moduleVFX.PlayVFX(i);
+				else if (trig.behaviour == BulletVFXBehaviour.Stop) bullet.moduleVFX.StopVFX(i);
+			}
+
 			TempEmissionData ted = new TempEmissionData();
 			ted.patternID = patternParams.uniqueIndex;
 			ted.patternID = shot.uniqueIndex;

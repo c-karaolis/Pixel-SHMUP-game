@@ -22,6 +22,7 @@ namespace BulletPro
 		protected BulletModuleLifespan moduleLifespan;
 		protected BulletModuleSpawn moduleSpawn;
 		protected BulletModuleParameters moduleParameters;
+		protected BulletModuleVFX moduleVFX;
 		protected DynamicParameterSolver solver;
 
 		// managers
@@ -50,6 +51,7 @@ namespace BulletPro
 			moduleLifespan = bullet.moduleLifespan;
 			modulePatterns = bullet.modulePatterns;
 			moduleParameters = bullet.moduleParameters;
+			moduleVFX = bullet.moduleVFX;
 
 			self = bullet.self;
 			spriteRenderer = bullet.spriteRenderer;

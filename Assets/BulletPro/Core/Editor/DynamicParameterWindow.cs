@@ -143,8 +143,16 @@ namespace BulletPro.EditorScripts
             if (openedEditors != null)
                 if (openedEditors.Length > 0)
                     for (int i = 0; i < openedEditors.Length; i++)
-                        if (openedEditors[i].serializedObject == serObj)
-                            editors.Add(openedEditors[i]);
+                    {
+                        // In rare cases, some editors just can't access their serializedObject.
+                        // It's impossible to know, but they're most likely bugged leftovers from Unity's back-end.
+                        try
+                        {
+                            if (openedEditors[i].serializedObject == serObj)
+                                editors.Add(openedEditors[i]);
+                        }
+                        catch { }
+                    }
 
             dynamicParameter = dynamicParameterProperty;
             valueTree = dynamicParameter.FindPropertyRelative("valueTree");

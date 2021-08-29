@@ -20,7 +20,6 @@ namespace BulletPro
         // An almost-empty script.
         // Its inspector displays a help message and shows gameplay plane orientation.
 
-
         public bool enableGizmo = true;
         public Color gizmoColor = Color.white;
 
@@ -38,6 +37,16 @@ namespace BulletPro
             Gizmos.DrawCube(transform.position + cubeSize * 0.5f, cubeSize);
 
             Gizmos.matrix = oldmat;
+        }
+
+        // buildNumber indicates in what version this scene setup has been created.
+        // Can be used by future updates that would need to change Scene Setup structure.
+        // Please don't modify this!
+        [HideInInspector] [SerializeField] private int buildNumber;
+        public int GetBuildNumber() => buildNumber;
+        public void SetBuildNumber(int newValue)
+        {
+            buildNumber = newValue;
         }
     }
 }

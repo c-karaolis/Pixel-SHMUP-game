@@ -6,6 +6,8 @@ Shader "BulletPro Samples/Bullets Single Color"
     {
         [PerRendererData] _MainTex ("Sprite Texture", 2D) = "white" {}
         _Color ("Tint", Color) = (1,1,1,1)
+        _RotationOffset ("Rotation Offset (Degrees)", Float) = 0
+        _RotationSpeed ("Rotation Speed (Degrees/sec)", Float) = 0
         [MaterialToggle] PixelSnap ("Pixel snap", Float) = 0
         [HideInInspector] _RendererColor ("RendererColor", Color) = (1,1,1,1)
         [HideInInspector] _Flip ("Flip", Vector) = (1,1,1,1)
@@ -62,11 +64,21 @@ Shader "BulletPro Samples/Bullets Single Color"
 				return OUT;
 			}
 
-			fixed4 BulletFrag(v2f IN) : SV_Target
-			{
-				fixed4 c = SampleSpriteTexture(IN.texcoord);
+            float _RotationSpeed, _RotationOffset;
 
-				fixed4 final = IN.color;
+			float4 BulletFrag(v2f IN) : SV_Target
+			{
+                // apply rotation
+                IN.texcoord.xy -= 0.5;
+                float t = 0.017453292 * (_RotationOffset + _RotationSpeed * _Time.y); // degrees to radians
+                float x = IN.texcoord.x * cos(t) - IN.texcoord.y * sin(t);
+                float y = IN.texcoord.y * cos(t) + IN.texcoord.x * sin(t);
+                IN.texcoord.xy = float2(x,y);
+                IN.texcoord.xy += 0.5;
+
+				float4 c = SampleSpriteTexture(IN.texcoord);
+
+				float4 final = IN.color;
 				final.a = c.a * IN.color.a;
 				return final;
 			}

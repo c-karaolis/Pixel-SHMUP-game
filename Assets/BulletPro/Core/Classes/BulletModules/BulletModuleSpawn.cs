@@ -14,8 +14,8 @@ namespace BulletPro
 		public float timeBeforeSpawn;
 		public bool playAudio;
 		public AudioClip audioClip;
-		// memorizing orientation from ShotParams can be necessary if bullet is both homing and delayed
-		private float rotateFromSpawn;
+		// memorizing position/orientation from ShotParams can be necessary if bullet is both homing and delayed
+		private Vector3 deltaFromSpawn;
 
 		public override void Enable() { base.Enable(); }
 		public override void Disable() { base.Disable(); }
@@ -35,8 +35,12 @@ namespace BulletPro
 			if (moduleHoming.isEnabled)
 			{
 				moduleHoming.RefreshTarget();
+
+				moduleHoming.MoveToTarget(moduleHoming.spawnOnTarget);
+				self.position = self.position + self.up * deltaFromSpawn.y + self.right * deltaFromSpawn.x;
+
 				moduleHoming.LookAtTarget(moduleHoming.homingSpawnRate);
-				moduleMovement.Rotate(rotateFromSpawn);
+				moduleMovement.Rotate(deltaFromSpawn.z);
 			}
 
 			isEnabled = false;
@@ -70,13 +74,13 @@ namespace BulletPro
 			isEnabled = false;
 			playAudio = false;
 			audioClip = null;
-			rotateFromSpawn = 0;
+			deltaFromSpawn = Vector3.zero;
 		}
 
 		// Called by patternModule if both homing and delayed
-		public void MemorizeSpawnRotation(float rotation)
+		public void MemorizeSpawnDelta(Vector3 delta)
 		{
-			rotateFromSpawn = rotation;
+			deltaFromSpawn = delta;
 		}
 	}
 }

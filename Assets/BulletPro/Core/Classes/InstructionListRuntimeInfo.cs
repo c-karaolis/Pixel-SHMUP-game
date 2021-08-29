@@ -194,16 +194,38 @@ namespace BulletPro
 			// Play VFX
 			else if (ip.instructionType == PatternInstructionType.PlayVFX)
 			{
-				if (ip.vfxPlayType == VFXPlayType.Default)
-				{
-					bullet.moduleRenderer.SpawnDefaultVFX();
-				}
-				else
+				if (ip.vfxFilterType == VFXFilterType.Index)
 				{
 					if (IsRerollNecessary(ip, 0))
-						ip.vfxToPlay = bullet.dynamicSolver.SolveDynamicObjectReference(rawInst.vfxToPlay, 5815777 * (numberOfRerolls++), ParameterOwner.Pattern) as ParticleSystem;
+						ip.vfxIndex = bullet.dynamicSolver.SolveDynamicInt(rawInst.vfxIndex, 5815777 * (numberOfRerolls++), ParameterOwner.Pattern);
 
-					bullet.moduleRenderer.SpawnFX(ip.vfxToPlay);
+					bullet.moduleVFX.PlayVFX(ip.vfxIndex);
+				}
+				else // if VFXFilterType.Tag
+				{
+					if (IsRerollNecessary(ip, 0))
+						ip.vfxTag = bullet.dynamicSolver.SolveDynamicString(rawInst.vfxTag, 5815777 * (numberOfRerolls++), ParameterOwner.Pattern);
+
+					bullet.moduleVFX.PlayVFX(ip.vfxTag);
+				}
+			}
+
+			// Stop VFX
+			else if (ip.instructionType == PatternInstructionType.StopVFX)
+			{
+				if (ip.vfxFilterType == VFXFilterType.Index)
+				{
+					if (IsRerollNecessary(ip, 0))
+						ip.vfxIndex = bullet.dynamicSolver.SolveDynamicInt(rawInst.vfxIndex, 5815777 * (numberOfRerolls++), ParameterOwner.Pattern);
+
+					bullet.moduleVFX.StopVFX(ip.vfxIndex);
+				}
+				else // if VFXFilterType.Tag
+				{
+					if (IsRerollNecessary(ip, 0))
+						ip.vfxTag = bullet.dynamicSolver.SolveDynamicString(rawInst.vfxTag, 5815777 * (numberOfRerolls++), ParameterOwner.Pattern);
+
+					bullet.moduleVFX.StopVFX(ip.vfxTag);
 				}
 			}
 

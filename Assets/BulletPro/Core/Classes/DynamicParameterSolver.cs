@@ -1213,9 +1213,22 @@ namespace BulletPro
             }
             else if (pit == PatternInstructionType.PlayVFX)
             {
-                result.vfxPlayType = pi.vfxPlayType;
-                result.vfxToPlay = SolveDynamicObjectReference(pi.vfxToPlay, 93741 * operationIDMultiplier, owner) as ParticleSystem;
-                settingsToCheck[0] = pi.vfxToPlay[1].settings;
+                // Commented out : deprecated in 1.2
+                //result.vfxPlayType = pi.vfxPlayType;                
+                //result.vfxToPlay = SolveDynamicObjectReference(pi.vfxToPlay, 93741 * operationIDMultiplier, owner) as ParticleSystem;
+                //settingsToCheck[0] = pi.vfxToPlay[1].settings;
+
+                result.vfxFilterType = pi.vfxFilterType;
+                if (pi.vfxFilterType == VFXFilterType.Index)
+                {
+                    result.vfxIndex = SolveDynamicInt(pi.vfxIndex, 93741 * operationIDMultiplier, owner);
+                    settingsToCheck[0] = pi.vfxIndex[1].settings;
+                }
+                else // if VFXFilterType.Tag
+                {
+                    result.vfxTag = SolveDynamicString(pi.vfxTag, 93741 * operationIDMultiplier, owner);
+                    settingsToCheck[0] = pi.vfxTag[1].settings;
+                }
             }
 
             // Transform things: translate, rotate, or speed
@@ -1361,6 +1374,166 @@ namespace BulletPro
                     }
                 }
                 else result.rerollFrequency[i] = RerollFrequency.OnlyOncePerPattern;
+            }
+
+            return result;
+        }
+
+        public BulletVFXParams SolveDynamicBulletVFXParams(DynamicBulletVFXParams dynParams, int operationID, ParameterOwner owner)
+        {
+            BulletVFXParams result = new BulletVFXParams();
+
+            result.tag = dynParams.tag;
+            result.attachToBulletTransform = dynParams.attachToBulletTransform;
+            result.useDefaultParticles = dynParams.useDefaultParticles;
+            result.particleSystemPrefab = SolveDynamicObjectReference(dynParams.particleSystemPrefab, 15742803 ^ operationID, owner) as ParticleSystem;
+
+            result.onBulletBirth = dynParams.onBulletBirth;
+            result.onCollision = dynParams.onCollision;
+            result.onBulletDeath = dynParams.onBulletDeath;
+            result.onInvisible = dynParams.onInvisible;
+            result.onVisible = dynParams.onVisible;
+            result.onPatternShoot = dynParams.onPatternShoot;
+
+            result.vfxOverrides = new List<BulletVFXOverride>();
+
+            // Adding quick overrides here
+            if (dynParams.replaceColorWithBulletColor)
+			{
+				BulletVFXOverride bvo = new BulletVFXOverride();
+				bvo.parameterToOverride = BulletVFXParameterType.MainModuleStartColor;
+				bvo.gradientMode = ParticleSystemGradientMode.Color;
+				bvo.referenceColor = VFXReferenceColor.BulletColor;
+				bvo.colorOverrideMode = VFXColorOverrideMode.ReplaceWith;
+				result.vfxOverrides.Add(bvo);
+			}
+            if (dynParams.replaceSizeWithNumber)
+			{
+				BulletVFXOverride bvo = new BulletVFXOverride();
+				bvo.parameterToOverride = BulletVFXParameterType.MainModuleStartSize;
+				bvo.curveMode = ParticleSystemCurveMode.Constant;
+				bvo.referenceFloat = VFXReferenceFloat.CustomValue;
+				bvo.numberOverrideMode = VFXNumberOverrideMode.ReplaceWith;
+				bvo.floatValue = SolveDynamicFloat(dynParams.sizeNewValue, 1457233 ^ operationID, owner);
+				result.vfxOverrides.Add(bvo);
+			}
+
+			if (dynParams.multiplySizeWithNumber)
+			{
+				BulletVFXOverride bvo = new BulletVFXOverride();
+				bvo.parameterToOverride = BulletVFXParameterType.MainModuleStartSize;
+				bvo.curveMode = ParticleSystemCurveMode.Constant;
+				bvo.referenceFloat = VFXReferenceFloat.CustomValue;
+				bvo.numberOverrideMode = VFXNumberOverrideMode.MultiplyBy;
+				bvo.floatValue = SolveDynamicFloat(dynParams.sizeMultiplier, 21485301 ^ operationID, owner);
+				result.vfxOverrides.Add(bvo);
+			}
+
+			if (dynParams.multiplySizeWithBulletScale)
+			{
+				BulletVFXOverride bvo = new BulletVFXOverride();
+				bvo.parameterToOverride = BulletVFXParameterType.MainModuleStartSize;
+				bvo.curveMode = ParticleSystemCurveMode.Constant;
+				bvo.referenceFloat = VFXReferenceFloat.BulletScale;
+				bvo.numberOverrideMode = VFXNumberOverrideMode.MultiplyBy;
+				result.vfxOverrides.Add(bvo);
+			}
+
+			if (dynParams.multiplySpeedWithBulletScale)
+			{
+				BulletVFXOverride bvo = new BulletVFXOverride();
+				bvo.parameterToOverride = BulletVFXParameterType.MainModuleStartSpeed;
+				bvo.curveMode = ParticleSystemCurveMode.Constant;
+				bvo.referenceFloat = VFXReferenceFloat.BulletScale;
+				bvo.numberOverrideMode = VFXNumberOverrideMode.MultiplyBy;
+				result.vfxOverrides.Add(bvo);
+			}
+
+            if (dynParams.vfxOverrides == null)
+                return result;
+
+            if (dynParams.vfxOverrides.Length > 0)
+            {
+                for (int i = 0; i < dynParams.vfxOverrides.Length; i++)
+                {
+                    BulletVFXOverride solvedOverride = SolveDynamicBulletVFXOverride(dynParams.vfxOverrides[i], (13478417 * i) ^ operationID, owner);
+                    result.vfxOverrides.Add(solvedOverride);
+                }
+            }
+
+            return result;
+        }
+
+        public BulletVFXOverride SolveDynamicBulletVFXOverride(DynamicBulletVFXOverride dynOverride, int operationID, ParameterOwner owner)
+        {
+            BulletVFXOverride result = new BulletVFXOverride();
+
+            result.parameterToOverride = dynOverride.parameterToOverride;
+            result.curveMode = dynOverride.curveMode;
+            result.gradientMode = dynOverride.gradientMode;
+            result.minMaxOverrideMode = dynOverride.minMaxOverrideMode;
+            result.referenceColor = dynOverride.referenceColor;
+            result.referenceGradient = dynOverride.referenceGradient;
+            result.referenceFloat = dynOverride.referenceFloat;
+
+            // Finally, find out which parameter type we have, and copy the proper value to result
+            BulletVFXAtomicParameterType atomicParamType = BulletVFXOverride.GetAtomicParameterType(result.parameterToOverride);
+            switch (atomicParamType)
+            {
+                case BulletVFXAtomicParameterType.MinMaxCurve:
+                    if (result.curveMode == ParticleSystemCurveMode.Constant || result.curveMode == ParticleSystemCurveMode.TwoConstants)
+                    {
+                        if (result.referenceFloat == VFXReferenceFloat.CustomValue)
+                            result.floatValue = SolveDynamicFloat(dynOverride.floatValue, 11427433 ^ operationID, owner);
+                    }
+                    else result.curveValue = SolveDynamicAnimationCurve(dynOverride.curveValue, 9457381 ^ operationID, owner);
+                    break;
+
+                case BulletVFXAtomicParameterType.MinMaxGradient:
+                    if (result.gradientMode == ParticleSystemGradientMode.Color || result.gradientMode == ParticleSystemGradientMode.TwoColors)
+                    {
+                        if (result.referenceColor == VFXReferenceColor.CustomValue)
+                            result.colorValue = SolveDynamicColor(dynOverride.colorValue, 21163637 ^ operationID, owner);
+                    }
+                    else
+                    {
+                        if (result.referenceGradient == VFXReferenceGradient.CustomValue)
+                            result.gradientValue = SolveDynamicGradient(dynOverride.gradientValue, 14677193 ^ operationID, owner);
+                    }
+                    break;
+
+                case BulletVFXAtomicParameterType.ConstantFloat:
+                    if (result.referenceFloat == VFXReferenceFloat.CustomValue)
+                        result.floatValue = SolveDynamicFloat(dynOverride.floatValue, 17651219 ^ operationID, owner);
+                    break;
+
+                case BulletVFXAtomicParameterType.ConstantInt:
+                    result.intValue = SolveDynamicInt(dynOverride.intValue, 14142743 ^ operationID, owner);
+                    break;
+
+                case BulletVFXAtomicParameterType.Enum:
+                    result.intValue = SolveDynamicEnum(dynOverride.enumValue, 19419977 ^ operationID, owner);
+                    break;
+
+                case BulletVFXAtomicParameterType.Bool:
+                    result.boolValue = SolveDynamicBool(dynOverride.boolValue, 14100373 ^ operationID, owner);
+                    break;
+
+                case BulletVFXAtomicParameterType.Vector2:
+                    result.vector2Value = SolveDynamicVector2(dynOverride.vector2Value, 19947803 ^ operationID, owner);
+                    break;
+
+                case BulletVFXAtomicParameterType.Vector3:
+                    result.vector3Value = SolveDynamicVector3(dynOverride.vector3Value, 21180343 ^ operationID, owner);
+                    break;
+
+                case BulletVFXAtomicParameterType.String:
+                    result.stringValue = SolveDynamicString(dynOverride.stringValue, 10774495 ^ operationID, owner);
+                    break;
+
+                case BulletVFXAtomicParameterType.Object:
+                    result.objectReferenceValue = SolveDynamicObjectReference(dynOverride.objectReferenceValue, 20993977 ^ operationID, owner);
+                    break;
             }
 
             return result;

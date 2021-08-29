@@ -11,7 +11,7 @@ namespace BulletPro
 	[System.Serializable]
 	public class HitByBulletEvent : UnityEvent<Bullet, Vector3> { }
 
-	public enum BulletReceiverType { Circle, Line }
+	public enum BulletReceiverType { Circle, Line, Composite }
 
 	// A hitbox that sends events when hit by bullets. Has OnEnter, OnStay and OnExit.
 	// Be careful though, as a same instance can only send one OnEnter, one OnStay and one OnExit per frame, regardless of the bullet.
@@ -20,6 +20,16 @@ namespace BulletPro
 	{
 		public Transform self;
 		public BulletReceiverType colliderType = BulletReceiverType.Circle;
+
+		// If a Receiver A has a parent B, it means B is composite and A is part of it.
+		// Being a child means the receiver calls no event on its own, the parent does it instead.
+		public BulletReceiver[] startingChildren;
+		public List<BulletReceiver> children { get; private set; }
+		public BulletReceiver parent { get; private set; }
+		public bool syncEnable = true;
+		public bool syncDisable = true;
+		public bool syncCollisionTags = true;
+
 		public float hitboxSize = 0.1f;
 		public Vector2 hitboxOffset = Vector2.zero;
 		public bool killBulletOnCollision = true;
@@ -28,17 +38,19 @@ namespace BulletPro
 		public List<Bullet> bulletsHitThisFrame { get; private set; }
 		public List<Bullet> bulletsHitLastFrame { get; private set; }
 		public CollisionTags collisionTags;
-		public bool collisionTagsFoldout; // editor only
 
 		public HitByBulletEvent OnHitByBullet;
 
 		// Yes, they do exist, and are usable, but they're most likely confusing and rarely useful - yet might be needed in some cases.
 		public HitByBulletEvent OnHitByBulletEnter, OnHitByBulletStay, OnHitByBulletExit;
-		#if UNITY_EDITOR
-		public bool advancedEventsFoldout;
-		#endif
 
+		#if UNITY_EDITOR
+		public bool parentSyncFoldout;
+		public bool collisionTagsFoldout;
+		public bool advancedEventsFoldout;
 		public Color gizmoColor = Color.black;
+		public float gizmoZOffset = 0f;
+		#endif
 
 		bool collisionEnabled; // helps avoiding bullets to hit this if we just disabled collisions
 
@@ -48,12 +60,16 @@ namespace BulletPro
 #if UNITY_EDITOR
 		void OnDrawGizmos()
 		{
+			if (!enabled) return;
+			if (colliderType == BulletReceiverType.Composite) return;
+
 			if (!self) self = transform;
 			//float avgScale = thisTransform.lossyScale.x * 0.5f + thisTransform.lossyScale.y * 0.5f;
 			// there's no point in taking scale.x into account
 			float avgScale = self.lossyScale.y;
 			Gizmos.color = gizmoColor;
 			Vector3 trPos = self.position;
+			if (gizmoZOffset != 0) trPos += self.lossyScale.z * gizmoZOffset * self.forward;
 			if (hitboxOffset.x != 0) trPos += self.lossyScale.x * hitboxOffset.x * self.right;
 			if (hitboxOffset.y != 0) trPos += self.lossyScale.y * hitboxOffset.y * self.up;
 
@@ -70,6 +86,12 @@ namespace BulletPro
 			bulletsHitThisFrame = new List<Bullet>();
 			bulletsHitLastFrame = new List<Bullet>();
 
+			children = new List<BulletReceiver>();
+			if (startingChildren != null)
+				if (startingChildren.Length > 0)
+					for (int i = 0; i < startingChildren.Length; i++)
+						startingChildren[i]?.SetParent(this);
+
 			// wait one frame so that the managers exist. Start is unreliable since it can be disabled
 			StartCoroutine(PostAwake());
 		}
@@ -78,6 +100,7 @@ namespace BulletPro
 		{
 			yield return new WaitForEndOfFrame();
 
+			// No loop needed here, because every child does it on its own
 			if (enabled) EnableCollisions();
 			else collisionEnabled = false;
 
@@ -138,6 +161,58 @@ namespace BulletPro
 			bulletsHitThisFrame.TrimExcess();
 		}
 
+		// Handles parenting in both ways.
+		public void SetParent(BulletReceiver newParent)
+		{
+			// Can't parent to itself
+			if (newParent == this) return;
+
+			// Can't add the same twice
+			if (parent == newParent) return;
+
+			// Can't make a loop
+			if (newParent != null)
+			{
+				bool loops = false;
+				BulletReceiver temp = newParent;
+				while (temp.parent != null)
+				{
+					if (temp.parent == this)
+					{
+						loops = true;
+						break;
+					}
+					temp = temp.parent;
+				}
+				if (loops) return;
+			}
+
+			// Unregister as child of previous parent, if any
+			parent?.children?.Remove(this);
+
+			// Actual assignation
+			parent = newParent;
+
+			if (newParent == null) return;
+
+			// Register as child of new parent
+			newParent.children?.Add(this);
+
+			// Sync collisionTags if needed
+			if (newParent.syncCollisionTags)
+				collisionTags = newParent.collisionTags;
+		}
+
+		// Copies collisionTags into children. Should be manually called if collisionTags are manually changed.
+		public void SyncCollisionTags()
+		{
+			if (children == null) return;
+			if (children.Count > 0) return;
+			for (int i = 0; i < children.Count; i++)
+				if (children[i] != null)
+					children[i].collisionTags = collisionTags;
+		}
+
 		// Called on collision : OnEnter and OnStay are handled if needed, but it will rarely be the case.
 		// Signature says "Vector3, Bullet" instead of "Bullet, Vector3" so events cannot call this and enter an infinite loop.
 		public void GetHit(Vector3 collisionPoint, Bullet bullet)
@@ -147,12 +222,28 @@ namespace BulletPro
 
 			// Compute Enter/Stay events here
 			if (!bulletsHitLastFrame.Contains(bullet))
+			{
 				OnHitByBulletEnter?.Invoke(bullet, collisionPoint);
+
+				// Also handle collision VFX here, if any
+				for (int i = 0; i < bullet.moduleVFX.availableVFX.Count; i++)
+				{
+					BulletVFXTrigger trig = bullet.moduleVFX.availableVFX[i].onCollision;
+					if (!bullet.moduleVFX.AskPermission(trig)) continue;
+					if (trig.behaviour == BulletVFXBehaviour.Play) bullet.moduleVFX.PlayVFX(i);
+					else if (trig.behaviour == BulletVFXBehaviour.Stop) bullet.moduleVFX.StopVFX(i);
+				}
+			}
 			else OnHitByBulletStay?.Invoke(bullet, collisionPoint);
 
 			// Kill bullet if needed
 			if (killBulletOnCollision && bullet.moduleCollision.dieOnCollision)
-				bullet.Die(collisionPoint);
+			{
+				if (bullet.moduleCollision.deathTiming == BulletDeathTiming.Immediately)
+					bullet.Die(collisionPoint);
+				else // if AtEndOfFrame
+					bullet.moduleCollision.ScheduleDeath(collisionPoint);
+			}
 		}
 
 		#region information getters
@@ -173,30 +264,38 @@ namespace BulletPro
 		// Since toggling .enabled is way more intuitive, this whole toolbox is private
 		#region collision toggle toolbox
 
-		void EnableCollisions()
+		protected void EnableCollisions()
 		{
 			if (collisionEnabled) return;
 			collisionEnabled = true;
 			BulletCollisionManager.AddReceiver(this);
 		}
 
-		void DisableCollisions()
+		protected void DisableCollisions()
 		{
 			if (!collisionEnabled) return;
 			collisionEnabled = false;
 			BulletCollisionManager.RemoveReceiver(this);
 		}
 
-		void ToggleCollisions()
+		protected void ToggleCollisions()
 		{
 			if (collisionEnabled) DisableCollisions();
 			else EnableCollisions();
 		}
 
-		void SetCollisions(bool active)
+		protected void SetCollisions(bool active)
 		{
 			if (active) EnableCollisions();
 			else DisableCollisions();
+
+			if (active && !syncEnable) return;
+			if (!active && !syncDisable) return;
+
+			if (children != null)
+				if (children.Count > 0)
+					for (int i = 0; i < children.Count; i++)
+						children[i]?.SetCollisions(active);
 		}
 
 		#endregion
@@ -222,11 +321,18 @@ namespace BulletPro
 			bulletsHitThisFrame.TrimExcess();
 		}
 
-		// Not recommended, but we can't leave it into the manager if it gets destroyed
+		// Not recommended, but we can't leave it into the manager (or in its parent) if it gets destroyed
 		void OnDestroy()
 		{
 			collisionEnabled = false;
 			BulletCollisionManager.RemoveReceiver(this);
+
+			// If it has a parent :
+			parent?.children?.Remove(this);
+			// If it has children :
+			if (children != null)
+				while (children.Count > 0)
+					children[0].SetParent(null);
 		}
 	}
 }

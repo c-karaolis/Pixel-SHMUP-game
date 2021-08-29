@@ -7,8 +7,8 @@ using UnityEngine;
 
 namespace BulletPro
 {
-	public enum PlayOptions { AllBullets, RootAndSubEmitters, RootOnly }
-	public enum KillOptions { AllBullets, AllSubEmitters, AllBulletsButRoot, AllSubEmittersButRoot, RootOnly, EndlessPatternsOnly }
+	public enum PlayOptions { AllBullets, RootAndSubEmitters, RootOnly, DoNothing }
+	public enum KillOptions { AllBullets, AllSubEmitters, AllBulletsButRoot, AllSubEmittersButRoot, RootOnly, EndlessPatternsOnly, DoNotKillAnything }
 
 	[AddComponentMenu("BulletPro/Bullet Emitter")]
 	public class BulletEmitter : MonoBehaviour
@@ -39,6 +39,7 @@ namespace BulletPro
 		public bool allBulletsPaused { get; private set; }
 
 		private bool isInitialized;
+		private bool justSwitchedProfile; // retains this info to abort calling Kill() upon detecting a new profile
 
 		// emitters shot in the tree, bullets shot in the tree
 		[System.NonSerialized]
@@ -59,6 +60,7 @@ namespace BulletPro
 		{
 			subEmitters = new List<Bullet>();
 			bullets = new List<Bullet>();
+			justSwitchedProfile = false;
 		}
 
 		void Start()
@@ -107,9 +109,24 @@ namespace BulletPro
 				return false;
 			}
 
+			// Fetching a fresh new bullet from the pools
 			Bullet b = null;
-			if (firstBulletParams.renderMode == BulletRenderMode.Sprite) b = BulletPoolManager.GetFreeBullet();
-			else b = BulletPoolManager.GetFree3DBullet();
+			if (firstBulletParams.renderMode == BulletRenderMode.Sprite)
+			{
+				b = BulletPoolManager.GetFreeBullet();
+				
+				// in case of fail, fallback to the other pool if bullet is invisible, because 2D or 3D won't matter
+				if ((!b) && (!firstBulletParams.isVisible))
+					b = BulletPoolManager.GetFree3DBullet();
+			}
+			else
+			{
+				b = BulletPoolManager.GetFree3DBullet();
+
+				// in case of fail, fallback to the other pool if bullet is invisible, because 2D or 3D won't matter
+				if ((!b) && (!firstBulletParams.isVisible))
+					b = BulletPoolManager.GetFreeBullet();
+			}
 			if (!b)
 			{
 				Debug.LogWarning(name + " can\'t launch pattern, available Bullets are missing!");
@@ -144,7 +161,11 @@ namespace BulletPro
 			if (firstBulletParams.homing)
 			{
 				bool delayed = b.moduleSpawn.isEnabled && (b.moduleSpawn.timeBeforeSpawn > 0);
-				if (!delayed) b.moduleHoming.LookAtTarget(b.moduleHoming.homingSpawnRate);
+				if (!delayed)
+				{
+					b.moduleHoming.MoveToTarget(b.moduleHoming.spawnOnTarget);
+					b.moduleHoming.LookAtTarget(b.moduleHoming.homingSpawnRate);
+				}
 			}
 
 			// Instantiate additional behaviour if needed.
@@ -177,11 +198,49 @@ namespace BulletPro
 			return true;
 		}
 
+		// Allows switching EmitterProfile without killing already-emitted bullets.
+		// Simply setting .emitterProfile works as well, but it automatically calls Kill() in the process.
+		// Also flushes any link between the emitter and its previous bullets, so their scripts can no longer use data from this emitter.
+		public void SwitchProfile(
+			EmitterProfile newProfile,
+			bool forgetAboutPreviousBullets = false,
+			PlayOptions stopPreviousEmission = PlayOptions.RootAndSubEmitters,
+			PlayOptions playNextEmission = PlayOptions.RootAndSubEmitters,
+			KillOptions killPreviousBullets = KillOptions.DoNotKillAnything)
+		{
+			Kill(killPreviousBullets);
+			Stop(stopPreviousEmission);
+
+			// Messing with the subEmitters list would lead to complex, unwanted behaviours from the previous bullet tree.
+			// So we just reset it and cut links to previous subEmitters, so retroactive control is made impossible.
+			subEmitters.Clear();
+			subEmitters.TrimExcess();
+			
+			// Forgetting about bullets means all links between bullets and this emitter are cut.
+			// If enabled, even killing them with this.Kill() will become impossible.
+			if (forgetAboutPreviousBullets)
+			{
+				if (bullets.Count > 0)
+				for (int i = 0; i < bullets.Count; i++)
+					bullets[i].emitter = null;
+				
+				bullets.Clear();
+				bullets.TrimExcess();
+			}
+
+			// This boolean tells the emitter not to call Kill() at next Play call.
+			justSwitchedProfile = true;
+			emitterProfile = newProfile;
+			if (emitterProfile != null)
+				Play(playNextEmission);
+		}
+
 		#region Global controls on whole danmaku tree
 
 		#region public tag-based functions
 
 		// Get, among bullets (indirectly) fired by this emitter, all the ones whose active Patterns have wanted tag.
+		// Warning : if SwitchProfile() has been used and the bullets List hasn't been flushed, this can retrieve bullets from the previous profile.
 		public List<Bullet> FindWithPatternTag(string patternTag)
 		{
 			List<Bullet> result = new List<Bullet>();
@@ -249,6 +308,8 @@ namespace BulletPro
 
 		public void Play(PlayOptions range = PlayOptions.RootAndSubEmitters)
 		{
+			if (range == PlayOptions.DoNothing) return;
+
 			// Emitter being not initialized means we are calling Play() from Start or Awake.
 			// In this case, the script must wait one frame so it gets all the managers.
 			if (!isInitialized)
@@ -259,7 +320,13 @@ namespace BulletPro
 			}
 
 			if (emitterProfile == null) return;
-			if (emitterProfile.rootBullet != firstBulletParams) { Kill(); Launch(); return; }
+			if (emitterProfile.rootBullet != firstBulletParams)
+			{
+				if (justSwitchedProfile) justSwitchedProfile = false;
+				else Kill();
+				Launch();
+				return;
+			}
 			
 			if (range == PlayOptions.RootOnly) PlaySingle();
 			else
@@ -272,6 +339,8 @@ namespace BulletPro
 
 		public void Pause(PlayOptions range = PlayOptions.RootAndSubEmitters)
 		{
+			if (range == PlayOptions.DoNothing) return;
+
 			if (!isInitialized)
 			{
 				if (gameObject.activeInHierarchy)
@@ -289,12 +358,15 @@ namespace BulletPro
 
 		public void Reinitialize(PlayOptions range = PlayOptions.RootAndSubEmitters)
 		{
+			if (range == PlayOptions.DoNothing) return;
+
 			if (!isInitialized)
 			{
 				if (gameObject.activeInHierarchy)
 					StartCoroutine(DelayedReinitialize(range));
 				return;
 			}
+
 			if (range == PlayOptions.RootOnly) ResetSingle();
 			else
 			{
@@ -306,12 +378,24 @@ namespace BulletPro
 
 		public void Boot(PlayOptions range = PlayOptions.RootAndSubEmitters)
 		{
+			if (range == PlayOptions.DoNothing) return;
+
 			if (!isInitialized)
 			{
 				if (gameObject.activeInHierarchy)
 					StartCoroutine(DelayedBoot(range));
 				return;
 			}
+
+			if (emitterProfile == null) return;
+			if (emitterProfile.rootBullet != firstBulletParams)
+			{
+				if (justSwitchedProfile) justSwitchedProfile = false;
+				else Kill();
+				Launch();
+				return;
+			}
+
 			if (range == PlayOptions.RootOnly) BootSingle();
 			else
 			{
@@ -323,6 +407,8 @@ namespace BulletPro
 
 		public void Stop(PlayOptions range = PlayOptions.RootAndSubEmitters)
 		{
+			if (range == PlayOptions.DoNothing) return;
+
 			if (!isInitialized)
 			{
 				if (gameObject.activeInHierarchy)
@@ -491,6 +577,8 @@ namespace BulletPro
 
 		public void Kill(KillOptions killOptions = KillOptions.AllBullets)
 		{
+			if (killOptions == KillOptions.DoNotKillAnything) return;
+
 			if (!isInitialized) return;
 
 			if (killOptions == KillOptions.AllSubEmitters) KillEmitters();

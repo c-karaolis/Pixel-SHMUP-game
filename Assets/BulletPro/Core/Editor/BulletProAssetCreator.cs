@@ -315,6 +315,7 @@ namespace BulletPro.EditorScripts
 
 			GameObject go = new GameObject("BulletPro Scene Setup");
 			BulletProSceneSetup bpss = go.AddComponent<BulletProSceneSetup>();
+			bpss.SetBuildNumber(BulletProSettings.buildNumber);
 			bpss.gizmoColor = new Color(1.0f, 1.0f, 1.0f, 0.5f);
 			Transform tr = go.transform;
 			tr.SetParent(null);

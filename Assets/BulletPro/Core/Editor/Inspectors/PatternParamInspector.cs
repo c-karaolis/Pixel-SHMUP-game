@@ -455,16 +455,18 @@ namespace BulletPro.EditorScripts
 				Rect enumPropRect = new Rect(usableSpace.x, usableSpace.y, halfWidth, usableSpace.height);
 				Rect secondPropRect = new Rect(usableSpace.x + halfWidth + spaceBetween, usableSpace.y, halfWidth, usableSpace.height);
 
-				if (pit == PatternInstructionType.PlayVFX)
+				if (pit == PatternInstructionType.PlayVFX || pit == PatternInstructionType.StopVFX)
 				{
-					enumProp = inst.FindPropertyRelative("vfxPlayType");
+					enumProp = inst.FindPropertyRelative("vfxFilterType");
 
 					EditorGUI.PropertyField(enumPropRect, enumProp, GUIContent.none);
-					if (enumProp.enumValueIndex == (int)VFXPlayType.Custom)
-					{
-						secondProp = inst.FindPropertyRelative("vfxToPlay");
-						EditorGUI.PropertyField(secondPropRect, secondProp, GUIContent.none);
-					}
+
+					if (enumProp.enumValueIndex == (int)VFXFilterType.Index)
+						secondProp = inst.FindPropertyRelative("vfxIndex");
+					else if (enumProp.enumValueIndex == (int)VFXFilterType.Tag)
+						secondProp = inst.FindPropertyRelative("vfxTag");
+
+					EditorGUI.PropertyField(secondPropRect, secondProp, GUIContent.none);
 				}
 				else if (pit == PatternInstructionType.BeginLoop)
 				{
@@ -762,6 +764,10 @@ namespace BulletPro.EditorScripts
 			SerializedProperty vfxProp = inst.FindPropertyRelative("vfxToPlay");
 			DynamicParameterUtility.SetFixedObject(vfxProp, null, true);
 			DynamicParameterUtility.SetObjectNarrowType(vfxProp, typeof(ParticleSystem));
+			SerializedProperty vfxIndex = inst.FindPropertyRelative("vfxIndex");
+			DynamicParameterUtility.SetFixedInt(vfxIndex, 0, true);
+			SerializedProperty vfxTag = inst.FindPropertyRelative("vfxTag");
+			DynamicParameterUtility.SetFixedString(vfxTag, "", true);
 
 			// homing
 			DynamicParameterUtility.SetFixedFloat(inst.FindPropertyRelative("turnIntensity"), 1f, true);
@@ -832,9 +838,11 @@ namespace BulletPro.EditorScripts
 				new StringToEnumInstruction("Most Used/Begin Loop", "Begin Loop", PatternInstructionType.BeginLoop),
 				new StringToEnumInstruction("Most Used/End Loop", "End Loop", PatternInstructionType.EndLoop),
 				new StringToEnumInstruction("Most Used/Play Audio", "Play Audio", PatternInstructionType.PlayAudio),
+				new StringToEnumInstruction("Most Used/Die", "Die", PatternInstructionType.Die),
 
 				new StringToEnumInstruction("Effects/Shoot", "Shoot", PatternInstructionType.Shoot),
 				new StringToEnumInstruction("Effects/Play VFX", "Play VFX", PatternInstructionType.PlayVFX),
+				new StringToEnumInstruction("Effects/Stop VFX", "Stop VFX", PatternInstructionType.StopVFX),
 				new StringToEnumInstruction("Effects/Play Audio", "Play Audio", PatternInstructionType.PlayAudio),
 
 				new StringToEnumInstruction("Transform/Position/Translate (World)", "Translate (World)", PatternInstructionType.TranslateGlobal),
@@ -865,6 +873,7 @@ namespace BulletPro.EditorScripts
 				new StringToEnumInstruction("Flow Control/Pause Pattern", "Pause Pattern", PatternInstructionType.PausePattern),
 				new StringToEnumInstruction("Flow Control/Stop Pattern", "Stop Pattern", PatternInstructionType.StopPattern),
 				new StringToEnumInstruction("Flow Control/Reboot Pattern", "Reboot Pattern", PatternInstructionType.RebootPattern),
+				new StringToEnumInstruction("Flow Control/Die", "Die", PatternInstructionType.Die),
 
 				new StringToEnumInstruction("Homing/Enable Homing", "Enable Homing", PatternInstructionType.EnableHoming),
 				new StringToEnumInstruction("Homing/Disable Homing", "Disable Homing", PatternInstructionType.DisableHoming),
@@ -1148,6 +1157,7 @@ namespace BulletPro.EditorScripts
 		{
 			if (instType == PatternInstructionType.BeginLoop) return true;
 			if (instType == PatternInstructionType.PlayVFX) return true;
+			if (instType == PatternInstructionType.StopVFX) return true;
 			if (instType == PatternInstructionType.ChangeHomingTag) return true;
 			if (instType == PatternInstructionType.ChangeCollisionTag) return true;
 			if (instType == PatternInstructionType.SetPeriod) return true;

@@ -205,7 +205,8 @@ namespace BulletPro
 					break;
 				}
 				BulletReceiver cur = allBulletReceivers[i];
-				receiverData[i].index = (i + 1) * (cur.colliderType == BulletReceiverType.Line ? -1 : 1);
+				if (cur.colliderType == BulletReceiverType.Composite) receiverData[i].index = 0;
+				else receiverData[i].index = (i + 1) * (cur.colliderType == BulletReceiverType.Line ? -1 : 1);
 				receiverData[i].position = cur.self.position;
 				receiverData[i].offset = cur.hitboxOffset;
 				receiverData[i].offset.z = cur.self.lossyScale.x; // (float assignation is somewhat twisted, to fit every float needed)

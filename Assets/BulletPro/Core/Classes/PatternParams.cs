@@ -69,6 +69,7 @@ namespace BulletPro
 		BeginLoop,
 		EndLoop,
 		PlayVFX,
+		StopVFX,
 		PlayAudio,
 		Die,
 
@@ -162,6 +163,8 @@ namespace BulletPro
 	public enum CurvePeriodType { FixedValue, BulletTotalLifetime, RemainingLifetime }
 	[System.Serializable]
 	public enum VFXPlayType { Default, Custom }
+	[System.Serializable]
+	public enum VFXFilterType { Index, Tag }
 
 	// The foundations of a pattern behaviour. Users have access to visual programming using these.
 	[System.Serializable]
@@ -188,8 +191,12 @@ namespace BulletPro
 		// used for all the "multiply something" instructions
 		public DynamicFloat factor;
 		// launching effects
-		public VFXPlayType vfxPlayType;
-		public DynamicObjectReference audioClip, vfxToPlay;
+		public VFXPlayType vfxPlayType; // deprecated, but used for updating EmitterProfiles to 1.2
+		public VFXFilterType vfxFilterType;
+		public DynamicObjectReference audioClip;
+		public DynamicObjectReference vfxToPlay; // deprecated, but used for updating EmitterProfiles to 1.2
+		public DynamicInt vfxIndex;
+		public DynamicString vfxTag;
 		// turn to target
 		public DynamicFloat turnIntensity;
 		// homing
@@ -275,6 +282,10 @@ namespace BulletPro
 				instructions[i].audioClip.SetNarrowType(typeof(AudioClip));
 				instructions[i].vfxToPlay = new DynamicObjectReference(null);
 				instructions[i].vfxToPlay.SetNarrowType(typeof(ParticleSystem));
+				instructions[i].vfxFilterType = VFXFilterType.Index;
+				instructions[i].vfxIndex = new DynamicInt(0);
+				instructions[i].vfxTag = new DynamicString("");
+
 				instructions[i].shot = new DynamicShot(null);
 
 				instructions[i].preferredTarget = new DynamicEnum(0);

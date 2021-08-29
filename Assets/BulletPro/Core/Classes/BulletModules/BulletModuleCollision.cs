@@ -31,6 +31,7 @@ namespace BulletPro
 	}
 
 	public enum BulletColliderType { Circle, Line }
+	public enum BulletDeathTiming { Immediately, AtEndOfFrame }
 
 	// Module that handles bullet collisions
 	public class BulletModuleCollision : BulletModule
@@ -41,14 +42,19 @@ namespace BulletPro
 		// Taking scale into account
 		public float scale { get; private set; }
 
-		public bool dieOnCollision;
 		// On collision, it's actually BulletReceiver which orders it to die, to avoid calling it twice
+		public bool dieOnCollision;
+		public BulletDeathTiming deathTiming;
+		public int maxSimultaneousCollisionsPerFrame;
 
 		public CollisionTags collisionTags;
 
+		public int timesCollidedThisFrame { get; private set; }
 		public bool isColliding { get; private set; }
 		public bool isCollidingThisFrame { get; private set; }
 		public bool wasCollidingLastFrame { get; private set; }
+		public bool scheduledToDie { get; private set; }
+		public Vector3 scheduledHitPoint { get; private set; }
 
 		#region Monobehaviour
 
@@ -86,9 +92,17 @@ namespace BulletPro
 			// Prepare the value for next frame :
 			wasCollidingLastFrame = isColliding;
 			isColliding = false;
+			timesCollidedThisFrame = 0;
 
 			// This variable is unused in this GPU variant, but let's keep consistency
 			isCollidingThisFrame = false;
+
+			// If previous frame contained a collision and it scheduled death, apply it now (which is technically "next frame")
+			if (scheduledToDie)
+			{
+				bullet.Die(scheduledHitPoint);
+				scheduledToDie = false;
+			}
 
 			// As said earlier, actual check happens at BulletCollisionManager.LateUpdate().
 		}
@@ -96,6 +110,7 @@ namespace BulletPro
 		// Collision detection that does not use Compute Shaders
 		void UpdateForCPUCollisions()
 		{
+			timesCollidedThisFrame = 0;
 			isCollidingThisFrame = false;
 
 			// Checks all targets for collisions
@@ -129,12 +144,18 @@ namespace BulletPro
 			// OnCollisionExit detection here
 			if (!isCollidingThisFrame)
 				CheckCollisionExit();
+
+			// If previous frame contained a collision and it scheduled death, apply it now
+			if (scheduledToDie)
+			{
+				bullet.Die(scheduledHitPoint);
+				scheduledToDie = false;
+			}
 		}
 
 		#endregion
 
 		#region toolbox
-
 
 		// Called at Bullet.ApplyBulletParams()
 		public void ApplyBulletParams(BulletParams bp)
@@ -143,6 +164,7 @@ namespace BulletPro
 			isColliding = false;
 			isCollidingThisFrame = false;
 			wasCollidingLastFrame = false;
+			scheduledToDie = false;
 
 			isEnabled = bp.canCollide;
 			if (!isEnabled) return;
@@ -152,6 +174,8 @@ namespace BulletPro
 			collisionTags = bp.collisionTags;
 
 			dieOnCollision = bp.dieOnCollision;
+			deathTiming = bp.deathTiming;
+			maxSimultaneousCollisionsPerFrame = bp.maxSimultaneousCollisionsPerFrame;
 		}
 
 		// Called when setting scale of movement module
@@ -176,13 +200,20 @@ namespace BulletPro
 			{
 				newColliders[i].collisionTags = collisionTags.tagList;
 				newColliders[i].bullet = bullet;
-			}			
+			}
 
             // Refresh informations in the manager
             bool wasEnabled = isEnabled;
             if (isEnabled) Disable();
 			colliders = newColliders;
             if (wasEnabled) Enable();
+		}
+
+		// Called when the bullet should die upon collision, but wants to delay it until end of frame. Hit position is retained for VFX.
+		public void ScheduleDeath(Vector3 collisionPoint)
+		{
+			scheduledToDie = true;
+			scheduledHitPoint = collisionPoint;
 		}
 
 		#endregion
@@ -197,12 +228,13 @@ namespace BulletPro
 				if (col.colliderType == BulletColliderType.Circle) return ComputeCircleCollision(col, br);
 				if (col.colliderType == BulletColliderType.Line) return ComputeLaserCollision(col, br);
 			}
-			else
+			else if (br.colliderType == BulletReceiverType.Line)
 			{
 				if (col.colliderType == BulletColliderType.Circle) return ComputeCircleCollisionWithLine(col, br);
 				if (col.colliderType == BulletColliderType.Line) return ComputeLaserCollisionWithLine(col, br);
 			}
 
+			// default, shouldn't happen, or means it's a Composite Receiver
 			CPUCollisionResult result;
 			result.happened = false;
 			result.hitPoint = self.position;
@@ -223,13 +255,13 @@ namespace BulletPro
 			if (br.hitboxOffset.y != 0) brPos += tr.lossyScale.y * br.hitboxOffset.y * tr.up;
 
 			//float scaledReceiverRadius = br.hitboxSize * (tr.localScale.x * 0.5f + tr.localScale.y * 0.5f);
-			float scaledReceiverRadius = br.hitboxSize * (tr.lossyScale.x + tr.lossyScale.y) * 0.5f;
+			float scaledReceiverRadius = Mathf.Abs(br.hitboxSize) * (Mathf.Abs(tr.lossyScale.x) + Mathf.Abs(tr.lossyScale.y)) * 0.5f;
 
 			float x = (brPos.x - pos.x);
 			float y = (brPos.y - pos.y);
 			float z = (brPos.z - pos.z);
 			float dist2 = x * x + y * y + z * z;
-			float bcRadius = col.size * scale;
+			float bcRadius = Mathf.Abs(col.size * scale);
 			float radius = (bcRadius + scaledReceiverRadius);
 
 			CPUCollisionResult result;
@@ -254,7 +286,7 @@ namespace BulletPro
 			if (br.hitboxOffset.x != 0) brPos += tr.lossyScale.x * br.hitboxOffset.x * tr.right;
 			if (br.hitboxOffset.y != 0) brPos += tr.lossyScale.y * br.hitboxOffset.y * tr.up;
 
-			float rad = br.hitboxSize * (tr.lossyScale.x + tr.lossyScale.y) * 0.5f;
+			float rad = Mathf.Abs(br.hitboxSize) * (Mathf.Abs(tr.lossyScale.x) + Mathf.Abs(tr.lossyScale.y)) * 0.5f;
 			float rad2 = rad * rad;
 
 			float laserLengthBrowsed = 0;
@@ -298,7 +330,7 @@ namespace BulletPro
 		CPUCollisionResult ComputeCircleCollisionWithLine(BulletCollider col, BulletReceiver br)
 		{
 			Vector3 pos = self.position + scale * (self.right * col.offset.x + self.up * col.offset.y);
-			float rad = col.size * scale;
+			float rad = Mathf.Abs(col.size * scale);
 			float rad2 = rad * rad;
 
 			float lineLengthBrowsed = 0;
@@ -315,7 +347,7 @@ namespace BulletPro
 			result.happened = false;
 			result.hitPoint = pos;
 
-			float realLineLength = br.hitboxSize * brScale;
+			float realLineLength = Mathf.Abs(br.hitboxSize * brScale);
 			while (true)
 			{
 				float x = (pos.x - curPoint.x);
@@ -441,11 +473,28 @@ namespace BulletPro
 		// When actual collision with a Receiver happens, this function applies the collision.
 		public void CollideWith(BulletReceiver br)
 		{
+			// This is the only way disabled composite receivers can negate a collision 
+			if (!br.enabled) return;
+			
+			// If the Receiver is part of a Composite, redirect all events to its parent
+			if (br.parent)
+			{
+				CollideWith(br.parent);
+				return;
+			}
+
 			if (!br.CanAcceptCollisionsThisFrame()) return;
 			if (br.HasAlreadyCollidedThisFrame(bullet)) return;
 
+			// Ultimately, check for amount of collisions
+			if (maxSimultaneousCollisionsPerFrame > 0)
+				if (timesCollidedThisFrame >= maxSimultaneousCollisionsPerFrame)
+					return;
+
+			// Estimate hit point since it's not provided as argument
 			Vector3 collisionPoint = bullet.self.position * 0.5f + br.self.position * 0.5f;
 
+			// Trigger callbacks
 			if (bullet.additionalBehaviourScripts.Count > 0)
 				for (int i = 0; i < bullet.additionalBehaviourScripts.Count; i++)
 				{
@@ -455,6 +504,7 @@ namespace BulletPro
 
 			isColliding = true;
 			isCollidingThisFrame = true;
+			timesCollidedThisFrame++;
 
 			br.GetHit(collisionPoint, bullet);
 		}
@@ -462,9 +512,22 @@ namespace BulletPro
 		// Overload providing collision position.
 		public void CollideWith(BulletReceiver br, Vector3 collisionPoint)
 		{
+			// If the Receiver is part of a Composite, redirect all events to its parent
+			if (br.parent)
+			{
+				CollideWith(br.parent, collisionPoint);
+				return;
+			}
+
 			if (!br.CanAcceptCollisionsThisFrame()) return;
 			if (br.HasAlreadyCollidedThisFrame(bullet)) return;
 
+			// Ultimately, check for amount of collisions
+			if (maxSimultaneousCollisionsPerFrame > 0)
+				if (timesCollidedThisFrame >= maxSimultaneousCollisionsPerFrame)
+					return;
+
+			// Trigger callbacks
 			if (bullet.additionalBehaviourScripts.Count > 0)
 				for (int i = 0; i < bullet.additionalBehaviourScripts.Count; i++)
 				{
@@ -474,6 +537,7 @@ namespace BulletPro
 
 			isColliding = true;
 			isCollidingThisFrame = true;
+			timesCollidedThisFrame++;
 
 			br.GetHit(collisionPoint, bullet);
 		}

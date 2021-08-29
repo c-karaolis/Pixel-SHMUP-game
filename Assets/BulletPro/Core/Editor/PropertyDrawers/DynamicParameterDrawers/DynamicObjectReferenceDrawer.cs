@@ -37,8 +37,9 @@ namespace BulletPro.EditorScripts
                     if (go)
                     {
                         specificType = System.Type.GetType(property.FindPropertyRelative("requiredComponentName").stringValue);
-                        if (!go.GetComponent(specificType))
-                            nonDynamicValue.objectReferenceValue = null;
+                        if (specificType != null)
+                            if (!go.GetComponent(specificType))
+                                nonDynamicValue.objectReferenceValue = null;
                     }
                 }
             }

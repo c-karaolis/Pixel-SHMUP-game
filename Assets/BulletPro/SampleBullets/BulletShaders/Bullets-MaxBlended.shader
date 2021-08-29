@@ -6,7 +6,8 @@ Shader "BulletPro Samples/Bullets Max Blend"
     {
         [PerRendererData] _MainTex ("Sprite Texture", 2D) = "white" {}
         _Color ("Tint", Color) = (1,1,1,1)
-        _RotationSpeed ("Degrees Per Second", Float) = 0
+        _RotationOffset ("Rotation Offset (Degrees)", Float) = 0
+        _RotationSpeed ("Rotation Speed (Degrees/sec)", Float) = 0
         [MaterialToggle] PixelSnap ("Pixel snap", Float) = 0
         [HideInInspector] _RendererColor ("RendererColor", Color) = (1,1,1,1)
         [HideInInspector] _Flip ("Flip", Vector) = (1,1,1,1)
@@ -65,23 +66,23 @@ Shader "BulletPro Samples/Bullets Max Blend"
 				return OUT;
 			}
 
-            fixed _RotationSpeed;
+            float _RotationSpeed, _RotationOffset;
 
-			fixed4 BulletFrag(v2f IN) : SV_Target
+			float4 BulletFrag(v2f IN) : SV_Target
 			{
                 // apply rotation
                 IN.texcoord.xy -= 0.5;
-                fixed t = 0.017453292 * _RotationSpeed * _Time.y; // degrees to radians
-                fixed x = IN.texcoord.x * cos(t) - IN.texcoord.y * sin(t);
-                fixed y = IN.texcoord.y * cos(t) + IN.texcoord.x * sin(t);
-                IN.texcoord.xy = fixed2(x,y);
+                float t = 0.017453292 * (_RotationOffset + _RotationSpeed * _Time.y); // degrees to radians
+                float x = IN.texcoord.x * cos(t) - IN.texcoord.y * sin(t);
+                float y = IN.texcoord.y * cos(t) + IN.texcoord.x * sin(t);
+                IN.texcoord.xy = float2(x,y);
                 IN.texcoord.xy += 0.5;
 
-				fixed4 c = SampleSpriteTexture(IN.texcoord);// *IN.color;
+				float4 c = SampleSpriteTexture(IN.texcoord);// *IN.color;
 
 				// my add
-				fixed4 grayscale = fixed4(c.g, c.g, c.g, c.a);
-				fixed4 final = lerp(grayscale, IN.color, c.r);
+				float4 grayscale = float4(c.g, c.g, c.g, c.a);
+				float4 final = lerp(grayscale, IN.color, c.r);
 				final.a = c.a * IN.color.a;
                 final.rgb *= c.b;
 				final.rgb *= final.a;

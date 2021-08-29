@@ -111,16 +111,14 @@ namespace BulletPro.EditorScripts
         {
             hasCalledPostOnEnable = true;
 
-            // set inspector min size
+            // set inspector min size - commented out because resizing back induces pop-up in Maximized Play Mode
+            /* *
             EditorWindow curFocused = EditorWindow.focusedWindow;
-            
-            /* */
             System.Type inspectorType = typeof(UnityEditor.Editor).Assembly.GetType("UnityEditor.InspectorWindow");
             EditorWindow insp = EditorWindow.GetWindow(inspectorType);
             insp.minSize = new Vector2(minSize.x, insp.minSize.y);
-            /* */
-
             if (curFocused) curFocused.Focus();
+            /* */
 
             // GUIStyles
             selectedHierarchyStyle = new GUIStyle();
@@ -159,13 +157,15 @@ namespace BulletPro.EditorScripts
                 DestroyImmediate(epi);
             }
 
-            // restore inspector min size
+            // restore inspector min size - commented out because reisizing back induces pop-up in Maximized Play Mode
+            /* *
             EditorWindow curFocused = EditorWindow.focusedWindow;
             System.Type inspectorType = typeof(UnityEditor.Editor).Assembly.GetType("UnityEditor.InspectorWindow");
             EditorWindow insp = EditorWindow.GetWindow(inspectorType);
             //insp.minSize = oldMinSize; // can cause problems
             insp.minSize = new Vector2(250, insp.minSize.y);
             if(curFocused) curFocused.Focus();
+            /* */
 
             Undo.undoRedoPerformed -= OnUndoRedo;
         }
@@ -210,8 +210,10 @@ namespace BulletPro.EditorScripts
             root.canCollide = false;
             root.canMove = false;
             root.hasLifespan = false;
+            root.hasLimitedRange = false;
             root.isChildOfEmitter = new DynamicBool(true);
             root.customParameters = new DynamicCustomParameter[0];
+            root.vfxParams[0].onBulletDeath.enabled = false;
             rootBullet.objectReferenceValue = root;
             
             PatternParams pattern = AddNewParams<PatternParams>(root, true);

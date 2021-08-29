@@ -39,7 +39,7 @@ namespace BulletPro
 	}
 
 	#if UNITY_EDITOR
-	public enum ParamInspectorPart { Renderer, Movement, Collision, Homing, SpawnAndLifetime, Emission, Behaviours, Parameters }
+	public enum ParamInspectorPart { Renderer, VFX, Movement, Collision, Homing, SpawnAndLifetime, Emission, Behaviours, Parameters }
 	#endif
 
 	// Stores any bullet parameters in order to read them just before shooting a bullet.
@@ -65,13 +65,17 @@ namespace BulletPro
 		public DynamicColor color;
 		public DynamicEnum evolutionBlendWithBaseColor;
 		public DynamicGradient colorEvolution; // replaces "color" if colorOverLifetime is enabled
+		public DynamicBulletVFXParams[] vfxParams;
+		public DynamicFloat vfxParticleSize; // deprecated in 1.2, but gets used while upgrading to 1.2, for quick overrides
+		
+		// deprecated in 1.2, but stays here so users don't lose data
 		public DynamicBool playVFXOnBirth, playVFXOnDeath;
-		public DynamicFloat vfxParticleSize;
 		public bool useCustomBirthVFX, useCustomDeathVFX;
 		public DynamicObjectReference customBirthVFX, customDeathVFX;
 		
 		#if UNITY_EDITOR
 		public bool foldoutVFX, hideSpriteList;
+		public int vfxOpened; // index of DynamicBulletVFXParams currently opened
 		public ParamInspectorPart currentlyDisplayedModule;
 		#endif
 
@@ -79,7 +83,7 @@ namespace BulletPro
 		public bool canMove;
 		public bool canCollide;
 		public bool isVisible;
-		public bool hasLifespan;
+		public bool hasLifespan, hasLimitedRange;
 		public bool hasPatterns
 		{ get {
 			if (patternsShot == null) return false;
@@ -102,6 +106,8 @@ namespace BulletPro
 		public CollisionTags collisionTags;
 		public BulletCollider[] colliders;
 		public bool dieOnCollision;
+		public BulletDeathTiming deathTiming;
+		public int maxSimultaneousCollisionsPerFrame;
 		public bool shapeFoldout, collisionTagsFoldout;
 
 		// Homing
@@ -109,6 +115,7 @@ namespace BulletPro
 		public CollisionTags homingTags;
 		public bool useSameTagsAsCollision; // if true, homingTags won't be used, collisionTags will be used instead
 		public DynamicFloat lookAtTargetAtSpawn; // from 0 to 1. 0 means regular spawn, 1 means spawn directly turned towards target
+		public DynamicFloat spawnOnTarget; // unclamped. Lerps spawn position towards target position, so 1 means spawnkill.
 		public DynamicFloat homingAngularSpeed; // speed at which we look at target
 		public DynamicFloat targetRefreshInterval; // if this bullet has many targets, change target every X seconds
 		public DynamicEnum preferredTarget; // when changing target, go to closest one, oldest one, or a random one
@@ -117,6 +124,7 @@ namespace BulletPro
 
 		// Lifespan
 		public DynamicFloat lifespan;
+		public DynamicFloat maxTravellableDistance;
 
 		// Curves
 		public DynamicBulletCurve speedOverLifetime;
@@ -183,7 +191,7 @@ namespace BulletPro
 			mesh = new DynamicObjectReference(null);
 			mesh.SetNarrowType(typeof(Mesh));
 
-			// vfx
+			// vfx (deprecated)
 			customBirthVFX = new DynamicObjectReference(null);
 			customDeathVFX = new DynamicObjectReference(null);
 			customBirthVFX.SetNarrowType(typeof(ParticleSystem));
@@ -191,6 +199,10 @@ namespace BulletPro
 			playVFXOnBirth = new DynamicBool(false);
 			playVFXOnDeath = new DynamicBool(true);
 			vfxParticleSize = new DynamicFloat(0.5f);
+
+			// vfx (new)
+			vfxParams = new DynamicBulletVFXParams[1];
+			vfxParams[0] = DynamicBulletVFXParams.GetDefaultParams();
 
 			// animation info
 			animated = new DynamicBool(false);
@@ -200,6 +212,8 @@ namespace BulletPro
 
 			// default collision params
 			dieOnCollision = true;
+			maxSimultaneousCollisionsPerFrame = 1;
+			deathTiming = BulletDeathTiming.Immediately;
 			colliders = new BulletCollider[1];
 			colliders[0].size = 0.1f;
 			colliders[0].colliderType = BulletColliderType.Circle;
@@ -212,6 +226,7 @@ namespace BulletPro
 			useSameTagsAsCollision = true;
 
 			// homing params
+			spawnOnTarget = new DynamicFloat(0f);
 			lookAtTargetAtSpawn = new DynamicFloat(0f);
 			lookAtTargetAtSpawn.EnableSlider(-1f, 1f);
 			homingAngularSpeed = new DynamicFloat(90f);
@@ -244,6 +259,7 @@ namespace BulletPro
 
 			// lifespan and spawn
 			lifespan = new DynamicFloat(5.0f);
+			maxTravellableDistance = new DynamicFloat(5.0f);
 			timeBeforeSpawn = new DynamicFloat(0.0f);
 			playAudioAtSpawn = new DynamicBool(false);
 			audioClip = new DynamicObjectReference(null);
@@ -260,6 +276,7 @@ namespace BulletPro
 			canMove = true;
 			canCollide = true;
 			hasLifespan = true;
+			hasLimitedRange = false;
 
 			// editor
 			preview.gizmoColor = new Color(0, 0, 0.5f, 1);
@@ -296,6 +313,7 @@ namespace BulletPro
 		Homing = (1 << 4),
 		Patterns = (1 << 5),
 		DelaySpawn = (1 << 6),
-		Parameters = (1 << 7)
+		Parameters = (1 << 7),
+		VFX = (1 << 8)
 	}
 }

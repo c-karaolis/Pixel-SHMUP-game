@@ -24,6 +24,7 @@ namespace BulletPro.EditorScripts
 				
 				// Only retain EmitterProfiles
 				System.Type assetType = AssetDatabase.GetMainAssetTypeAtPath(str);
+				if (assetType == null) continue;
 				if (assetType.ToString() != "BulletPro.EmitterProfile") continue;
 				
 				// Get newly created asset. If flag is already set to true, it's a duplicated one, not a created one
@@ -52,8 +53,6 @@ namespace BulletPro.EditorScripts
 				EditorUtility.SetDirty(newEP);
 				Selection.activeObject = newEP;
 				/* */
-					
-				
 			}
 		}
 	}

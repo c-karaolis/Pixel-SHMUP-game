@@ -143,7 +143,8 @@ namespace BulletPro.EditorScripts
         {
             // window button
             Color defC = GUI.color;
-            if (valueType.enumValueIndex > 0) GUI.color = Color.green;
+            if (valueType.enumValueIndex > 0)
+                GUI.color = EditorGUIUtility.isProSkin ? new Color(0f, 1.5f, 1.1f, 1f) : Color.green;
             GUIContent dynamicButtonGC = new GUIContent("...", "Make this parameter Dynamic: randomize it or have its value be based on various parameters.");
             if (GUI.Button(buttonRect, dynamicButtonGC, EditorStyles.miniButton))
             {

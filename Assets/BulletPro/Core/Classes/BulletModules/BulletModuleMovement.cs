@@ -36,6 +36,8 @@ namespace BulletPro
 		}
 		private float _currentScale;
 
+		public float totalTravelledDistance; // only increased by Translate(), not by teleports of any kind
+
 		public Space animationMovementSpace;
 		private Vector4 prevAnimValues;
 
@@ -227,6 +229,12 @@ namespace BulletPro
 				lastBounceTimestamp[i] = -10f;
 		}
 
+		// Called in Bullet.Die()
+		public void Die()
+		{
+			totalTravelledDistance = 0f;
+		}
+
 		// Translate of any vector
 		public void Translate(Vector3 movement, Space space)
 		{
@@ -234,6 +242,8 @@ namespace BulletPro
 
 			if (space == Space.World)
 				self.Translate(bulletCanvas.up * movement.y + bulletCanvas.right * movement.x + bulletCanvas.forward * movement.z, Space.World);
+			
+			totalTravelledDistance += movement.magnitude;
 		}
 
 		// Float overload
@@ -243,6 +253,8 @@ namespace BulletPro
 
 			if (space == Space.World)
 				self.Translate(bulletCanvas.up * y + bulletCanvas.right * x + bulletCanvas.forward * z, Space.World);
+
+			totalTravelledDistance += Mathf.Sqrt(x*x+y*y+z*z);		
 		}
 
 		// Rotate of any angle - having the rotate in a function will ease the implementation of some advanced features
@@ -301,7 +313,9 @@ namespace BulletPro
 			Vector3 rotationAxis = Vector3.Cross(self.up, wallDirection);
 			Vector3 wallNormal = Quaternion.AngleAxis(90, rotationAxis) * wallDirection;
 			Vector3 newUp = Vector3.Reflect(self.up, wallNormal);
-			self.Rotate(Quaternion.FromToRotation(self.up, newUp).eulerAngles);
+			// Can't use Quaternions, because when the two vectors are collinear (ie. U-turn) it uses the wrong axis to rotate.
+			//self.Rotate(Quaternion.FromToRotation(self.up, newUp).eulerAngles);
+			self.up = newUp;
 
 			// update timestamps in wanted channels
 			for (int i = 0; i < 8; i++)

@@ -47,9 +47,9 @@ namespace BulletPro.EditorScripts
 		private void DrawSprite(Rect position, Sprite sprite)
 		{
 			Vector2 fullSize = new Vector2(sprite.texture.width, sprite.texture.height);
-			Vector2 size = new Vector2(sprite.textureRect.width, sprite.textureRect.height);
+			Vector2 size = new Vector2(sprite.rect.width, sprite.rect.height);
 
-			Rect coords = sprite.textureRect;
+			Rect coords = sprite.rect;
 			coords.x /= fullSize.x;
 			coords.width /= fullSize.x;
 			coords.y /= fullSize.y;

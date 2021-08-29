@@ -713,11 +713,53 @@ namespace BulletPro.EditorScripts
                 // nothing to do here, just incrementing build number to avoid seeing enumValue==4 in old versions
                 // for (int i = 0; i < profile.subAssets.Length; i++) { }
             }
-            // to be continued (when V11 comes out)
 
             // from V10 to V11
-            /* *
             if (profile.buildNumber == 10)
+            {
+                profile.buildNumber++;
+
+                // Loops twice so patterns get their new DynamicParams, but Bullet update properly overrides it
+                for (int i = 0; i < profile.subAssets.Length; i++)
+                {
+                    if (!(profile.subAssets[i] is PatternParams)) continue;
+                    PatternParams pp = profile.subAssets[i] as PatternParams;
+                    if (pp.instructionLists == null) continue;
+                    if (pp.instructionLists.Length == 0) continue;
+                    for (int j = 0; j < pp.instructionLists.Length; j++)
+                    {
+                        if (pp.instructionLists[j].instructions == null)
+                            pp.instructionLists[j].instructions = new PatternInstruction[0];
+                        if (pp.instructionLists[j].instructions.Length == 0) continue;
+                        for (int k = 0; k < pp.instructionLists[j].instructions.Length; k++)
+                        {
+                            pp.instructionLists[j].instructions[k].vfxIndex = new DynamicInt(0);
+                            pp.instructionLists[j].instructions[k].vfxTag = new DynamicString("");
+                            pp.instructionLists[j].instructions[k].vfxFilterType = VFXFilterType.Index;
+
+                            // make room for the newly-created StopVFX instruction
+                            int instIndex = (int)pp.instructionLists[j].instructions[k].instructionType;
+                            if (instIndex >= (int)PatternInstructionType.StopVFX)
+                            {
+                                instIndex++;
+                                pp.instructionLists[j].instructions[k].instructionType = (PatternInstructionType)instIndex;
+                            }
+                        }
+                    }
+
+                    EditorUtility.SetDirty(pp);
+                }
+
+                for (int i = 0; i < profile.subAssets.Length; i++)
+                {
+                    if (profile.subAssets[i] is BulletParams)
+                        UpdateBulletParamsForVFX(profile.subAssets[i] as BulletParams);
+                }
+            }
+
+            // from V11 to V12
+            /* *
+            if (profile.buildNumber == 11)
             {
                 profile.buildNumber++;
                 for (int i = 0; i < profile.subAssets.Length; i++)
@@ -726,7 +768,7 @@ namespace BulletPro.EditorScripts
                 }
             }
             /* */
-            // to be continued (when V12 comes out)
+            // to be continued (when V13 comes out)
 
             // in the end, validate everything
             EditorUtility.SetDirty(profile);
@@ -735,6 +777,233 @@ namespace BulletPro.EditorScripts
             // - default build number of EmitterProfiles
             // - build number of BulletProSettings
             // - create an update function (here) from N to N+1
+        }
+
+        // From V10 to V11 : converts BulletParams so they have VFX Module
+        static void UpdateBulletParamsForVFX(BulletParams bp)
+        {
+            // merge birth/death VFX in the same object, unless they use a different particle system
+            bool atBirth = DynamicParameterUtility.GetBool(bp.playVFXOnBirth, true, true);
+            bool atDeath = DynamicParameterUtility.GetBool(bp.playVFXOnDeath, true, true);
+            bool atLeastOne = atBirth || atDeath;
+            bool playsBoth = atBirth && atDeath;
+            
+            // should we differenciate birth and death effects?
+            bool diff = false;
+            if (atLeastOne)
+            {
+                if (playsBoth)
+                {
+                    bool cBirth = bp.useCustomBirthVFX;
+                    bool cDeath = bp.useCustomDeathVFX;
+
+                    if (cBirth || cDeath)
+                    {
+                        bool hasUniqueBirthFX = false;
+                        bool hasUniqueDeathFX = false;
+
+                        if (cBirth)
+                        {
+                            if (bp.customBirthVFX.root.settings.valueType != DynamicParameterSorting.Fixed)
+                                hasUniqueBirthFX = true;
+                            else hasUniqueBirthFX = (bp.customBirthVFX.root.defaultValue != null);
+                        }
+                        if (cDeath)
+                        {
+                            if (bp.customDeathVFX.root.settings.valueType != DynamicParameterSorting.Fixed)
+                                hasUniqueDeathFX = true;
+                            else hasUniqueDeathFX = (bp.customDeathVFX.root.defaultValue != null);
+                        }
+
+                        diff = (hasUniqueBirthFX || hasUniqueDeathFX);
+                    }
+                    // else diff stays false
+                }
+                else if (atBirth)
+                {
+                    if (bp.useCustomBirthVFX)
+                    {
+                        if (bp.customBirthVFX.root.settings.valueType != DynamicParameterSorting.Fixed)
+                            diff = true;
+                        else diff = (bp.customBirthVFX.root.defaultValue != null);
+                    }
+                    // else diff stays false
+                }
+                else // if atDeath
+                {
+                    if (bp.useCustomDeathVFX)
+                    {
+                        if (bp.customDeathVFX.root.settings.valueType != DynamicParameterSorting.Fixed)
+                            diff = true;
+                        else diff = (bp.customDeathVFX.root.defaultValue != null);
+                    }
+                    // else diff stays false
+                }
+            }
+            // else diff stays false (no birth, no death)
+
+            List<DynamicBulletVFXParams> vfxList = new List<DynamicBulletVFXParams>();
+
+            if (!diff)
+            {
+                DynamicBulletVFXParams vfx = new DynamicBulletVFXParams();
+                vfx.tag = "VFX #0";
+                vfx.useDefaultParticles = !bp.useCustomBirthVFX;
+                vfx.particleSystemPrefab = bp.customBirthVFX;
+                vfx.particleSystemPrefab.SetNarrowType(typeof(ParticleSystem));
+                vfx.onBulletBirth.enabled = DynamicParameterUtility.GetBool(bp.playVFXOnBirth, false, true);
+                vfx.onBulletDeath.enabled = DynamicParameterUtility.GetBool(bp.playVFXOnDeath, false, true);
+                vfx.replaceColorWithBulletColor = !bp.useCustomBirthVFX;
+                vfx.replaceSizeWithNumber = !bp.useCustomBirthVFX;
+                vfx.sizeNewValue = bp.useCustomBirthVFX ? new DynamicFloat(1.0f) : bp.vfxParticleSize;
+                vfx.multiplySizeWithNumber = bp.useCustomBirthVFX;
+                vfx.sizeMultiplier = bp.useCustomBirthVFX ? bp.vfxParticleSize : new DynamicFloat(1.0f);
+                vfx.multiplySizeWithBulletScale = true;
+                vfx.multiplySpeedWithBulletScale = false;
+                vfx.vfxOverrides = new DynamicBulletVFXOverride[0];
+                vfxList.Add(vfx);
+            }
+            else
+            {
+                if (atBirth)
+                {
+                    DynamicBulletVFXParams vfx = new DynamicBulletVFXParams();
+                    vfx.tag = "BirthVFX";
+                    vfx.useDefaultParticles = !bp.useCustomBirthVFX;
+                    vfx.particleSystemPrefab = bp.customBirthVFX;
+                    vfx.particleSystemPrefab.SetNarrowType(typeof(ParticleSystem));
+                    vfx.onBulletBirth.enabled = DynamicParameterUtility.GetBool(bp.playVFXOnBirth, false, true);
+                    vfx.onBulletDeath.enabled = false;
+                    vfx.replaceColorWithBulletColor = !bp.useCustomBirthVFX;
+                    vfx.replaceSizeWithNumber = !bp.useCustomBirthVFX;
+                    vfx.sizeNewValue = bp.useCustomBirthVFX ? new DynamicFloat(1.0f) : bp.vfxParticleSize;
+                    vfx.multiplySizeWithNumber = bp.useCustomBirthVFX;
+                    vfx.sizeMultiplier = bp.useCustomBirthVFX ? bp.vfxParticleSize : new DynamicFloat(1.0f);
+                    vfx.multiplySizeWithBulletScale = true;
+                    vfx.multiplySpeedWithBulletScale = false;
+                    vfx.vfxOverrides = new DynamicBulletVFXOverride[0];
+                    vfxList.Add(vfx);
+                }
+                
+                if (atDeath)
+                {
+                    DynamicBulletVFXParams vfx = new DynamicBulletVFXParams();
+                    vfx.tag = "DeathVFX";
+                    vfx.useDefaultParticles = !bp.useCustomDeathVFX;
+                    vfx.particleSystemPrefab = bp.customDeathVFX;
+                    vfx.particleSystemPrefab.SetNarrowType(typeof(ParticleSystem));
+                    vfx.onBulletBirth.enabled = false;
+                    vfx.onBulletDeath.enabled = DynamicParameterUtility.GetBool(bp.playVFXOnDeath, false, true);
+                    vfx.replaceColorWithBulletColor = !bp.useCustomDeathVFX;
+                    vfx.replaceSizeWithNumber = !bp.useCustomDeathVFX;
+                    vfx.sizeNewValue = bp.useCustomDeathVFX ? new DynamicFloat(1.0f) : bp.vfxParticleSize;
+                    vfx.multiplySizeWithNumber = bp.useCustomDeathVFX;
+                    vfx.sizeMultiplier = bp.useCustomDeathVFX ? bp.vfxParticleSize : new DynamicFloat(1.0f);
+                    vfx.multiplySizeWithBulletScale = true;
+                    vfx.multiplySpeedWithBulletScale = false;
+                    vfx.vfxOverrides = new DynamicBulletVFXOverride[0];
+                    vfxList.Add(vfx);
+                }
+            }
+
+            // Finally, if a PatternInstruction says to play a VFX, register it here
+            if (bp.children != null)
+            {
+                if (bp.children.Length > 0)
+                {
+                    for (int i = 0; i < bp.children.Length; i++)
+                    {
+                        PatternParams pp = bp.children[i] as PatternParams;
+                        if (pp == null) continue;
+                        if (pp.instructionLists == null) continue;
+                        if (pp.instructionLists.Length == 0) continue;
+                        for (int j = 0; j < pp.instructionLists.Length; j++)
+                        {
+                            PatternInstructionList pil = pp.instructionLists[j];
+                            if (pil.instructions == null) continue;
+                            if (pil.instructions.Length == 0) continue;
+                            for (int k = 0; k < pil.instructions.Length; k++)
+                            {
+                                pil.instructions[k].vfxIndex = new DynamicInt(0);
+                                pil.instructions[k].vfxTag = new DynamicString("");
+                                if (pil.instructions[k].instructionType != PatternInstructionType.PlayVFX) continue;
+
+                                // case 1 : instruction uses default particles
+                                if (pil.instructions[k].vfxPlayType == VFXPlayType.Default)
+                                {
+                                    bool shouldCreate = true;
+                                    if (vfxList.Count > 0)
+                                    {
+                                        for (int m = 0; m < vfxList.Count; m++)
+                                        {
+                                            if (vfxList[m].useDefaultParticles)
+                                            {
+                                                shouldCreate = false;
+                                                pil.instructions[k].vfxIndex = new DynamicInt(m);
+                                                break;
+                                            }
+                                        }
+                                    }
+
+                                    if (shouldCreate)
+                                    {
+                                        DynamicBulletVFXParams vfx = new DynamicBulletVFXParams();
+                                        vfx.tag = "Pattern VFX "+vfxList.Count.ToString();
+                                        vfx.useDefaultParticles = true;
+                                        vfx.particleSystemPrefab = new DynamicObjectReference(null);
+                                        vfx.particleSystemPrefab.SetNarrowType(typeof(ParticleSystem));
+                                        vfx.onBulletBirth.enabled = false;
+                                        vfx.onBulletDeath.enabled = false;
+                                        vfx.replaceColorWithBulletColor = true;
+                                        vfx.replaceSizeWithNumber = true;
+                                        vfx.sizeNewValue = bp.vfxParticleSize;
+                                        vfx.multiplySizeWithNumber = false;
+                                        vfx.sizeMultiplier = new DynamicFloat(1.0f);
+                                        vfx.multiplySizeWithBulletScale = true;
+                                        vfx.multiplySpeedWithBulletScale = false;
+                                        vfx.vfxOverrides = new DynamicBulletVFXOverride[0];
+                                        pil.instructions[k].vfxIndex = new DynamicInt(vfxList.Count);
+                                        vfxList.Add(vfx);
+                                    }
+                                }
+                                // case 2 : instruction uses custom VFX
+                                else
+                                {
+                                    // In this rare case, we just consider the VFX should always be created. 
+                                    DynamicBulletVFXParams vfx = new DynamicBulletVFXParams();
+                                    vfx.tag = "Pattern VFX "+vfxList.Count.ToString();
+                                    vfx.useDefaultParticles = false;
+                                    vfx.particleSystemPrefab = pil.instructions[k].vfxToPlay;
+                                    vfx.onBulletBirth.enabled = false;
+                                    vfx.onBulletDeath.enabled = false;
+                                    vfx.replaceColorWithBulletColor = false;
+                                    vfx.replaceSizeWithNumber = false;
+                                    vfx.sizeNewValue = new DynamicFloat(1.0f);
+                                    vfx.multiplySizeWithNumber = true;
+                                    vfx.sizeMultiplier = bp.vfxParticleSize;
+                                    vfx.multiplySizeWithBulletScale = true;
+                                    vfx.multiplySpeedWithBulletScale = false;
+                                    vfx.vfxOverrides = new DynamicBulletVFXOverride[0];
+                                    pil.instructions[k].vfxIndex = new DynamicInt(vfxList.Count);
+                                    vfxList.Add(vfx);
+                                }
+                            }
+                        }
+
+                        EditorUtility.SetDirty(pp);
+                    }
+                }
+            }
+
+            vfxList.TrimExcess();
+            bp.vfxParams = vfxList.ToArray();
+
+            bp.vfxOpened = 0;
+            bp.maxTravellableDistance = new DynamicFloat(5.0f);
+            bp.spawnOnTarget = new DynamicFloat(0.0f);
+            bp.maxSimultaneousCollisionsPerFrame = 1;
+            bp.deathTiming = BulletDeathTiming.Immediately;
+            EditorUtility.SetDirty(bp);
         }
 
         #endregion

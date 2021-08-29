@@ -24,6 +24,9 @@ namespace BulletPro
 		public bool useCustomBirthVFX, useCustomDeathVFX;
 		public ParticleSystem customBirthVFX, customDeathVFX;
 
+		// VFX-related vars (1.2). This stores all the VFX that can be played by this bullet.
+		public BulletVFXParams[] availableVFX;
+
 		// Animation-related vars
 		public bool animated;
 		public Sprite[] animationSprites; // used if animated
@@ -65,7 +68,7 @@ namespace BulletPro
 
 		#endregion
 
-		// Called at Bullet.AWake()
+		// Called at Bullet.Awake()
 		public override void Awake()
 		{
 			base.Awake();
@@ -101,6 +104,16 @@ namespace BulletPro
 				spriteRenderer.enabled = visible;
 			else if (renderMode == BulletRenderMode.Mesh)
 				meshRenderer.enabled = visible;
+
+			if (moduleVFX.availableVFX == null) return;
+			if (moduleVFX.availableVFX.Count == 0) return;
+			for (int i = 0; i < moduleVFX.availableVFX.Count; i++)
+			{
+				BulletVFXTrigger trig = visible ? moduleVFX.availableVFX[i].onVisible : moduleVFX.availableVFX[i].onInvisible;
+				if (!moduleVFX.AskPermission(trig)) continue;
+				if (trig.behaviour == BulletVFXBehaviour.Play) moduleVFX.PlayVFX(i);
+				else if (trig.behaviour == BulletVFXBehaviour.Stop) moduleVFX.StopVFX(i);
+			}
 		}
 
 		// Called at Bullet.Update() only for sprite bullets
@@ -178,14 +191,6 @@ namespace BulletPro
 			alphaOverLifetime.Stop();
 			isSwitchingGradient = false;
 
-			if (!isEnabled)
-			{
-				// reset curves in case module gets reenabled later on
-				colorOverLifetime.enabled = false;
-				alphaOverLifetime.enabled = false;
-				return;
-			}
-
 			// VFX stuff
 			playVFXOnBirth = solver.SolveDynamicBool(bp.playVFXOnBirth, 3956329, ParameterOwner.Bullet);
 			playVFXOnDeath = solver.SolveDynamicBool(bp.playVFXOnDeath, 28263241, ParameterOwner.Bullet);
@@ -194,6 +199,25 @@ namespace BulletPro
 			useCustomDeathVFX = bp.useCustomDeathVFX;
 			customBirthVFX = solver.SolveDynamicObjectReference(bp.customBirthVFX, 15079187, ParameterOwner.Bullet) as ParticleSystem;
 			customDeathVFX = solver.SolveDynamicObjectReference(bp.customDeathVFX, 5117134, ParameterOwner.Bullet) as ParticleSystem;
+
+			// VFX stuff (1.2)
+			if (bp.vfxParams == null) availableVFX = new BulletVFXParams[0];
+			else if (bp.vfxParams.Length == 0) availableVFX = new BulletVFXParams[0];
+			else
+			{
+				availableVFX = new BulletVFXParams[bp.vfxParams.Length];
+				for (int i = 0; i < bp.vfxParams.Length; i++)
+					availableVFX[i] = solver.SolveDynamicBulletVFXParams(bp.vfxParams[i], 17789231, ParameterOwner.Bullet);
+			}
+
+			// Enable-check happens AFTER initializing VFX because invisible bullets might still want to play particles
+			if (!isEnabled)
+			{
+				// reset curves in case module gets reenabled later on
+				colorOverLifetime.enabled = false;
+				alphaOverLifetime.enabled = false;
+				return;
+			}
 
 			// If a mesh is used, only update mesh then end function, as it won't support curves and animation
 			if (bp.renderMode == BulletRenderMode.Mesh)
@@ -272,7 +296,10 @@ namespace BulletPro
 			}
 		}
 
+		#region old VFX functions, pre-1.2, should be deprecated
+
 		// Launches VFX if needed. If a mesh uses default, it will be white.
+		[System.Obsolete("This function is deprecated since BulletPro 1.2. For particle-related functions, please use the BulletModuleVFX class instead.", false)]
 		public void SpawnFX(Vector3 position, bool birth) // true = birth, false = death
 		{
 			if (birth)
@@ -306,12 +333,14 @@ namespace BulletPro
 		}
 
 		// Launches VFX if needed. If a mesh uses default, it will be white.
+		[System.Obsolete("This function is deprecated since BulletPro 1.2. For particle-related functions, please use the BulletModuleVFX class instead.", false)]
 		public void SpawnFX(bool birth) // true = birth, false = death
 		{
 			SpawnFX(self.position, birth);
 		}
 
 		// Launches a custom VFX at bullet position and size. Made to be called from Patterns. 
+		[System.Obsolete("This function is deprecated since BulletPro 1.2. For particle-related functions, please use the BulletModuleVFX class instead.", false)]
 		public void SpawnFX(ParticleSystem particleSystemSettings)
 		{
 			if (particleSystemSettings == null) return;
@@ -319,6 +348,7 @@ namespace BulletPro
 		}
 
 		// Launches the default VFX at bullet position, size and color.
+		[System.Obsolete("This function is deprecated since BulletPro 1.2. For particle-related functions, please use the BulletModuleVFX class instead.", false)]
 		public void SpawnDefaultVFX(bool copyBulletColor=true)
 		{
 			Color col = Color.white;
@@ -327,6 +357,8 @@ namespace BulletPro
 					col = spriteRenderer.color;
 			vfxManager.PlayVFXAt(self.position, self.eulerAngles, col, moduleMovement.currentScale * vfxParticleSize);
 		}
+
+		#endregion
 
 		public Color BlendColors(Color oldCol, Color newCol, ColorBlend blendType)
 		{

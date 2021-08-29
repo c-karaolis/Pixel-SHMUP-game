@@ -11,7 +11,7 @@ namespace BulletPro
 	public class BulletModuleHoming : BulletModule
 	{
 		public PreferredTarget preferredTarget;
-		public float homingSpawnRate, homingAngularSpeed, homingAngleThreshold, targetRefreshInterval;
+		public float homingSpawnRate, spawnOnTarget, homingAngularSpeed, homingAngleThreshold, targetRefreshInterval;
 		public float currentHomingSpeed { get; private set; }
 		public CollisionTags homingTags;
 		public bool useSameTagsAsCollision;
@@ -83,6 +83,7 @@ namespace BulletPro
 			preferredTarget = (PreferredTarget) solver.SolveDynamicEnum(bp.preferredTarget, 17149663, ParameterOwner.Bullet);
 			RefreshTarget();
 			homingSpawnRate = solver.SolveDynamicFloat(bp.lookAtTargetAtSpawn, 7826475, ParameterOwner.Bullet);
+			spawnOnTarget = solver.SolveDynamicFloat(bp.spawnOnTarget, 8433561, ParameterOwner.Bullet);
 
 			homingAngularSpeed = solver.SolveDynamicFloat(bp.homingAngularSpeed, 19096746, ParameterOwner.Bullet);
 
@@ -214,6 +215,19 @@ namespace BulletPro
 		public Transform GetNewPossibleTarget()
 		{
 			return GetNewPossibleTarget(preferredTarget);
+		}
+
+		// When called, instantly teleports by lerping from bullet position to target position.
+		// Argument is unclamped, so the bullet can get past its target. (past 1)
+		// Negative values will flee from target rather than going towards it.
+		public void MoveToTarget(float ratio=1)
+		{
+			// if not already targeting something, try to get a target to begin with (using Oldest which is the most efficient way to get it)
+			if (!currentTarget) currentTarget = GetNewPossibleTarget(PreferredTarget.Oldest);
+			if (!currentTarget) return;
+
+			Vector3 movementNeeded = ratio * (currentTarget.position - self.position);
+			self.Translate(movementNeeded, Space.World);
 		}
 
 		// When called, instantly rotates.
