@@ -7,19 +7,22 @@ using BulletPro;
 // But it's only used in the example scene and I recommend writing a better one that fits your needs.
 // Author : Simon Albou <albou.simon@gmail.com>
 
-public class BPDemo_Wall : MonoBehaviour {
-
-	Transform self;
-	public float bounceCooldown = 0.2f;
-	public BounceChannel channel = BounceChannel.Horizontal;
-
-	void Awake()
+namespace BulletPro.DemoScripts
+{
+	public class BPDemo_Wall : MonoBehaviour
 	{
-		self = transform;
-	}
+		Transform self;
+		public float bounceCooldown = 0.2f;
+		public BounceChannel channel = BounceChannel.Horizontal;
 
-	public void BounceBullet(Bullet bullet, Vector3 hitPoint)
-	{
-		bullet.moduleMovement.Bounce(self.up, bounceCooldown, channel);
+		void Awake()
+		{
+			self = transform;
+		}
+
+		public void BounceBullet(Bullet bullet, Vector3 hitPoint)
+		{
+			bullet.moduleMovement.Bounce(self.up, bounceCooldown, channel);
+		}
 	}
 }

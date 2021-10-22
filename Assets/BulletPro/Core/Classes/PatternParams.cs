@@ -16,6 +16,9 @@ namespace BulletPro
 		// Used for controlling one pattern from another
 		public DynamicString[] patternTags;
 		public bool playAtBulletBirth;
+		public bool compensateSmallWaits, deltaTimeDisplacement;
+		public DynamicFloat defaultInstructionDelay;
+		public List<PatternInstructionType> delaylessInstructions;
 
 		// The instruction stack that mimics visual programming.
 		// A single pattern can have multiple instruction lists working in parallel.
@@ -36,13 +39,16 @@ namespace BulletPro
 
 #if UNITY_EDITOR
 
+		// Simple foldout bool
+		public bool advancedFoldout;
+
 		// Allows custom default values
 		public bool hasBeenSerializedOnce;
 
 		// Which instruction is being closely inspected ? (for micro-actions)
 		public int focusedInstruction = -1;
 
-		// Allows safely edition of the instruction stack during play mode
+		// Allows safe edition of the instruction stack during play mode
 		public int safetyForPlaymode;
 
 		public override void FirstInitialization()
@@ -52,9 +58,19 @@ namespace BulletPro
 			SetUniqueIndex();
 
 			playAtBulletBirth = true;
+			compensateSmallWaits = false;
+			deltaTimeDisplacement = false;
+			defaultInstructionDelay = new DynamicFloat(0f);
 			patternTags = new DynamicString[0];
 			instructionLists = new PatternInstructionList[1];
 			instructionLists[0].FirstInitialization();
+
+			delaylessInstructions = new List<PatternInstructionType>();
+			delaylessInstructions.Add(PatternInstructionType.Wait);
+			delaylessInstructions.Add(PatternInstructionType.BeginLoop);
+			delaylessInstructions.Add(PatternInstructionType.EndLoop);
+			delaylessInstructions.Add(PatternInstructionType.SetInstructionDelay);
+			delaylessInstructions.Add(PatternInstructionType.Die);
 		}
 #endif
 	}
@@ -149,7 +165,57 @@ namespace BulletPro
 		PlayPattern,
 		PausePattern,
 		StopPattern,
-		RebootPattern
+		RebootPattern,
+		SetInstructionDelay,
+
+		// Random Seed
+		FreezeRandomSeed,
+		UnfreezeRandomSeed,
+		RerollRandomSeed,
+		SetRandomSeed,
+
+		// Custom Parameters - numbers
+		SetCustomInteger,
+		AddCustomInteger,
+		MultiplyCustomInteger,
+		SetCustomFloat,
+		AddCustomFloat,
+		MultiplyCustomFloat,
+		SetCustomSlider01,
+		AddCustomSlider01,
+		MultiplyCustomSlider01,
+		SetCustomDouble,
+		AddCustomDouble,
+		MultiplyCustomDouble,
+		SetCustomLong,
+		AddCustomLong,
+		MultiplyCustomLong,
+
+		// Custom Parameters - vectors and colors
+		SetCustomVector2,
+		AddCustomVector2,
+		MultiplyCustomVector2,
+		SetCustomVector3,
+		AddCustomVector3,
+		MultiplyCustomVector3,
+		SetCustomVector4,
+		AddCustomVector4,
+		MultiplyCustomVector4,
+		SetCustomColor,
+		AddCustomColor,
+		MultiplyCustomColor,
+		OverlayCustomColor,
+
+		// Custom Parameters - the rest
+		SetCustomGradient,
+		SetCustomBool,
+		SetCustomString,
+		AppendToCustomString,
+		SetCustomAnimationCurve,
+		SetCustomObject,
+		SetCustomQuaternion,
+		SetCustomRect,
+		SetCustomBounds
 	}
 
 	// enums used as arguments in an instruction
@@ -207,6 +273,7 @@ namespace BulletPro
 		// control patterns
 		public PatternControlTarget patternControlTarget;
 		public DynamicString patternTag;
+		public DynamicSlider01 newRandomSeed;
 		// curves
 		public DynamicAnimationCurve newCurveValue;
 		public DynamicFloat newPeriodValue;
@@ -225,6 +292,26 @@ namespace BulletPro
 		public InstructionTiming instructionTiming;
 		public DynamicFloat instructionDuration;
 		public DynamicAnimationCurve operationCurve;
+
+		// custom params
+		public string customParamName;
+		public DynamicInt customInt;
+		public DynamicFloat customFloat;
+		public DynamicSlider01 customSlider01;
+		public double customDouble;
+		public long customLong;
+		public DynamicVector2 customVector2;
+		public DynamicVector3 customVector3;
+		public DynamicVector4 customVector4;
+		public DynamicColor customColor;
+		public DynamicGradient customGradient;
+		public DynamicBool customBool;
+		public DynamicString customString;
+		public DynamicAnimationCurve customAnimationCurve;
+		public DynamicObjectReference customObjectReference;
+		public Quaternion customQuaternion;
+		public DynamicRect customRect;
+		public Bounds customBounds;
 
 		#if UNITY_EDITOR
 		public string displayName;
@@ -296,6 +383,7 @@ namespace BulletPro
 				instructions[i].collisionTag = new DynamicString("Player");
 				instructions[i].patternTag = new DynamicString("");
 				instructions[i].patternControlTarget = PatternControlTarget.ThisPattern;
+				instructions[i].newRandomSeed = new DynamicSlider01(0f);
 				
 				instructions[i].newCurveValue = new DynamicAnimationCurve(AnimationCurve.Constant(0,1,1));
 				instructions[i].newCurveValue.SetForceZeroToOne(true);
@@ -320,6 +408,21 @@ namespace BulletPro
 
 				instructions[i].displayName = "Wait";
 				instructions[i].canBeDoneOverTime = false;
+
+				instructions[i].customParamName = "_PowerLevel";
+				instructions[i].customInt = new DynamicInt(0);
+				instructions[i].customFloat = new DynamicFloat(0f);
+				instructions[i].customSlider01 = new DynamicSlider01(0f);
+				instructions[i].customVector2 = new DynamicVector2(Vector2.zero);
+				instructions[i].customVector3 = new DynamicVector3(Vector3.zero);
+				instructions[i].customVector4 = new DynamicVector4(Vector4.zero);
+				instructions[i].customColor = new DynamicColor(Color.black);
+				instructions[i].customGradient = new DynamicGradient(grad);
+				instructions[i].customBool = new DynamicBool(false);
+				instructions[i].customString = new DynamicString("");
+				instructions[i].customAnimationCurve = new DynamicAnimationCurve(AnimationCurve.EaseInOut(0, 0, 1, 1));
+				instructions[i].customObjectReference = new DynamicObjectReference(null);
+				instructions[i].customRect = new DynamicRect(Rect.zero);
 			}
 
 			instructions[0].instructionType = PatternInstructionType.BeginLoop;

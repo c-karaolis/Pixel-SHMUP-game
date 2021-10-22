@@ -274,8 +274,12 @@ namespace BulletPro.EditorScripts
 					if (EditorGUIUtility.isProSkin) EditorStyles.label.normal.textColor = new Color(0, 1, 0, 1);
 					EditorGUILayout.BeginHorizontal();
 					EditorGUILayout.LabelField("Current pool : " + bbp.pool.Length.ToString() + " objects.");
-					if (GUILayout.Button("Add 50", EditorStyles.miniButton)) ModifyPool(index, 50, ref bbp);
-					if (GUILayout.Button("Remove 50", EditorStyles.miniButton)) ModifyPool(index, -50, ref bbp);
+					if (GUILayout.Button("-50", EditorStyles.miniButton)) ModifyPool(index, -50, ref bbp);
+					if (GUILayout.Button("-10", EditorStyles.miniButton)) ModifyPool(index, -10, ref bbp);
+					if (GUILayout.Button("-1", EditorStyles.miniButton)) ModifyPool(index, -1, ref bbp);
+					if (GUILayout.Button("+1", EditorStyles.miniButton)) ModifyPool(index, 1, ref bbp);
+					if (GUILayout.Button("+10", EditorStyles.miniButton)) ModifyPool(index, 10, ref bbp);
+					if (GUILayout.Button("+50", EditorStyles.miniButton)) ModifyPool(index, 50, ref bbp);
 					EditorGUILayout.EndHorizontal();
 					EditorStyles.label.fontStyle = defF;
 					EditorStyles.label.normal.textColor = defC;

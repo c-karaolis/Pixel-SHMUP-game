@@ -39,6 +39,7 @@ namespace BulletPro
 		public float turnIntensity;
 		public string collisionTag;
 		public string patternTag;
+		public float newRandomSeed;
 
 		public AnimationCurve newCurveValue;
 		public float newPeriodValue;
@@ -49,6 +50,26 @@ namespace BulletPro
 		public Color color;
 		public float alpha;
 		public Gradient gradient;
+
+		// custom params
+		public string customParamName;
+		public int customInt;
+		public float customFloat; // also used as vector multiplier
+		public float customSlider01;
+		public double customDouble;
+		public long customLong;
+		public Vector2 customVector2;
+		public Vector3 customVector3;
+		public Vector4 customVector4;
+		public Color customColor;
+		public Gradient customGradient;
+		public bool customBool;
+		public string customString;
+		public AnimationCurve customAnimationCurve;
+		public Object customObjectReference;
+		public Quaternion customQuaternion;
+		//public Rect customRect;
+		//public Bounds customBounds; 
 
 		// general, for MicroActions
 		public float instructionDuration;
@@ -75,6 +96,10 @@ namespace BulletPro
 		public string[] patternTags;
 		public bool playAtStart;
 		public bool containsNullPattern;
+		public bool compensateSmallWaits;
+		public bool deltaTimeDisplacement;
+		public float defaultInstructionDelay;
+		public List<PatternInstructionType> delaylessInstructions;
 
 		// This is still an array, so the code is not incompatible with having multiple parallel stacks,
 		// but it's unused as of now, and could be a single SolvedInstructionList. (2020-09)
@@ -102,6 +127,10 @@ namespace BulletPro
 		public Bullet bullet { get; private set; }
 		public int patternIndex { get; private set; }
 		public bool playAtStart { get { return solvedPatternParams.playAtStart; } }
+		public bool compensateSmallWaits { get { return solvedPatternParams.compensateSmallWaits; }}
+		public bool deltaTimeDisplacement { get { return solvedPatternParams.deltaTimeDisplacement; }}
+		public float instructionDelay;
+		public List<PatternInstructionType> delaylessInstructions;
 
 		#endregion
 
@@ -136,10 +165,12 @@ namespace BulletPro
 			// init time
 			timeSinceLive = 0;
 			shotsShotSinceLive = 0;
+			instructionDelay = spp.defaultInstructionDelay;
+			delaylessInstructions = spp.delaylessInstructions;
 
 			// instructions vars
 			for (int i = 0; i < instructionLists.Length; i++)
-				instructionLists[i].Init(spp.instructionLists[i].instructions, pp.instructionLists[i], bullet, patternIndex, i);
+				instructionLists[i].Init(spp.instructionLists[i].instructions, pp.instructionLists[i], bullet, patternIndex, i, instructionDelay);
 		}
 
 		// Called when the bullet which emitted this pattern dies.
@@ -164,11 +195,6 @@ namespace BulletPro
 						Init(patternParams, solvedPatternParams, bullet, patternIndex);
 					}
 				}
-				// TODO : delete this
-				/* *
-				else for (int i = 0; i < instructionLists.Length; i++)
-					instructionLists[i].instructions = solvedPatternParams.instructionLists[i].instructions;
-				/* */
 			}
 			#endif
 
@@ -203,7 +229,7 @@ namespace BulletPro
 		}
 
 		// Shoot
-		public void Shoot(ShotParams shot)
+		public void Shoot(ShotParams shot, float timeOffset=0f)
 		{
 			if (shot == null) return;
 
@@ -222,12 +248,12 @@ namespace BulletPro
 
 			TempEmissionData ted = new TempEmissionData();
 			ted.patternID = patternParams.uniqueIndex;
-			ted.patternID = shot.uniqueIndex;
+			ted.shotID = shot.uniqueIndex;
 			ted.patternIndexInEmitter = patternIndex;
 			ted.shotTimeInPattern = timeSinceLive;
 			ted.shotIndexInPattern = shotsShotSinceLive;
 
-			bullet.modulePatterns.ShootBullets(shot, ted);
+			bullet.modulePatterns.ShootBullets(shot, ted, timeOffset);
 			shotsShotSinceLive++;
 		}
 	}

@@ -31,7 +31,9 @@ namespace BulletPro.EditorScripts
 		// Instruction stack
 		ReorderableList tagList;
 		ReorderableList instRList;
-		SerializedProperty playAtBulletBirth, patternTags, instructions, safetyForPlaymode;
+		ReorderableList delaylessList;
+		SerializedProperty playAtBulletBirth, compensateSmallWaits, deltaTimeDisplacement, patternTags, instructions, safetyForPlaymode;
+		SerializedProperty defaultInstructionDelay, delaylessInstructions, advancedFoldout;
 		SerializedProperty focusedInstruction;
 
 		// Styles and resources
@@ -66,6 +68,8 @@ namespace BulletPro.EditorScripts
 			base.OnEnable();
 
 			playAtBulletBirth = serializedObject.FindProperty("playAtBulletBirth");
+			compensateSmallWaits = serializedObject.FindProperty("compensateSmallWaits");
+			deltaTimeDisplacement = serializedObject.FindProperty("deltaTimeDisplacement");
 			patternTags = serializedObject.FindProperty("patternTags");
 			SerializedProperty parallelInstArray = serializedObject.FindProperty("instructionLists");
 			if (parallelInstArray.arraySize != 1)
@@ -77,6 +81,10 @@ namespace BulletPro.EditorScripts
 			safetyForPlaymode = serializedObject.FindProperty("safetyForPlaymode");
 			focusedInstruction = serializedObject.FindProperty("focusedInstruction");
 			
+			advancedFoldout = serializedObject.FindProperty("advancedFoldout");
+			delaylessInstructions = serializedObject.FindProperty("delaylessInstructions");
+			defaultInstructionDelay = serializedObject.FindProperty("defaultInstructionDelay");
+
 			disabledModuleStyle = "Label";
 			enabledModuleStyle = "Box";
 
@@ -109,6 +117,7 @@ namespace BulletPro.EditorScripts
 				}
 			}
 
+			SetupDelaylessInstructions();
 			SetupPossibleInstructions();
 			SetupInstructionList();
 			SetupTagList();
@@ -166,53 +175,24 @@ namespace BulletPro.EditorScripts
 			GUILayout.Space(8);
 			float oldLabelWidth = EditorGUIUtility.labelWidth;
 			EditorGUIUtility.labelWidth = 80;
+			EditorGUILayout.BeginHorizontal();
+			GUILayout.Space(0);
+			EditorGUILayout.BeginVertical();
 			tagList.DoLayoutList();
+			EditorGUILayout.EndVertical();
+			EditorGUILayout.EndHorizontal();
 			EditorGUIUtility.labelWidth = oldLabelWidth;
-			GUILayout.Space(8);
 
 			EditorGUI.BeginChangeCheck();
+			
+			GUILayout.Space(8);
 			currentLoopLevel = 0;
 			previousWasEndLoop = false;
 			instRList.DoLayoutList();
 			if (HasInfiniteLoop())
 			{
 				GUILayout.Space(8);
-				EditorGUILayout.HelpBox("The list above contains an endless loop with no enabled \"Wait\" instruction. Wait time needs to be greater than 0.", MessageType.Error);
-			}
-			GUILayout.Space(16);
-
-			if (EditorGUI.EndChangeCheck())
-			{
-				safetyForPlaymode.intValue++;
-				serializedObject.ApplyModifiedProperties();
-			}
-
-			if (EditorApplication.isPlaying)
-			{
-				GUILayout.Space(16);
-				EditorGUILayout.LabelField("Ingame debugging actions :");
-				EditorGUILayout.BeginHorizontal();
-				if (GUILayout.Button("Kill all bullets (except root emitter)", EditorStyles.miniButton))
-				{
-					BulletEmitter[] be = GameObject.FindObjectsOfType(typeof(BulletEmitter)) as BulletEmitter[];
-					if (be != null)
-						if (be.Length > 0)
-							for (int i = 0; i < be.Length; i++)
-								if (be[i].emitterProfile == pp.profile)
-									be[i].Kill(KillOptions.AllBulletsButRoot);
-				}
-
-				if (GUILayout.Button("Restart pattern", EditorStyles.miniButton))
-				{
-					safetyForPlaymode.intValue++;
-					serializedObject.ApplyModifiedProperties();
-				}
-				EditorGUILayout.EndHorizontal();
-			
-				GUILayout.Space(8);
-				EditorGUILayout.HelpBox("You can edit the instruction parameters in Play Mode.\n"+
-				"Whenever you do so, the pattern will restart.\n"+
-				"At any other time, you can also manually click the buttons above.", MessageType.Info);
+				EditorGUILayout.HelpBox("The list above contains an endless loop with no enabled \"Wait\" instruction with Wait time greater than 0.\nIf you don't use the Instruction Delay, loop iteration time will be as short as one frame.", MessageType.Warning);
 			}
 
 			if (focusedInstruction.intValue > -1 && focusedInstruction.intValue < instructions.arraySize)
@@ -277,7 +257,11 @@ namespace BulletPro.EditorScripts
 						EditorGUILayout.PropertyField(focusedInst.FindPropertyRelative("alpha"));
 					else if (pit == PatternInstructionType.SetLifetimeGradient)
 						EditorGUILayout.PropertyField(focusedInst.FindPropertyRelative("gradient"));
-					
+					else if (PromptsForCustomParam(pit))
+					{
+						EditorGUILayout.PropertyField(focusedInst.FindPropertyRelative("customParamName"));
+						EditorGUILayout.PropertyField(focusedInst.FindPropertyRelative(GetRelevantPropertyForCustomParam(pit)));						
+					}
 					#endregion
 					
 					SerializedProperty instructionTiming = focusedInst.FindPropertyRelative("instructionTiming");
@@ -294,6 +278,68 @@ namespace BulletPro.EditorScripts
 					EditorGUI.indentLevel -= 2;
 					EditorGUILayout.EndVertical();
 				}
+			}
+
+			GUILayout.Space(16);
+			EditorGUILayout.BeginHorizontal();
+			GUILayout.Space(8);
+			advancedFoldout.boolValue = EditorGUILayout.Foldout(advancedFoldout.boolValue, "Advanced Settings", true);
+			EditorGUILayout.EndHorizontal();
+			if (advancedFoldout.boolValue)
+			{
+				EditorGUI.indentLevel += 2;
+
+				EditorGUILayout.PropertyField(compensateSmallWaits, new GUIContent("Compensate Small Waits",
+				"If this is enabled and you have multiple Wait instructions that are really small (smaller than one frame), they will be skipped when necessary to simulate a higher framerate.\n"+
+				"If this is disabled, every Wait instruction will last at least one frame (16ms).\n"+
+				"Enabling this can incur a slight loss of accuracy, that can be recovered by checking \"Delta Time Displacement\" below."));
+
+				EditorGUILayout.PropertyField(deltaTimeDisplacement, new GUIContent("Delta Time Displacement", "If this is enabled, bullets fired by this Pattern will have their spawn point slightly offset in order to simulate different timesteps within a single frame.\n"+
+				"This can greatly improve overall pattern accuracy."));
+
+				EditorGUILayout.PropertyField(defaultInstructionDelay, new GUIContent("Instruction Delay", "If this is greater than zero, the pattern will wait this many seconds after every instruction, except those marked as \"delayless\" just below."));
+				EditorGUI.indentLevel -= 2;
+
+				EditorGUILayout.BeginHorizontal();
+				GUILayout.Space(28);
+				EditorGUILayout.BeginVertical();
+				delaylessList.DoLayoutList();
+				EditorGUILayout.EndVertical();
+				EditorGUILayout.EndHorizontal();
+			}
+
+			if (EditorGUI.EndChangeCheck())
+			{
+				safetyForPlaymode.intValue++;
+				serializedObject.ApplyModifiedProperties();
+			}
+
+			if (EditorApplication.isPlaying)
+			{
+				GUILayout.Space(16);
+				EditorGUILayout.LabelField("Ingame debugging actions :");
+				EditorGUILayout.BeginHorizontal();
+				if (GUILayout.Button("Kill all bullets (except root emitter)", EditorStyles.miniButton))
+				{
+					BulletEmitter[] be = GameObject.FindObjectsOfType(typeof(BulletEmitter)) as BulletEmitter[];
+					if (be != null)
+						if (be.Length > 0)
+							for (int i = 0; i < be.Length; i++)
+								if (be[i].emitterProfile == pp.profile)
+									be[i].Kill(KillOptions.AllBulletsButRoot);
+				}
+
+				if (GUILayout.Button("Restart pattern", EditorStyles.miniButton))
+				{
+					safetyForPlaymode.intValue++;
+					serializedObject.ApplyModifiedProperties();
+				}
+				EditorGUILayout.EndHorizontal();
+			
+				GUILayout.Space(8);
+				EditorGUILayout.HelpBox("You can edit the instruction parameters in Play Mode.\n"+
+				"Whenever you do so, the pattern will restart.\n"+
+				"At any other time, you can also manually click the buttons above.", MessageType.Info);
 			}
 			
 			ApplyAll();
@@ -438,11 +484,13 @@ namespace BulletPro.EditorScripts
 				else if (pit == PatternInstructionType.SetLifetimeGradient) uniqueProp = inst.FindPropertyRelative("gradient");
 				
 				else if (pit == PatternInstructionType.PlayPattern) uniqueProp = inst.FindPropertyRelative("patternTag");
+				else if (pit == PatternInstructionType.SetInstructionDelay) uniqueProp = inst.FindPropertyRelative("waitTime");
+				else if (pit == PatternInstructionType.SetRandomSeed) uniqueProp = inst.FindPropertyRelative("newRandomSeed");
 
 				EditorGUI.PropertyField(usableSpace, uniqueProp, GUIContent.none);
 
 				// Clamp some values
-				if (pit == PatternInstructionType.Wait)
+				if (pit == PatternInstructionType.Wait || pit == PatternInstructionType.SetInstructionDelay)
 					DynamicParameterUtility.ClampAboveZero(uniqueProp);
 			}
 			else if (PromptsForEnumPlusRect(pit))
@@ -517,6 +565,25 @@ namespace BulletPro.EditorScripts
 						EditorGUI.PropertyField(secondPropRect, secondProp, GUIContent.none);
 					}
 				}
+			}
+			else if (PromptsForCustomParam(pit))
+			{
+				SerializedProperty nameProp = inst.FindPropertyRelative("customParamName");
+				SerializedProperty customProp = inst.FindPropertyRelative(GetRelevantPropertyForCustomParam(pit));
+
+				float spaceBetween = 10f;
+				float halfWidth = (usableSpace.width-spaceBetween)*0.5f;
+				Rect namePropRect = new Rect(usableSpace.x, usableSpace.y, halfWidth, usableSpace.height);
+				Rect customPropRect = new Rect(usableSpace.x + halfWidth + spaceBetween, usableSpace.y, halfWidth, usableSpace.height);	
+
+				if (pit == PatternInstructionType.SetCustomAnimationCurve)
+				{
+					SerializedProperty forceZeroToOne = customProp.FindPropertyRelative("forceZeroToOne");
+					forceZeroToOne.boolValue = false;
+				}
+
+				EditorGUI.PropertyField(namePropRect, nameProp, GUIContent.none);
+				EditorGUI.PropertyField(customPropRect, customProp, GUIContent.none);
 			}
 			else if (pit == PatternInstructionType.Shoot)
 			{
@@ -691,6 +758,33 @@ namespace BulletPro.EditorScripts
 			};
 		}
 
+		// Sets up the reorderable list for delaylessInstructions
+		void SetupDelaylessInstructions()
+		{
+			delaylessList = new ReorderableList(serializedObject, delaylessInstructions, true, true, true, true);
+
+			delaylessList.drawHeaderCallback = (Rect rect) =>
+			{
+				EditorGUI.LabelField(rect, "Instruction types that won't trigger a delay:");		
+			};
+			delaylessList.drawElementCallback = (Rect rect, int index, bool isActive, bool isFocused) =>
+			{
+				rect.y += 2;
+				rect.height = EditorGUIUtility.singleLineHeight;
+				EditorGUI.PropertyField(rect, delaylessInstructions.GetArrayElementAtIndex(index), GUIContent.none);
+			};
+			delaylessList.onRemoveCallback += (ReorderableList list) =>
+			{
+				delaylessInstructions.DeleteArrayElementAtIndex(list.index);
+			};
+			delaylessList.onAddCallback += (ReorderableList list) =>
+			{
+				delaylessInstructions.arraySize++;
+				delaylessInstructions.GetArrayElementAtIndex(delaylessInstructions.arraySize-1).enumValueIndex = 0;
+				serializedObject.ApplyModifiedProperties();
+			};
+		}
+
 		// Sets up the reorderable list for the instruction stack
 		void SetupInstructionList()
 		{
@@ -714,18 +808,21 @@ namespace BulletPro.EditorScripts
 				ApplyAll();
 			};
 			instRList.onAddCallback += SetupNewInstruction;
+			
+			// The sheer existence of SetRect and SetBounds messes with UI, hinders its performance, and nobody will ever need them 
 			/* *
-			rlist.elementHeightCallback += (int idx) =>
+			instRList.elementHeightCallback += (int idx) =>
 			{
-				//SerializedProperty inst = instructions.GetArrayElementAtIndex(idx);
+				SerializedProperty inst = instructions.GetArrayElementAtIndex(idx);
 				
-				float numberOfLines = 2;
-				float offset = -4;
+				float numberOfLines = 1;
+				float offset = 0;
 
-				//if (inst.FindPropertyRelative("instructionType").enumValueIndex == (int)PatternInstructionType.NameRandomShot)
-				//	numberOfLines += inst.FindPropertyRelative("possibleShots").arraySize + 1;
+				PatternInstructionType instType = (PatternInstructionType)inst.FindPropertyRelative("instructionType").enumValueIndex;
+				if (instType == PatternInstructionType.SetCustomRect) numberOfLines++;
+				if (instType == PatternInstructionType.SetCustomBounds) numberOfLines++;
 				
-				return rlist.elementHeight * numberOfLines + offset;
+				return instRList.elementHeight * numberOfLines + offset;
 			};
 			/* */
 		}
@@ -798,6 +895,9 @@ namespace BulletPro.EditorScripts
 			DynamicParameterUtility.SetFixedFloat(inst.FindPropertyRelative("alpha"), 1f, true);
 			DynamicParameterUtility.SetFixedGradient(inst.FindPropertyRelative("gradient"), BulletProExtensions.DefaultGradient(), true);
 
+			// random seed
+			DynamicParameterUtility.SetFixedFloat(inst.FindPropertyRelative("newRandomSeed"), 0f, true);
+
 			// params for MicroActions
 			inst.FindPropertyRelative("instructionTiming").enumValueIndex = (int)InstructionTiming.Instantly;
 			DynamicParameterUtility.SetFixedFloat(inst.FindPropertyRelative("instructionDuration"), 1f, true);
@@ -809,6 +909,22 @@ namespace BulletPro.EditorScripts
 			inst.FindPropertyRelative("curveAffected").enumValueIndex = (int)PatternCurveType.None;
 			inst.FindPropertyRelative("canBeDoneOverTime").boolValue = false;
 			inst.FindPropertyRelative("displayName").stringValue = "Wait";
+
+			// custom params
+			inst.FindPropertyRelative("customParamName").stringValue = "_PowerLevel";
+			DynamicParameterUtility.SetFixedInt(inst.FindPropertyRelative("customInt"), 0, true);
+			DynamicParameterUtility.SetFixedFloat(inst.FindPropertyRelative("customFloat"), 0f, true);
+			DynamicParameterUtility.SetFixedFloat(inst.FindPropertyRelative("customSlider01"), 0f, true);
+			DynamicParameterUtility.SetFixedVector2(inst.FindPropertyRelative("customVector2"), Vector2.zero, true);
+			DynamicParameterUtility.SetFixedVector3(inst.FindPropertyRelative("customVector3"), Vector3.zero, true);
+			DynamicParameterUtility.SetFixedVector4(inst.FindPropertyRelative("customVector4"), Vector4.zero, true);
+			DynamicParameterUtility.SetFixedColor(inst.FindPropertyRelative("customColor"), Color.black, true);
+			DynamicParameterUtility.SetFixedGradient(inst.FindPropertyRelative("customGradient"), BulletProExtensions.DefaultGradient(), true);
+			DynamicParameterUtility.SetFixedBool(inst.FindPropertyRelative("customBool"), false, true);
+			DynamicParameterUtility.SetFixedString(inst.FindPropertyRelative("customString"), "", true);
+			DynamicParameterUtility.SetFixedAnimationCurve(inst.FindPropertyRelative("customAnimationCurve"), AnimationCurve.EaseInOut(0,0,1,1), true);
+			DynamicParameterUtility.SetFixedObject(inst.FindPropertyRelative("customObjectReference"), null, true);
+			DynamicParameterUtility.SetFixedRect(inst.FindPropertyRelative("customRect"), Rect.zero, true);
 
 			ApplyAll();
 		}
@@ -869,6 +985,7 @@ namespace BulletPro.EditorScripts
 				new StringToEnumInstruction("Flow Control/Wait", "Wait", PatternInstructionType.Wait),
 				new StringToEnumInstruction("Flow Control/Begin Loop", "Begin Loop", PatternInstructionType.BeginLoop),
 				new StringToEnumInstruction("Flow Control/End Loop", "End Loop", PatternInstructionType.EndLoop),
+				new StringToEnumInstruction("Flow Control/Set Instruction Delay", "Set Instr. Delay", PatternInstructionType.SetInstructionDelay),
 				new StringToEnumInstruction("Flow Control/Play Pattern", "Play Pattern", PatternInstructionType.PlayPattern),
 				new StringToEnumInstruction("Flow Control/Pause Pattern", "Pause Pattern", PatternInstructionType.PausePattern),
 				new StringToEnumInstruction("Flow Control/Stop Pattern", "Stop Pattern", PatternInstructionType.StopPattern),
@@ -900,6 +1017,54 @@ namespace BulletPro.EditorScripts
 				new StringToEnumInstruction("Graphics/Alpha/Add Alpha", "Add Sprite Alpha", PatternInstructionType.AddAlpha),
 				new StringToEnumInstruction("Graphics/Alpha/Multiply Alpha", "Multiply Sprite Alpha", PatternInstructionType.MultiplyAlpha),
 				new StringToEnumInstruction("Graphics/Set Lifetime Gradient", "Set Lifetime Gradient", PatternInstructionType.SetLifetimeGradient),
+				
+				new StringToEnumInstruction("Custom Params/Number/Integer/Set", "Set Custom Int", PatternInstructionType.SetCustomInteger),
+				new StringToEnumInstruction("Custom Params/Number/Integer/Add", "Add Custom Int", PatternInstructionType.AddCustomInteger),
+				new StringToEnumInstruction("Custom Params/Number/Integer/Multiply", "Multiply Custom Int", PatternInstructionType.MultiplyCustomInteger),
+				new StringToEnumInstruction("Custom Params/Number/Float/Set", "Set Custom Float", PatternInstructionType.SetCustomFloat),
+				new StringToEnumInstruction("Custom Params/Number/Float/Add", "Add Custom Float", PatternInstructionType.AddCustomFloat),
+				new StringToEnumInstruction("Custom Params/Number/Float/Multiply", "Multiply Custom Float", PatternInstructionType.MultiplyCustomFloat),
+				new StringToEnumInstruction("Custom Params/Number/Slider 01/Set", "Set Custom Slider 01", PatternInstructionType.SetCustomSlider01),
+				new StringToEnumInstruction("Custom Params/Number/Slider 01/Add", "Add Custom Slider 01", PatternInstructionType.AddCustomSlider01),
+				new StringToEnumInstruction("Custom Params/Number/Slider 01/Multiply", "Multiply Custom Slider 01", PatternInstructionType.MultiplyCustomSlider01),
+				new StringToEnumInstruction("Custom Params/Number/Double/Set", "Set Custom Double", PatternInstructionType.SetCustomDouble),
+				new StringToEnumInstruction("Custom Params/Number/Double/Add", "Add Custom Double", PatternInstructionType.AddCustomDouble),
+				new StringToEnumInstruction("Custom Params/Number/Double/Multiply", "Multiply Custom Double", PatternInstructionType.MultiplyCustomDouble),
+				new StringToEnumInstruction("Custom Params/Number/Long/Set", "Set Custom Long", PatternInstructionType.SetCustomLong),
+				new StringToEnumInstruction("Custom Params/Number/Long/Add", "Add Custom Long", PatternInstructionType.AddCustomLong),
+				new StringToEnumInstruction("Custom Params/Number/Long/Multiply", "Multiply Custom Long", PatternInstructionType.MultiplyCustomLong),
+				
+				new StringToEnumInstruction("Custom Params/Vector/Vector2/Set", "Set Custom Vector2", PatternInstructionType.SetCustomVector2),
+				new StringToEnumInstruction("Custom Params/Vector/Vector2/Add", "Add Custom Vector2", PatternInstructionType.AddCustomVector2),
+				new StringToEnumInstruction("Custom Params/Vector/Vector2/Multiply", "Multiply Custom Vector2", PatternInstructionType.MultiplyCustomVector2),
+				new StringToEnumInstruction("Custom Params/Vector/Vector3/Set", "Set Custom Vector3", PatternInstructionType.SetCustomVector3),
+				new StringToEnumInstruction("Custom Params/Vector/Vector3/Add", "Add Custom Vector3", PatternInstructionType.AddCustomVector3),
+				new StringToEnumInstruction("Custom Params/Vector/Vector3/Multiply", "Multiply Custom Vector3", PatternInstructionType.MultiplyCustomVector3),
+				new StringToEnumInstruction("Custom Params/Vector/Vector4/Set", "Set Custom Vector4", PatternInstructionType.SetCustomVector4),
+				new StringToEnumInstruction("Custom Params/Vector/Vector4/Add", "Add Custom Vector4", PatternInstructionType.AddCustomVector4),
+				new StringToEnumInstruction("Custom Params/Vector/Vector4/Multiply", "Multiply Custom Vector4", PatternInstructionType.MultiplyCustomVector4),
+
+				new StringToEnumInstruction("Custom Params/Color/Set", "Set Custom Color", PatternInstructionType.SetCustomColor),
+				new StringToEnumInstruction("Custom Params/Color/Add", "Add Custom Color", PatternInstructionType.AddCustomColor),
+				new StringToEnumInstruction("Custom Params/Color/Multiply", "Multiply Custom Color", PatternInstructionType.MultiplyCustomColor),
+				new StringToEnumInstruction("Custom Params/Color/Overlay", "Overlay Custom Color", PatternInstructionType.OverlayCustomColor),
+
+				new StringToEnumInstruction("Custom Params/String/Set", "Set Custom String", PatternInstructionType.SetCustomString),
+				new StringToEnumInstruction("Custom Params/String/Append", "Append To Custom String", PatternInstructionType.AppendToCustomString),
+
+				new StringToEnumInstruction("Custom Params/Other/Set Bool", "Set Custom Bool", PatternInstructionType.SetCustomBool),
+				new StringToEnumInstruction("Custom Params/Other/Set Animation Curve", "Set Custom Animation Curve", PatternInstructionType.SetCustomAnimationCurve),
+				new StringToEnumInstruction("Custom Params/Other/Set Gradient", "Set Custom Gradient", PatternInstructionType.SetCustomGradient),
+				new StringToEnumInstruction("Custom Params/Other/Set Quaternion", "Set Custom Quaternion", PatternInstructionType.SetCustomQuaternion),
+				new StringToEnumInstruction("Custom Params/Other/Set Object", "Set Custom Object", PatternInstructionType.SetCustomObject),
+				// The sheer existence of SetRect and SetBounds messes with the UI, hinders its performance, and nobody will ever need them				
+				//new StringToEnumInstruction("Custom Params/Other/Set Rect", "Set Custom Rect", PatternInstructionType.SetCustomRect),
+				//new StringToEnumInstruction("Custom Params/Other/Set Bounds", "Set Custom Bounds", PatternInstructionType.SetCustomBounds)
+
+				new StringToEnumInstruction("Random Seed/Freeze", "Freeze Rndm Seed", PatternInstructionType.FreezeRandomSeed),
+				new StringToEnumInstruction("Random Seed/Unfreeze", "Unfreeze R. Seed", PatternInstructionType.UnfreezeRandomSeed),
+				new StringToEnumInstruction("Random Seed/Reroll", "Reroll Rndm Seed", PatternInstructionType.RerollRandomSeed),
+				new StringToEnumInstruction("Random Seed/Manual Set", "Set Random Seed", PatternInstructionType.SetRandomSeed)
 			};
 
 			possibleCurveInstructions = new StringToEnumInstruction[]
@@ -1033,41 +1198,35 @@ namespace BulletPro.EditorScripts
 
 		public static bool CanBeMadeIntroMicroAction(PatternInstructionType instType)
 		{
-			if (instType == PatternInstructionType.TranslateGlobal) return true;
-			if (instType == PatternInstructionType.TranslateLocal) return true;
-			if (instType == PatternInstructionType.SetWorldPosition) return true;
-			if (instType == PatternInstructionType.SetLocalPosition) return true;
-			if (instType == PatternInstructionType.SetSpeed) return true;
-			if (instType == PatternInstructionType.MultiplySpeed) return true;
+			int i = (int)instType;
 
-			if (instType == PatternInstructionType.Rotate) return true;
-			if (instType == PatternInstructionType.SetWorldRotation) return true;
-			if (instType == PatternInstructionType.SetLocalRotation) return true;
-			if (instType == PatternInstructionType.SetAngularSpeed) return true;
-			if (instType == PatternInstructionType.MultiplyAngularSpeed) return true;
+			// Transform : position, rotation, scale
+			if ((i >= (int)PatternInstructionType.TranslateGlobal)
+				&& (i <= (int)PatternInstructionType.MultiplyScale))
+				return true;
 
-			if (instType == PatternInstructionType.SetScale) return true;
-			if (instType == PatternInstructionType.MultiplyScale) return true;
-
+			// Homing
 			if (instType == PatternInstructionType.TurnToTarget) return true;
 			if (instType == PatternInstructionType.SetHomingSpeed) return true;
 			if (instType == PatternInstructionType.MultiplyHomingSpeed) return true;
 
-			if (instType == PatternInstructionType.SetCurveValue) return true;
-			if (instType == PatternInstructionType.SetPeriod) return true;
-			if (instType == PatternInstructionType.MultiplyPeriod) return true;
-			if (instType == PatternInstructionType.SetCurveRawTime) return true;
-			if (instType == PatternInstructionType.SetCurveRatio) return true;
+			// Curves
+			if ((i >= (int)PatternInstructionType.SetCurveValue)
+				&& (i != (int)PatternInstructionType.SetWrapMode)
+				&& (i <= (int)PatternInstructionType.SetCurveRatio))
+				return true;
 
-			if (instType == PatternInstructionType.SetColor) return true;
-			if (instType == PatternInstructionType.AddColor) return true;
-			if (instType == PatternInstructionType.MultiplyColor) return true;
-			if (instType == PatternInstructionType.OverlayColor) return true;
-			if (instType == PatternInstructionType.SetAlpha) return true;
-			if (instType == PatternInstructionType.AddAlpha) return true;
-			if (instType == PatternInstructionType.MultiplyAlpha) return true;
-			if (instType == PatternInstructionType.SetLifetimeGradient) return true;
+			// Colors
+			if ((i >= (int)PatternInstructionType.SetColor)
+				&& (i <= (int)PatternInstructionType.SetLifetimeGradient))
+				return true;
 
+			// Custom parameters
+			if ((i >= (int)PatternInstructionType.SetCustomInteger)
+				&& (i < (int)PatternInstructionType.SetCustomGradient)) // for custom params, gradients are unspported as MicroActions 
+				return true;
+
+			// The rest
 			return false;
 		}
 
@@ -1112,6 +1271,8 @@ namespace BulletPro.EditorScripts
 			if (instType == PatternInstructionType.SetAlpha) return true;
 			if (instType == PatternInstructionType.AddAlpha) return true;
 			if (instType == PatternInstructionType.SetCurveRawTime) return true;
+			if (instType == PatternInstructionType.SetRandomSeed) return true;
+			if (instType == PatternInstructionType.SetInstructionDelay) return true;
 
 			return false;
 		}
@@ -1166,6 +1327,85 @@ namespace BulletPro.EditorScripts
 			if (instType == PatternInstructionType.StopPattern) return true;
 
 			return false;
+		}
+
+		public static bool PromptsForCustomParam(PatternInstructionType instType)
+		{
+			int i = (int)instType;
+
+			if ((i >= (int)PatternInstructionType.SetCustomInteger)
+				&& (i <= (int)PatternInstructionType.SetCustomBounds))
+				return true;
+
+			else return false;
+		}
+
+		public static string GetRelevantPropertyForCustomParam(PatternInstructionType instType)
+		{
+			if (instType == PatternInstructionType.SetCustomInteger
+				|| instType == PatternInstructionType.AddCustomInteger
+				|| instType == PatternInstructionType.MultiplyCustomInteger)
+				return "customInt";
+			else if (instType == PatternInstructionType.SetCustomFloat
+				|| instType == PatternInstructionType.AddCustomFloat
+				|| instType == PatternInstructionType.MultiplyCustomFloat)
+				return "customFloat";
+			else if (instType == PatternInstructionType.MultiplyCustomVector2
+				|| instType == PatternInstructionType.MultiplyCustomVector3
+				|| instType == PatternInstructionType.MultiplyCustomVector4
+				|| instType == PatternInstructionType.MultiplyCustomSlider01)
+				return "factor";
+			else if (instType == PatternInstructionType.SetCustomSlider01
+				|| instType == PatternInstructionType.AddCustomSlider01)
+				//|| instType == PatternInstructionType.MultiplyCustomSlider01)
+				return "customSlider01";
+			else if (instType == PatternInstructionType.SetCustomDouble
+				|| instType == PatternInstructionType.AddCustomDouble
+				|| instType == PatternInstructionType.MultiplyCustomDouble)
+				return "customDouble";
+			else if (instType == PatternInstructionType.SetCustomLong
+				|| instType == PatternInstructionType.AddCustomLong
+				|| instType == PatternInstructionType.MultiplyCustomLong)
+				return "customLong";
+			else if (instType == PatternInstructionType.SetCustomVector2
+				|| instType == PatternInstructionType.AddCustomVector2)
+				//|| instType == PatternInstructionType.MultiplyCustomVector2)
+				return "customVector2";
+			else if (instType == PatternInstructionType.SetCustomVector3
+				|| instType == PatternInstructionType.AddCustomVector3)
+				//|| instType == PatternInstructionType.MultiplyCustomVector3)
+				return "customVector3";
+			else if (instType == PatternInstructionType.SetCustomVector4
+				|| instType == PatternInstructionType.AddCustomVector4)
+				//|| instType == PatternInstructionType.MultiplyCustomVector4)
+				return "customVector4";
+			else if (instType == PatternInstructionType.SetCustomColor
+				|| instType == PatternInstructionType.AddCustomColor
+				|| instType == PatternInstructionType.OverlayCustomColor
+				|| instType == PatternInstructionType.MultiplyCustomColor)
+				return "customColor";
+			else if (instType == PatternInstructionType.SetCustomGradient)
+				return "customGradient";
+			else if (instType == PatternInstructionType.SetCustomBool)
+				return "customBool";
+			else if (instType == PatternInstructionType.SetCustomString
+				|| instType == PatternInstructionType.AppendToCustomString)
+				return "customString";
+			else if (instType == PatternInstructionType.SetCustomAnimationCurve)
+				return "customAnimationCurve";
+			else if (instType == PatternInstructionType.SetCustomObject)
+				return "customObjectReference";
+			else if (instType == PatternInstructionType.SetCustomQuaternion)
+				return "customQuaternion";
+			
+			// Cut for ensuring UI consistency, can be restored if a user ever needs it
+			else if (instType == PatternInstructionType.SetCustomRect)
+				return "customRect";
+			else if (instType == PatternInstructionType.SetCustomBounds)
+				return "customBounds";
+
+			Debug.LogError("BulletPro Error: invalid Instruction Type.");
+			return "";
 		}
 
 		#endregion

@@ -31,7 +31,7 @@ namespace BulletPro.EditorScripts
 		SerializedProperty maxSimultaneousCollisionsPerFrame, deathTiming;
 		SerializedProperty preview, shapeFoldout, collisionTagsFoldout;
 		SerializedProperty homing, homingAngularSpeed, lookAtTargetAtSpawn, spawnOnTarget, targetRefreshInterval, preferredTarget, homingAngleThreshold;
-		SerializedProperty homingTags, useSameTagsAsCollision, homingTagsFoldout;
+		SerializedProperty chaseMode, homingTags, useSameTagsAsCollision, homingTagsFoldout;
 		SerializedProperty behaviourPrefabs;
 		SerializedProperty delaySpawn, timeBeforeSpawn, playAudioAtSpawn, audioClip;
 		SerializedProperty animFoldout, animationClip, animationMovementSpace;
@@ -177,6 +177,7 @@ namespace BulletPro.EditorScripts
 			preferredTarget = serializedObject.FindProperty("preferredTarget");
 			homingAngleThreshold = serializedObject.FindProperty("homingAngleThreshold");
 
+			chaseMode = serializedObject.FindProperty("chaseMode");
 			homingTags = serializedObject.FindProperty("homingTags");
 			useSameTagsAsCollision = serializedObject.FindProperty("useSameTagsAsCollision");
 			homingTagsFoldout = serializedObject.FindProperty("homingTagsFoldout");
@@ -352,7 +353,7 @@ namespace BulletPro.EditorScripts
 			enabledModuleStyle = "Box";
 			baseGUIColor = GUI.color;
 			enabledButtonColor = EditorGUIUtility.isProSkin ? new Color(0f, 1.2f, 1f, 1f) : new Color(0.8f, 1f, 0.8f, 1f);
-			disabledButtonColor = EditorGUIUtility.isProSkin ? new Color(1f, 0.95f, 0.95f, 1f) : new Color(0.8f, 0f, 0f, 1f);
+			disabledButtonColor = EditorGUIUtility.isProSkin ? new Color(1f, 0.95f, 0.95f, 1f) : new Color(1f, 0.95f, 0.95f, 1f);
 			currentButtonColor = EditorGUIUtility.isProSkin ? new Color(0.6f, 1f, 1.5f, 1f) : new Color(0.6f, 0.7f, 1f, 1f);
 			currentDisabledButtonColor = EditorGUIUtility.isProSkin ? new Color(1.1f, 0.7f, 1.2f, 1f) : new Color(0.6f, 0f, 0.6f, 1f);
 			//enabledButtonColor = new Color(0.85f, 1f, 0.75f, 1f);
@@ -1119,11 +1120,18 @@ namespace BulletPro.EditorScripts
 				EditorGUI.indentLevel--;
 				EditorGUILayout.LabelField("Continuously chasing target :", EditorStyles.boldLabel);
 				EditorGUI.indentLevel++;
+				EditorGUILayout.PropertyField(chaseMode, new GUIContent("Chase Mode", "Do Not Chase: disables chasing."
+				+"\nStandard: will chase target position."
+				+"\nPredictive: will anticipate target trajectory, and chase the estimated optimal point in front of target."));
+				EditorGUI.BeginDisabledGroup(chaseMode.enumValueIndex == (int)ChaseMode.DoNotChase);
 				EditorGUILayout.PropertyField(homingAngularSpeed, new GUIContent("Homing Angular Speed", "How fast does the bullet turn to its target?"));
 				EditorGUI.BeginChangeCheck();
 				EditorGUILayout.PropertyField(homingAngleThreshold, new GUIContent("Homing Angle Threshold", "Below a certain delta, bullet will stop turning to its target, to avoid ugly shaking."));
 				if (EditorGUI.EndChangeCheck())
 					DynamicParameterUtility.ClampAboveZero(homingAngleThreshold);
+				EditorGUI.EndDisabledGroup();
+				if (chaseMode.enumValueIndex == (int)ChaseMode.Predictive)
+					EditorGUILayout.HelpBox("Predictive Chasing can incur slightly heavier calculations.\nIf you target lower-end devices, it is advised not to have hundreds of bullets that use it simultaneously.", MessageType.Info);
 
 				GUILayout.Space(12);
 				EditorGUI.indentLevel--;

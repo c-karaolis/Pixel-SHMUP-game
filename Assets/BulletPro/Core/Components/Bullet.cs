@@ -83,6 +83,7 @@ namespace BulletPro
 		#region editor-only (gizmos)
 
 #if UNITY_EDITOR
+		public bool useDefaultGizmoColor = true;
 		public Color gizmoColor = Color.yellow;
 		void OnDrawGizmos()
 		{
@@ -98,7 +99,7 @@ namespace BulletPro
 
 			Matrix4x4 oldMat = Gizmos.matrix;
 			Gizmos.matrix = self.localToWorldMatrix;
-			Gizmos.color = gizmoColor;
+			Gizmos.color = useDefaultGizmoColor ? BulletProSettings.instance.defaultBulletGizmoColor : gizmoColor;
 			foreach (BulletCollider bc in bcs)
 			{
 				if (bc.colliderType == BulletColliderType.Line)

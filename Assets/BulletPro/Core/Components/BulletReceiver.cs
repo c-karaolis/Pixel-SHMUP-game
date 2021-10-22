@@ -48,6 +48,7 @@ namespace BulletPro
 		public bool parentSyncFoldout;
 		public bool collisionTagsFoldout;
 		public bool advancedEventsFoldout;
+		public bool useDefaultGizmoColor = true;
 		public Color gizmoColor = Color.black;
 		public float gizmoZOffset = 0f;
 		#endif
@@ -67,7 +68,7 @@ namespace BulletPro
 			//float avgScale = thisTransform.lossyScale.x * 0.5f + thisTransform.lossyScale.y * 0.5f;
 			// there's no point in taking scale.x into account
 			float avgScale = self.lossyScale.y;
-			Gizmos.color = gizmoColor;
+			Gizmos.color = useDefaultGizmoColor ? BulletProSettings.instance.defaultReceiverGizmoColor : gizmoColor;			
 			Vector3 trPos = self.position;
 			if (gizmoZOffset != 0) trPos += self.lossyScale.z * gizmoZOffset * self.forward;
 			if (hitboxOffset.x != 0) trPos += self.lossyScale.x * hitboxOffset.x * self.right;

@@ -7,36 +7,39 @@ using BulletPro;
 // But it's only used in the example scene and I recommend writing a better one that fits your needs.
 // Author : Simon Albou <albou.simon@gmail.com>
 
-public class BPDemo_ExplodeOnHit : MonoBehaviour {
-
-	public ParticleSystem explosionFX;
-	float timestamp;
-	public float explosionDuration = 0.2f;
-
-	public void Awake()
+namespace BulletPro.DemoScripts
+{
+	public class BPDemo_ExplodeOnHit : MonoBehaviour
 	{
-		ParticleSystem.EmissionModule em = explosionFX.emission;
-		em.enabled = false;
-		timestamp = -10f;
-		explosionFX.Play();
-	}
+		public ParticleSystem explosionFX;
+		float timestamp;
+		public float explosionDuration = 0.2f;
 
-	void Update()
-	{
-		if (Time.time - timestamp > explosionDuration)
+		public void Awake()
 		{
 			ParticleSystem.EmissionModule em = explosionFX.emission;
 			em.enabled = false;
-			enabled = false;
+			timestamp = -10f;
+			explosionFX.Play();
 		}
-	}
 
-	public void LaunchExplosion(Bullet bullet, Vector3 position)
-	{
-		explosionFX.transform.position = position;
-		ParticleSystem.EmissionModule em = explosionFX.emission;
-		em.enabled = true;
-		timestamp = Time.time;
-		enabled = true;
+		void Update()
+		{
+			if (Time.time - timestamp > explosionDuration)
+			{
+				ParticleSystem.EmissionModule em = explosionFX.emission;
+				em.enabled = false;
+				enabled = false;
+			}
+		}
+
+		public void LaunchExplosion(Bullet bullet, Vector3 position)
+		{
+			explosionFX.transform.position = position;
+			ParticleSystem.EmissionModule em = explosionFX.emission;
+			em.enabled = true;
+			timestamp = Time.time;
+			enabled = true;
+		}
 	}
 }

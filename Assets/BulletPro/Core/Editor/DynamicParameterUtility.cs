@@ -624,6 +624,48 @@ namespace BulletPro.EditorScripts
             rootValue.FindPropertyRelative("defaultValue").vector2Value = newVal;
         }
 
+        public static void SetFixedVector3(SerializedProperty prop, Vector3 newVal, bool initializeIfNeeded=false)
+        {
+            SerializedProperty valueTree = null;
+            if (!IsInitialized(prop))
+            {
+                if (initializeIfNeeded) valueTree = InitializeTree(prop);
+                else return;
+            }
+            else valueTree = prop.FindPropertyRelative("valueTree");
+            SerializedProperty rootValue = valueTree.GetArrayElementAtIndex(1);
+            rootValue.FindPropertyRelative("settings").FindPropertyRelative("valueType").enumValueIndex = (int)DynamicParameterSorting.Fixed;
+            rootValue.FindPropertyRelative("defaultValue").vector3Value = newVal;
+        }
+
+        public static void SetFixedVector4(SerializedProperty prop, Vector4 newVal, bool initializeIfNeeded=false)
+        {
+            SerializedProperty valueTree = null;
+            if (!IsInitialized(prop))
+            {
+                if (initializeIfNeeded) valueTree = InitializeTree(prop);
+                else return;
+            }
+            else valueTree = prop.FindPropertyRelative("valueTree");
+            SerializedProperty rootValue = valueTree.GetArrayElementAtIndex(1);
+            rootValue.FindPropertyRelative("settings").FindPropertyRelative("valueType").enumValueIndex = (int)DynamicParameterSorting.Fixed;
+            rootValue.FindPropertyRelative("defaultValue").vector4Value = newVal;
+        }
+
+        public static void SetFixedRect(SerializedProperty prop, Rect newVal, bool initializeIfNeeded=false)
+        {
+            SerializedProperty valueTree = null;
+            if (!IsInitialized(prop))
+            {
+                if (initializeIfNeeded) valueTree = InitializeTree(prop);
+                else return;
+            }
+            else valueTree = prop.FindPropertyRelative("valueTree");
+            SerializedProperty rootValue = valueTree.GetArrayElementAtIndex(1);
+            rootValue.FindPropertyRelative("settings").FindPropertyRelative("valueType").enumValueIndex = (int)DynamicParameterSorting.Fixed;
+            rootValue.FindPropertyRelative("defaultValue").rectValue = newVal;
+        }
+
         public static void SetFixedBool(SerializedProperty prop, bool newVal, bool initializeIfNeeded=false)
         {
             SerializedProperty valueTree = null;

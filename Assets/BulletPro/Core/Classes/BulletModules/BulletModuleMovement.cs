@@ -62,7 +62,8 @@ namespace BulletPro
 		public override void Disable() { base.Disable(); }
 
 		// Called in Bullet.Update()
-		public void Update()
+		public void Update() => Update(Time.deltaTime);
+		public void Update(float timestep)
 		{
 			// enabled spawn module means we're still waiting for the actual spawn
 			if (moduleSpawn.isEnabled) return;
@@ -73,14 +74,14 @@ namespace BulletPro
 				Vector3 move = Vector3.zero;
 				if (moveXFromAnim.enabled)
 				{
-					moveXFromAnim.Update();
+					moveXFromAnim.Update(timestep);
 					float cr = moveXFromAnim.GetCurveResult();
 					move.x = cr - prevAnimValues.x;
 					prevAnimValues.x = cr;
 				}
 				if (moveYFromAnim.enabled)
 				{
-					moveYFromAnim.Update();
+					moveYFromAnim.Update(timestep);
 					float cr = moveYFromAnim.GetCurveResult();
 					move.y = cr - prevAnimValues.y;
 					prevAnimValues.y = cr;
@@ -92,18 +93,18 @@ namespace BulletPro
 			{
 				if (speedOverLifetime.enabled)
 				{
-					speedOverLifetime.Update();
+					speedOverLifetime.Update(timestep);
 					currentSpeed = baseSpeed * speedOverLifetime.GetCurveResult();
 				}
 				else currentSpeed = baseSpeed;
-				Translate(Vector3.up * currentSpeed * Time.deltaTime, Space.Self);
+				Translate(Vector3.up * currentSpeed * timestep, Space.Self);
 			}
 
 			// rotation if driven by an AnimationClip
 			if (rotateFromAnim.enabled)
 			{
 				float angle = 0;
-				rotateFromAnim.Update();
+				rotateFromAnim.Update(timestep);
 				float cr = rotateFromAnim.GetCurveResult();
 				angle = cr - prevAnimValues.z;
 				prevAnimValues.z = cr;
@@ -114,18 +115,18 @@ namespace BulletPro
 			{
 				if (angularSpeedOverLifetime.enabled)
 				{
-					angularSpeedOverLifetime.Update();
+					angularSpeedOverLifetime.Update(timestep);
 					currentAngularSpeed = baseAngularSpeed * angularSpeedOverLifetime.GetCurveResult();
 				}
 				else currentAngularSpeed = baseAngularSpeed;
-				Rotate(currentAngularSpeed * Time.deltaTime);
+				Rotate(currentAngularSpeed * timestep);
 			}
 
 			// scale if driven by simple values
 			if (scaleFromAnim.enabled)
 			{
 				float newScale = 1;
-				scaleFromAnim.Update();
+				scaleFromAnim.Update(timestep);
 				float cr = scaleFromAnim.GetCurveResult();
 				newScale = cr - prevAnimValues.w;
 				prevAnimValues.w = cr;
@@ -135,7 +136,7 @@ namespace BulletPro
 			{
 				if (scaleOverLifetime.enabled)
 				{
-					scaleOverLifetime.Update();
+					scaleOverLifetime.Update(timestep);
 					currentScale = baseScale * scaleOverLifetime.GetCurveResult();
 				}
 				else currentScale = baseScale;
@@ -263,6 +264,17 @@ namespace BulletPro
 			self.Rotate(Vector3.forward, angle, Space.Self);
 		}
 
+		// Performs, in a single call, the movement and rotation that would have been applied over X seconds.
+		// A higher value of iterations will provide higher accuracy, at the cost of multiple Update calls.
+		public void SimulateMovementOverTime(float timestep, int iterations=3)
+		{
+			if (iterations < 1) iterations = 1;
+			if (iterations > 10) iterations = 10; // capped for performance
+			float timestepPerIteration = timestep/(float)iterations;
+			for (int i = 0; i < iterations; i++)
+				Update(timestepPerIteration);
+		}
+
 		// Look at a certain transform, as if homing
 		public void LookAt(Transform target, float ratio=1)
 		{
@@ -271,7 +283,7 @@ namespace BulletPro
 			Rotate(GetAngleTo(target, ratio));
 		}
 
-		// Look at a certain position, as if homing
+		// Overload with Vector3 instead of Transform
 		public void LookAt(Vector3 target, float ratio=1)
 		{
 			if (ratio == 0) return;
@@ -284,16 +296,76 @@ namespace BulletPro
 			if (!target) return 0;
 			return GetAngleTo(target.position, ratio);
 		}
+		
+		// Overload with Vector3 instead of Transform
 		public float GetAngleTo(Vector3 target, float ratio=1)
 		{
-			Vector2 diff = target - self.position;
+			if (target == self.position) return 0;
+
+			Vector2 diff = bulletCanvas.InverseTransformVector(target - self.position);
 			diff *= Mathf.Sign(ratio);
 			float angle = Vector2.Angle(self.up, diff);
-			Vector3 cross = Vector3.Cross(self.up, diff);
-			cross = bulletCanvas.InverseTransformVector(cross);
+			Vector3 cross = Vector3.Cross(self.up, target - self.position);
 			if (cross.z < 0) angle *= -1;
+			if (bulletCanvas.forward.z < 0) angle += 180;
+
 			return angle * Mathf.Abs(ratio);
 		}
+
+		#region interception (assumes currentAngularSpeed == 0)
+
+		// Given a transform and its speed vector (per second), performs a LookAt towards the exact point that will anticipate and intercept movement
+		public void LookAtInterception(Transform target, Vector3 targetSpeed, float ratio=1)
+		{
+			if (!target) return;
+			if (ratio == 0) return;
+			Rotate(GetAngleToInterception(target, targetSpeed, ratio));
+		}
+		
+		// Overload with Vector3 instead of Transform
+		public void LookAtInterception(Vector3 target, Vector3 targetSpeed, float ratio=1)
+		{
+			if (ratio == 0) return;
+			Rotate(GetAngleToInterception(target, targetSpeed, ratio));
+		}
+
+		// Finds out what angle is needed to perform a LookAtInterception and returns it, but does not actually perform the LookAtInterception
+		public float GetAngleToInterception(Transform target, Vector3 targetSpeed, float ratio=1)
+		{
+			if (!target) return 0;
+			return GetAngleToInterception(target.position, targetSpeed, ratio);
+		}
+
+		// Overload with Vector3 instead of Transform
+		public float GetAngleToInterception(Vector3 target, Vector3 targetSpeed, float ratio=1)
+		{
+			return GetAngleTo(GetAnticipatedCollisionPoint(target, targetSpeed), ratio);
+		}
+
+		// Estimates what point should be aimed at if we wanted to hit the object currently at <targetPosition> but moving at <target speed> per second
+		public Vector3 GetAnticipatedCollisionPoint(Vector3 targetPosition, Vector3 targetSpeed)
+		{
+			// Evacuate exceptions
+			if (currentSpeed == 0) return self.position;
+			if (targetSpeed == Vector3.zero) return targetPosition;
+			if (targetPosition == self.position) return self.position;
+
+			// We assume a good approximation is to aim at a point placed such as dist(target,aim) equals dist(target,bullet).
+			// Then, higher target/bullet speed ratio means the bullet needs to aim further.
+			// Recalculating this at each frame will guarantee that the bullet ends up on target trajectory.
+			// targetSpeed.normalized * [...] * targetSpeed.magnitude cancels out, hence the targetSpeed at the beginning.
+			Vector3 projectedAim = targetPosition + targetSpeed * Vector3.Distance(targetPosition, self.position) / currentSpeed;
+
+			// but if projectedAim and the two actors are aligned, then the bullet only has to look at its target,
+			// and the collision point is just a mere lerp.
+			Vector3 lerpedPositions = Vector3.Lerp(self.position, targetPosition, currentSpeed/(targetSpeed.magnitude+currentSpeed));
+
+			// the more the points are aligned (which matches abs(dot(speed vectors))), the more this second method makes sense compared to the first one.
+			float mix = Mathf.Abs(Vector3.Dot((projectedAim-targetPosition).normalized, (projectedAim-self.position).normalized));
+			return Vector3.Lerp(projectedAim, lerpedPositions, mix);
+		}
+
+		#endregion
 
 		// Bounce on any flat surface, ie. a wall. Bounce will be aborted if a previous bounce occured in the same channel during the last <cooldownTime> seconds
 		public void Bounce(Vector3 wallDirection, float cooldownTime=0.1f, BounceChannel bounceChannel = BounceChannel.Horizontal)

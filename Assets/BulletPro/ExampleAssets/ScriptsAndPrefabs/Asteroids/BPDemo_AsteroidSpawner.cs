@@ -7,12 +7,15 @@ using BulletPro;
 // But it's only used in the example scene and I recommend writing a better one that fits your needs.
 // Author : Simon Albou <albou.simon@gmail.com>
 
-public class BPDemo_AsteroidSpawner : MonoBehaviour {
-
-	public BulletEmitter emitter;
-
-	public void ResetEmitter()
+namespace BulletPro.DemoScripts
+{
+	public class BPDemo_AsteroidSpawner : MonoBehaviour
 	{
-		emitter.Kill(KillOptions.AllBulletsButRoot);
+		public BulletEmitter emitter;
+
+		public void ResetEmitter()
+		{
+			emitter.Kill(KillOptions.AllBulletsButRoot);
+		}
 	}
 }

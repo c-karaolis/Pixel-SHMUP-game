@@ -7,14 +7,17 @@ using BulletPro;
 // But it's only used in the example scene and I recommend writing a better one that fits your needs.
 // Author : Simon Albou <albou.simon@gmail.com>
 
-public class BPDemo_PlayerAnimation : MonoBehaviour {
-
-	[Header("References")]
-	public BPDemo_PlayerController playerController;
-	public Animator animator;
-
-	public void Update()
+namespace BulletPro.DemoScripts
+{
+	public class BPDemo_PlayerAnimation : MonoBehaviour
 	{
-		animator.SetFloat("HorizMovement", playerController.inputVector.x);
+		[Header("References")]
+		public BPDemo_PlayerController playerController;
+		public Animator animator;
+
+		public void Update()
+		{
+			animator.SetFloat("HorizMovement", playerController.inputVector.x);
+		}
 	}
 }

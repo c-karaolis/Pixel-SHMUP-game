@@ -62,12 +62,15 @@ namespace BulletPro
 		}
 
 		// Called every frame when Bullet Modules are updated
-		public void Update()
+		public void Update() => Update(Time.deltaTime);
+
+		// Called for update with user-defined timestep
+		public void Update(float timestep)
 		{
 			if (!isPlaying) return;
 			
-			if (isBackwards) timeSinceLive -= Time.deltaTime;
-			else timeSinceLive += Time.deltaTime;
+			if (isBackwards) timeSinceLive -= timestep;
+			else timeSinceLive += timestep;
 		}
 
 		// Main control functions

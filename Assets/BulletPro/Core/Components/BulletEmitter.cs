@@ -13,6 +13,7 @@ namespace BulletPro
 	[AddComponentMenu("BulletPro/Bullet Emitter")]
 	public class BulletEmitter : MonoBehaviour
 	{
+		//[Header("Gameplay")]
 		public EmitterProfile emitterProfile;
 		private BulletParams firstBulletParams;
 		public Transform patternOrigin;
@@ -55,6 +56,84 @@ namespace BulletPro
 				return subEmitters[0];
 			}
 		}
+
+		#if UNITY_EDITOR
+		//[Header("Gizmo")]
+		public bool useDefaultGizmoColor = true;
+		public Color gizmoColor = Color.green;
+		public float gizmoSize = 0.5f;
+
+		private void OnDrawGizmos()
+		{
+			if (gizmoSize == 0) return;
+			if (patternOrigin == null) return;
+
+			Color oldCol = Gizmos.color;
+			Matrix4x4 oldMat = Gizmos.matrix;
+			Gizmos.color = useDefaultGizmoColor ? BulletProSettings.instance.defaultEmitterGizmoColor : gizmoColor;			
+			Gizmos.matrix = patternOrigin.localToWorldMatrix;
+
+			Gizmos.DrawWireSphere(Vector3.zero, gizmoSize);
+
+			// three parallel lines
+			/* */
+			Vector3 leftLinePos = Vector3.left * gizmoSize * 0.5f;
+			Vector3 rightLinePos = Vector3.right * gizmoSize * 0.5f;
+			Vector3 upLinePos = Vector3.up * gizmoSize * 0.5f;
+			Gizmos.DrawLine(leftLinePos, leftLinePos + Vector3.up * gizmoSize * 4f);
+			Gizmos.DrawLine(rightLinePos, rightLinePos + Vector3.up * gizmoSize * 4f);
+			Gizmos.DrawLine(upLinePos, upLinePos + Vector3.up * gizmoSize * 4f);
+			/* */
+
+			// arrow tip + simple angles
+			/* *
+			Vector3 arrowTip = Vector3.up * 4 * gizmoSize;
+
+			Gizmos.DrawLine(Vector3.zero, new Vector3(-1.5f, 1.5f, 0) * gizmoSize);
+			Gizmos.DrawLine(Vector3.zero, new Vector3(-1.5f, 3, 0) * gizmoSize);
+			Gizmos.DrawLine(Vector3.zero, arrowTip);
+			Gizmos.DrawLine(Vector3.zero, new Vector3(1.5f, 3, 0) * gizmoSize);
+			Gizmos.DrawLine(Vector3.zero, new Vector3(1.5f, 1.5f, 0) * gizmoSize);
+
+			Gizmos.DrawLine(arrowTip, arrowTip + new Vector3(-1, -2, 0) * gizmoSize * 0.3f);
+			Gizmos.DrawLine(arrowTip, arrowTip + new Vector3(1, -2, 0) * gizmoSize * 0.3f);
+			/* */
+
+			// multiple arrows (90° and 45° angle)
+			/* *
+			DrawArrow(-1f, 1f);
+			DrawArrow(-1f, 2f);
+			DrawArrow(0f, 4f);
+			DrawArrow(1f, 2f);
+			DrawArrow(1f, 1f);
+			/* */
+
+			Gizmos.color = oldCol;
+			Gizmos.matrix = oldMat;
+		}
+
+		// Currently unused, but could be
+		void DrawArrow(float tx, float ty)
+		{
+			Vector3 tip = new Vector3(tx, ty, 0) * gizmoSize;
+
+			// tweakable :
+			float angle = 0.05f; // radians
+			float sideCut = 0.9f;
+
+			// non-tweakable :
+			float c = Mathf.Cos(angle);
+			float s = Mathf.Sin(angle);
+			Vector3 leftBit = new Vector3(tip.x*c-tip.y*s, tip.x*s+tip.y*c);
+			c = Mathf.Cos(-angle);
+			s = Mathf.Sin(-angle);
+			Vector3 rightBit = new Vector3(tip.x*c-tip.y*s, tip.x*s+tip.y*c);
+
+			Gizmos.DrawLine(Vector3.zero, tip);
+			Gizmos.DrawLine(tip, leftBit * sideCut);
+			Gizmos.DrawLine(tip, rightBit * sideCut);
+		}
+		#endif
 
 		void Awake()
 		{
@@ -267,36 +346,31 @@ namespace BulletPro
 		// Gets all bullets to call Play on a certain pattern tag
 		public void PlayPatternTag(string patternTag)
 		{
-			if (subEmitters[0] != null)
-				subEmitters[0].modulePatterns.Play(patternTag);
+			rootBullet?.modulePatterns.Play(patternTag);
 		}
 
 		// Gets all bullets to call Pause on a certain pattern tag
 		public void PausePatternTag(string patternTag)
 		{
-			if (subEmitters[0] != null)
-				subEmitters[0].modulePatterns.Pause(patternTag);
+			rootBullet?.modulePatterns.Pause(patternTag);
 		}
 
 		// Gets all bullets to call Reset on a certain pattern tag
 		public void ResetPatternTag(string patternTag)
 		{
-			if (subEmitters[0] != null)
-				subEmitters[0].modulePatterns.ResetPattern(patternTag);
+			rootBullet?.modulePatterns.ResetPattern(patternTag);
 		}
 
 		// Gets all bullets to call Stop on a certain pattern tag
 		public void StopPatternTag(string patternTag)
 		{
-			if (subEmitters[0] != null)
-				subEmitters[0].modulePatterns.Stop(patternTag);
+			rootBullet?.modulePatterns.Stop(patternTag);
 		}
 
 		// Gets all bullets to call Boot on a certain pattern tag
 		public void BootPatternTag(string patternTag)
 		{
-			if (subEmitters[0] != null)
-				subEmitters[0].modulePatterns.Boot(patternTag);
+			rootBullet?.modulePatterns.Boot(patternTag);
 		}
 
 		#endregion
