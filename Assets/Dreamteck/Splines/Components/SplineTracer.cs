@@ -163,6 +163,11 @@ namespace Dreamteck.Splines
             }
         }
 
+        public double GetPercent()
+        {
+            return _result.percent;
+        }
+
         public virtual void SetDistance(float distance, bool checkTriggers = false, bool handleJunctions = false)
         {
             double lastPercent = _result.percent;
@@ -211,16 +216,6 @@ namespace Dreamteck.Splines
             if (applyDirectionRotation) motion.direction = _direction;
             else motion.direction = Spline.Direction.Forward;
 
-#if UNITY_EDITOR
-                if (!Application.isPlaying)
-            {
-                if (targetTransform == null) RefreshTargets();
-                if (targetTransform == null) return;
-                motion.ApplyTransform(targetTransform);
-                if (onMotionApplied != null) onMotionApplied();
-                return;
-            }
-#endif
             switch (_physicsMode)
             {
                 case PhysicsMode.Transform:

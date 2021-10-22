@@ -16,7 +16,8 @@ namespace BulletPro.EditorScripts
 		SerializedProperty colliderType, hitboxSize, hitboxOffset, startingChildren;
 		SerializedProperty parentSyncFoldout, syncEnable, syncDisable, syncCollisionTags;
 		SerializedProperty killBulletOnCollision, maxSimultaneousCollisionsPerFrame;
-		SerializedProperty collisionTags, collisionTagsFoldout, OnHitByBullet, gizmoColor, gizmoZOffset;
+		SerializedProperty collisionTags, collisionTagsFoldout, OnHitByBullet;
+		SerializedProperty useDefaultGizmoColor, gizmoColor, gizmoZOffset;
 		SerializedProperty advancedEventsFoldout, OnHitByBulletEnter, OnHitByBulletStay, OnHitByBulletExit;
 
 		bool lockBehaviour, lockEvents;
@@ -38,6 +39,8 @@ namespace BulletPro.EditorScripts
 			collisionTags = serializedObject.FindProperty("collisionTags");
 			collisionTagsFoldout = serializedObject.FindProperty("collisionTagsFoldout");
 			OnHitByBullet = serializedObject.FindProperty("OnHitByBullet");
+			
+			useDefaultGizmoColor = serializedObject.FindProperty("useDefaultGizmoColor");
 			gizmoColor = serializedObject.FindProperty("gizmoColor");
 			gizmoZOffset = serializedObject.FindProperty("gizmoZOffset");
 
@@ -207,9 +210,10 @@ namespace BulletPro.EditorScripts
 			
 			EditorGUILayout.Space();
 			EditorGUILayout.LabelField("Gizmo", EditorStyles.boldLabel);
-			EditorGUILayout.PropertyField(gizmoColor);
+			EditorGUILayout.PropertyField(useDefaultGizmoColor);
+			if (!useDefaultGizmoColor.boolValue)
+				EditorGUILayout.PropertyField(gizmoColor);
 			EditorGUILayout.PropertyField(gizmoZOffset);
-
 			serializedObject.ApplyModifiedProperties();
 
 			for (int i = 0; i < brs.Length; i++)

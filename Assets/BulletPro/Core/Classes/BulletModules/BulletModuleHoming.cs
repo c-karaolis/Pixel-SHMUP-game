@@ -13,15 +13,25 @@ namespace BulletPro
 		public PreferredTarget preferredTarget;
 		public float homingSpawnRate, spawnOnTarget, homingAngularSpeed, homingAngleThreshold, targetRefreshInterval;
 		public float currentHomingSpeed { get; private set; }
+		public ChaseMode chaseMode;
 		public CollisionTags homingTags;
 		public bool useSameTagsAsCollision;
 		public BulletCurve homingOverLifetime;
 
 		public Transform currentTarget;
+		public Vector3 lastKnownTargetPosition { get; private set; }
+		public Vector3 curTargetSpeedPerSecond
+		{
+			get
+			{
+				if (currentTarget == null) return Vector3.zero;
+				return (currentTarget.position - lastKnownTargetPosition)/Time.deltaTime;
+			}
+		}
 
 		public List<BulletReceiver> possibleTargets { get; private set; }
 
-		// Called at Bullet.AWake()
+		// Called at Bullet.Awake()
 		public override void Awake()
 		{
 			base.Awake();
@@ -38,6 +48,7 @@ namespace BulletPro
 			if (moduleSpawn.isEnabled) return;
 
 			// No need to bother for homing if we only enabled it for an orientated spawn
+			if (chaseMode == ChaseMode.DoNotChase) return;
 			if (homingAngularSpeed == 0) return;
 
 			if (targetRefreshInterval > 0)
@@ -53,6 +64,15 @@ namespace BulletPro
 			}
 			else currentHomingSpeed = homingAngularSpeed;
 
+			// If we're in Predictive mode, the actual aimed point will be further on target trajectory
+			Vector3 targetPoint = currentTarget.position;
+			if (chaseMode == ChaseMode.Predictive)
+			{
+				targetPoint = moduleMovement.GetAnticipatedCollisionPoint(currentTarget.position, curTargetSpeedPerSecond);
+				lastKnownTargetPosition = currentTarget.position;
+			}
+
+			// Either way, in the end we just slowly turn to aimed point
 			Vector3 diff = currentTarget.position - self.position;
 			if (Vector3.Angle(self.up, diff) > homingAngleThreshold)
 			{
@@ -85,9 +105,12 @@ namespace BulletPro
 			homingSpawnRate = solver.SolveDynamicFloat(bp.lookAtTargetAtSpawn, 7826475, ParameterOwner.Bullet);
 			spawnOnTarget = solver.SolveDynamicFloat(bp.spawnOnTarget, 8433561, ParameterOwner.Bullet);
 
-			homingAngularSpeed = solver.SolveDynamicFloat(bp.homingAngularSpeed, 19096746, ParameterOwner.Bullet);
+			chaseMode = bp.chaseMode;
 
 			// if we're only here for the homing spawn, we're done :
+			if (chaseMode == ChaseMode.DoNotChase) return;
+
+			homingAngularSpeed = solver.SolveDynamicFloat(bp.homingAngularSpeed, 19096746, ParameterOwner.Bullet);
 			if (homingAngularSpeed == 0) return;
 
 			targetRefreshInterval = solver.SolveDynamicFloat(bp.targetRefreshInterval, 855685, ParameterOwner.Bullet);
@@ -99,8 +122,8 @@ namespace BulletPro
 			homingOverLifetime.UpdateInternalValues();
 			if (homingOverLifetime.enabled)
 			{
-				currentHomingSpeed *= homingOverLifetime.GetCurveResult();
 				homingOverLifetime.Boot();
+				currentHomingSpeed *= homingOverLifetime.GetCurveResult();
 			}
 		}
 
@@ -249,6 +272,24 @@ namespace BulletPro
 			if (!currentTarget) return 0;
 
 			return moduleMovement.GetAngleTo(currentTarget, ratio);
+		}
+
+		// Similar to LookAtTarget, but predicts a target point further on target trajectory.
+		public void LookAtTargetInterception(float ratio=1)
+		{
+			// Fails if there's no target, since it needs to have existed for at least one full frame for speed calculation
+			if (!currentTarget) return;
+
+			moduleMovement.LookAtInterception(currentTarget, curTargetSpeedPerSecond, ratio);
+		}
+
+		// Functions the same as LookAtTargetInterception, but just returns the angle and doesn't perform the rotation
+		public float GetAngleToTargetInterception(float ratio=1)
+		{
+			// Fails if there's no target, since it needs to have existed for at least one full frame for speed calculation
+			if (!currentTarget) return 0;
+
+			return moduleMovement.GetAngleToInterception(currentTarget, curTargetSpeedPerSecond, ratio);
 		}
 
 		// Called the potential target list should be updated

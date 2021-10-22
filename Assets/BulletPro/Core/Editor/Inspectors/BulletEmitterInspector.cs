@@ -12,9 +12,38 @@ namespace BulletPro.EditorScripts
 	[CustomEditor(typeof(BulletEmitter))]
 	public class BulletEmitterInspector : Editor
 	{
+		SerializedProperty emitterProfile, patternOrigin, playAtStart;
+		SerializedProperty useDefaultGizmoColor, gizmoColor, gizmoSize;
+
+		public void OnEnable()
+		{
+			emitterProfile = serializedObject.FindProperty("emitterProfile");
+			patternOrigin = serializedObject.FindProperty("patternOrigin");
+			playAtStart = serializedObject.FindProperty("playAtStart");
+
+			useDefaultGizmoColor = serializedObject.FindProperty("useDefaultGizmoColor");
+			gizmoColor = serializedObject.FindProperty("gizmoColor");
+			gizmoSize = serializedObject.FindProperty("gizmoSize");
+		}
+
 		public override void OnInspectorGUI()
 		{
-			base.OnInspectorGUI();
+			serializedObject.Update();
+
+			EditorGUILayout.Space();
+			EditorGUILayout.LabelField("Gameplay", EditorStyles.boldLabel);
+			EditorGUILayout.PropertyField(emitterProfile);
+			EditorGUILayout.PropertyField(patternOrigin);
+			EditorGUILayout.PropertyField(playAtStart);
+
+			EditorGUILayout.Space();
+			EditorGUILayout.LabelField("Gizmo", EditorStyles.boldLabel);
+			EditorGUILayout.PropertyField(useDefaultGizmoColor);
+			if (!useDefaultGizmoColor.boolValue)
+				EditorGUILayout.PropertyField(gizmoColor);
+			EditorGUILayout.PropertyField(gizmoSize);
+
+			serializedObject.ApplyModifiedProperties();
 
 			if (!EditorApplication.isPlaying) return;
 			if (targets.Length > 1) return;

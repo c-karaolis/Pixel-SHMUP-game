@@ -7,12 +7,15 @@ using UnityEngine.UI;
 // But it's only used in the example scene and I recommend writing a better one that fits your needs.
 // Author : Simon Albou <albou.simon@gmail.com>
 
-public class BPDemo_CompatibilityDetector : MonoBehaviour
+namespace BulletPro.DemoScripts
 {
-	public Image image;
-
-	void Start()
+	public class BPDemo_CompatibilityDetector : MonoBehaviour
 	{
-		image.color = SystemInfo.supportsComputeShaders ? Color.green : Color.red;
+		public Image image;
+
+		void Start()
+		{
+			image.color = SystemInfo.supportsComputeShaders ? Color.green : Color.red;
+		}
 	}
 }

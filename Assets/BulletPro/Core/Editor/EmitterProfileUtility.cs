@@ -714,7 +714,7 @@ namespace BulletPro.EditorScripts
                 // for (int i = 0; i < profile.subAssets.Length; i++) { }
             }
 
-            // from V10 to V11
+            // from V10 to V11 : introducing VFX module
             if (profile.buildNumber == 10)
             {
                 profile.buildNumber++;
@@ -757,9 +757,131 @@ namespace BulletPro.EditorScripts
                 }
             }
 
-            // from V11 to V12
-            /* *
+            // from V11 to V12 : custom param-related pattern instructions
             if (profile.buildNumber == 11)
+            {
+                profile.buildNumber++;
+                for (int i = 0; i < profile.subAssets.Length; i++)
+                {
+                    if (!(profile.subAssets[i] is PatternParams)) continue;
+                    PatternParams pp = profile.subAssets[i] as PatternParams;
+                    if (pp.instructionLists == null) continue;
+                    if (pp.instructionLists.Length == 0) continue;
+                    for (int j = 0; j < pp.instructionLists.Length; j++)
+                    {
+                        if (pp.instructionLists[j].instructions == null)
+                            pp.instructionLists[j].instructions = new PatternInstruction[0];
+                        if (pp.instructionLists[j].instructions.Length == 0) continue;
+                        for (int k = 0; k < pp.instructionLists[j].instructions.Length; k++)
+                        {
+                            pp.instructionLists[j].instructions[k].customParamName = "_PowerLevel";
+                            pp.instructionLists[j].instructions[k].customInt = new DynamicInt(0);
+                            pp.instructionLists[j].instructions[k].customFloat = new DynamicFloat(0f);
+                            pp.instructionLists[j].instructions[k].customSlider01 = new DynamicSlider01(0f);
+                            pp.instructionLists[j].instructions[k].customVector2 = new DynamicVector2(Vector2.zero);
+                            pp.instructionLists[j].instructions[k].customVector3 = new DynamicVector3(Vector3.zero);
+                            pp.instructionLists[j].instructions[k].customVector4 = new DynamicVector4(Vector4.zero);
+                            pp.instructionLists[j].instructions[k].customColor = new DynamicColor(Color.black);
+                            pp.instructionLists[j].instructions[k].customGradient = new DynamicGradient(BulletProExtensions.DefaultGradient());
+                            pp.instructionLists[j].instructions[k].customBool = new DynamicBool(false);
+                            pp.instructionLists[j].instructions[k].customString = new DynamicString("");
+                            pp.instructionLists[j].instructions[k].customAnimationCurve = new DynamicAnimationCurve(AnimationCurve.EaseInOut(0,0,1,1));
+                            pp.instructionLists[j].instructions[k].customAnimationCurve.SetForceZeroToOne(false);
+                            pp.instructionLists[j].instructions[k].customObjectReference = new DynamicObjectReference(null);
+                            pp.instructionLists[j].instructions[k].customRect = new DynamicRect(Rect.zero);
+                        }
+                    }
+
+                    EditorUtility.SetDirty(pp);
+                }
+            }
+
+            // from V12 to V13 : tweaking random seed via pattern instructions
+            if (profile.buildNumber == 12)
+            {
+                profile.buildNumber++;
+                for (int i = 0; i < profile.subAssets.Length; i++)
+                {
+                    if (profile.subAssets[i] is BulletParams)
+                    {
+                        BulletParams bp = profile.subAssets[i] as BulletParams;
+                        
+                        // Commented out because setting all previously existing bullets to Standard is much safer
+                        // (maybe some users have bullets that start at zero)
+
+                        //bool isZeroSpeed = false;
+                        //if (bp.homingAngularSpeed.root.settings.valueType == DynamicParameterSorting.Fixed)
+                        //    isZeroSpeed = (bp.homingAngularSpeed.root.defaultValue == 0f);
+                        //bp.chaseMode = (isZeroSpeed) ? ChaseMode.DoNotChase : ChaseMode.Standard;
+                        
+                        bp.chaseMode = ChaseMode.Standard;
+                        EditorUtility.SetDirty(bp);
+                        continue;
+                    }
+
+                    if (!(profile.subAssets[i] is PatternParams)) continue;
+                    PatternParams pp = profile.subAssets[i] as PatternParams;
+                    if (pp.instructionLists == null) continue;
+                    if (pp.instructionLists.Length == 0) continue;
+                    for (int j = 0; j < pp.instructionLists.Length; j++)
+                    {
+                        if (pp.instructionLists[j].instructions == null)
+                            pp.instructionLists[j].instructions = new PatternInstruction[0];
+                        if (pp.instructionLists[j].instructions.Length == 0) continue;
+                        for (int k = 0; k < pp.instructionLists[j].instructions.Length; k++)
+                        {
+                            pp.instructionLists[j].instructions[k].newRandomSeed = new DynamicSlider01(0f);
+                            int instType = (int)pp.instructionLists[j].instructions[k].instructionType;
+                            if (instType > (int)PatternInstructionType.RebootPattern)
+                                pp.instructionLists[j].instructions[k].instructionType = (PatternInstructionType)(instType+4);
+                        }
+                    }
+
+                    EditorUtility.SetDirty(pp);
+                }
+            }
+
+            // from V13 to V14 :
+            if (profile.buildNumber == 13)
+            {
+                profile.buildNumber++;
+                for (int i = 0; i < profile.subAssets.Length; i++)
+                {
+                    if (!(profile.subAssets[i] is PatternParams)) continue;
+                    PatternParams pp = profile.subAssets[i] as PatternParams;
+
+                    pp.advancedFoldout = false;
+                    pp.defaultInstructionDelay = new DynamicFloat(0f);
+                    pp.delaylessInstructions = new List<PatternInstructionType>();
+                    pp.delaylessInstructions.Add(PatternInstructionType.Wait);
+                    pp.delaylessInstructions.Add(PatternInstructionType.BeginLoop);
+                    pp.delaylessInstructions.Add(PatternInstructionType.EndLoop);
+                    pp.delaylessInstructions.Add(PatternInstructionType.SetInstructionDelay);
+                    pp.delaylessInstructions.Add(PatternInstructionType.Die);
+
+                    if (pp.instructionLists != null)
+                        if (pp.instructionLists.Length != 0)
+                            for (int j = 0; j < pp.instructionLists.Length; j++)
+                            {
+                                if (pp.instructionLists[j].instructions == null)
+                                    pp.instructionLists[j].instructions = new PatternInstruction[0];
+                                if (pp.instructionLists[j].instructions.Length != 0)
+                                    for (int k = 0; k < pp.instructionLists[j].instructions.Length; k++)
+                                    {
+                                        int instType = (int)pp.instructionLists[j].instructions[k].instructionType;
+                                        if (instType > (int)PatternInstructionType.RebootPattern)
+                                            pp.instructionLists[j].instructions[k].instructionType = (PatternInstructionType)(instType+1);
+                                    }
+                            }
+
+                    EditorUtility.SetDirty(pp);
+                }
+            }
+            // to be continued (when V15 comes out)
+
+            // from V14 to V15 :
+            /* *
+            if (profile.buildNumber == 14)
             {
                 profile.buildNumber++;
                 for (int i = 0; i < profile.subAssets.Length; i++)
@@ -768,7 +890,7 @@ namespace BulletPro.EditorScripts
                 }
             }
             /* */
-            // to be continued (when V13 comes out)
+            // to be continued (when V16 comes out)
 
             // in the end, validate everything
             EditorUtility.SetDirty(profile);
@@ -776,6 +898,7 @@ namespace BulletPro.EditorScripts
             // note to self: when updating BPro, always remember incrementing:
             // - default build number of EmitterProfiles
             // - build number of BulletProSettings
+            // - build number of Scene Setup (if it needs to change)
             // - create an update function (here) from N to N+1
         }
 

@@ -15,16 +15,25 @@ namespace Dreamteck.Splines.Editor
 
             serializedObject.Update();
             SerializedProperty mode = serializedObject.FindProperty("_mode");
+            SerializedProperty position = serializedObject.FindProperty("_position");
             EditorGUI.BeginChangeCheck();
             SplinePositioner positioner = (SplinePositioner)target;
             EditorGUILayout.PropertyField(mode, new GUIContent("Mode"));
-            if (positioner.mode == SplinePositioner.Mode.Distance) positioner.position = EditorGUILayout.FloatField("Distance", (float)positioner.position);
+            if (positioner.mode == SplinePositioner.Mode.Distance)
+            {
+                float lastPos = position.floatValue;
+                EditorGUILayout.PropertyField(position, new GUIContent("Distance"));
+                if (lastPos != position.floatValue)
+                {
+                    positioner.position = position.floatValue;
+                }
+            }
             else
             {
                 SerializedProperty percent = serializedObject.FindProperty("_result").FindPropertyRelative("percent");
 
                 EditorGUILayout.BeginHorizontal();
-                SerializedProperty position = serializedObject.FindProperty("_position");
+                
                 double pos = positioner.ClipPercent(percent.floatValue);
                 EditorGUI.BeginChangeCheck();
                 pos = EditorGUILayout.Slider("Percent", (float)pos, 0f, 1f);
@@ -51,10 +60,26 @@ namespace Dreamteck.Splines.Editor
 
         void OnSetDistance(float distance)
         {
+            int longest = 0;
+            float max = 0f;
+            for (int i = 0; i < users.Length; i++)
+            {
+                float length = users[i].CalculateLength();
+                if (length > max)
+                {
+                    max = length;
+                    longest = i;
+                }
+            }
+            SerializedProperty position = serializedObject.FindProperty("_position");
+            SplinePositioner positioner = (SplinePositioner)targets[longest];
+            double travel = positioner.Travel(0.0, distance, Spline.Direction.Forward);
+            position.floatValue = (float)travel;
+            serializedObject.ApplyModifiedProperties();
+
             for (int i = 0; i < targets.Length; i++)
             {
-                SplinePositioner positioner = (SplinePositioner)targets[i];
-                double travel = positioner.Travel(0.0, distance, Spline.Direction.Forward);
+                positioner = (SplinePositioner)targets[0];
                 positioner.position = travel;
             }
         }

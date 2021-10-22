@@ -30,6 +30,7 @@ namespace BulletPro
 
         // For shared-random-based solving
 		public float randomSeed;
+        public bool frozenSeed; // if seed is frozen, any roll will consistently output the same value
         public int patternID, shotID, bulletID; // refers to EmissionParams.uniqueIndex
         public Dictionary<int, float> randomValues;
 
@@ -46,6 +47,7 @@ namespace BulletPro
 			patternIndexInEmitter = -1;
 
 			randomSeed = -1f;
+            frozenSeed = false;
             patternID = 0;
             shotID = 0;
             bulletID = 0;
@@ -106,6 +108,28 @@ namespace BulletPro
             inheritedData.Flush();
         }
 
+        // Called from Pattern Instructions
+        public void FreezeRandomSeed()
+        {
+            inheritedData.frozenSeed = true;
+            inheritedData.randomValues.Clear();
+        }
+        public void UnfreezeRandomSeed()
+        {
+            inheritedData.frozenSeed = false;
+            inheritedData.randomValues.Clear();
+        }
+        public void RerollRandomSeed()
+        {
+            inheritedData.randomSeed = Random.value;
+            inheritedData.randomValues.Clear();
+        }
+        public void SetRandomSeed(float newValue)
+        {
+            inheritedData.randomSeed = newValue;
+            inheritedData.randomValues.Clear();
+        }
+
         // Called every time a parameter is not fixed to retrieve an interpolation float (from 0 to 1) that decides which value to take.
         // OperationID is a fully random constant positive int (from 0 to 2^25) ensuring every operation is stored under a different hash.
         float SolveInterpolationValue(InterpolationValue val, int operationID, ParameterOwner owner = ParameterOwner.Bullet)
@@ -114,9 +138,17 @@ namespace BulletPro
 
             if (val.interpolationFactor == InterpolationFactor.Random)
             {
-                if (!val.shareValueBetweenInstances) result = Random.value;
-                else if (owner == ParameterOwner.None) result = Random.value;
-                else if (bullet == null) result = Random.value;
+                bool simpleRandom = false;
+                if (!val.shareValueBetweenInstances) simpleRandom = true;
+                else if (owner == ParameterOwner.None) simpleRandom = true;
+                else if (bullet == null) simpleRandom = true;
+
+                if (simpleRandom)
+                {
+                    if (inheritedData.frozenSeed) result = inheritedData.Randomize(operationID);
+                    else result = Random.value;
+                }
+
                 else // sharing random seed with a common parent
                 {
                     // Regarding the owner : Shots and Patterns use the seed of their emitter bullet.
@@ -1122,6 +1154,10 @@ namespace BulletPro
                         result.patternTags[i] = SolveDynamicString(pp.patternTags[i], 4788713 * i, ParameterOwner.Pattern);
             }
             result.playAtStart = pp.playAtBulletBirth;
+            result.compensateSmallWaits = pp.compensateSmallWaits;
+            result.deltaTimeDisplacement = pp.deltaTimeDisplacement;
+            result.defaultInstructionDelay = SolveDynamicFloat(pp.defaultInstructionDelay, 5587721, ParameterOwner.Pattern);
+            result.delaylessInstructions = pp.delaylessInstructions;
 
             if (pp.instructionLists == null) return result;
             if (pp.instructionLists.Length == 0) return result;
@@ -1184,6 +1220,7 @@ namespace BulletPro
                 lastActiveChannel = 2;
             }
 
+            // non-dynamic data
             result.enabled = pi.enabled;
             result.instructionType = pit;
             result.endless = pi.endless;
@@ -1320,6 +1357,18 @@ namespace BulletPro
                 settingsToCheck[0] = pi.curveTime[1].settings;
             }
 
+            // Flow control, random seed, instruction delay
+            else if (pit == PatternInstructionType.SetRandomSeed)
+            {
+                result.newRandomSeed = SolveDynamicSlider01(pi.newRandomSeed, 83883 * operationIDMultiplier, owner);
+                settingsToCheck[0] = pi.newRandomSeed[1].settings;
+            }
+            else if (pit == PatternInstructionType.SetInstructionDelay)
+            {
+                result.waitTime = SolveDynamicFloat(pi.waitTime, 417217 * operationIDMultiplier, owner);
+                settingsToCheck[0] = pi.waitTime[1].settings;
+            }
+
             // Colors
             else if (pit == PatternInstructionType.SetColor 
                 || pit == PatternInstructionType.AddColor
@@ -1355,6 +1404,123 @@ namespace BulletPro
             {
                 result.factor = SolveDynamicFloat(pi.factor, (int)pit + 48979 * operationIDMultiplier, owner);
                 settingsToCheck[0] = pi.factor[1].settings;   
+            }
+
+            // Custom params
+            else if ((int)pit >= (int)PatternInstructionType.SetCustomInteger
+                && (int)pit <= (int)PatternInstructionType.SetCustomBounds)
+            {
+                result.customParamName = pi.customParamName;
+                
+                if (pit == PatternInstructionType.SetCustomInteger
+                    || pit == PatternInstructionType.AddCustomInteger
+                    || pit == PatternInstructionType.MultiplyCustomInteger)
+                {
+                    result.customInt = SolveDynamicInt(pi.customInt, (int)pit + 44871 * operationIDMultiplier, owner);
+                    settingsToCheck[0] = pi.customInt[1].settings;   
+                }
+                else if (pit == PatternInstructionType.SetCustomFloat
+                    || pit == PatternInstructionType.AddCustomFloat
+                    || pit == PatternInstructionType.MultiplyCustomFloat)
+                {
+                    result.customFloat = SolveDynamicFloat(pi.customFloat, (int)pit + 13871 * operationIDMultiplier, owner);
+                    settingsToCheck[0] = pi.customFloat[1].settings;   
+                }
+                else if (pit == PatternInstructionType.MultiplyCustomVector2
+                    || pit == PatternInstructionType.MultiplyCustomVector3
+                    || pit == PatternInstructionType.MultiplyCustomVector4
+                    || pit == PatternInstructionType.MultiplyCustomSlider01)
+                {
+                    result.factor = SolveDynamicFloat(pi.factor, (int)pit + 87462 * operationIDMultiplier, owner);
+                    settingsToCheck[0] = pi.factor[1].settings;   
+                }
+                else if (pit == PatternInstructionType.SetCustomSlider01
+                    || pit == PatternInstructionType.AddCustomSlider01)
+                {
+                    result.customSlider01 = SolveDynamicSlider01(pi.customSlider01, (int)pit + 94111 * operationIDMultiplier, owner);
+                    settingsToCheck[0] = pi.customSlider01[1].settings;   
+                }
+                else if (pit == PatternInstructionType.SetCustomDouble
+                    || pit == PatternInstructionType.AddCustomDouble
+                    || pit == PatternInstructionType.MultiplyCustomDouble)
+                {
+                    result.customDouble = pi.customDouble;   
+                }
+                else if (pit == PatternInstructionType.SetCustomLong
+                    || pit == PatternInstructionType.AddCustomLong
+                    || pit == PatternInstructionType.MultiplyCustomLong)
+                {
+                    result.customLong = pi.customLong;
+                }
+                else if (pit == PatternInstructionType.SetCustomVector2
+                    || pit == PatternInstructionType.AddCustomVector2)
+                {
+                    result.customVector2 = SolveDynamicVector2(pi.customVector2, (int)pit + 55473 * operationIDMultiplier, owner);
+                    settingsToCheck[0] = pi.customVector2[1].settings;   
+                }
+                else if (pit == PatternInstructionType.SetCustomVector3
+                    || pit == PatternInstructionType.AddCustomVector3)
+                {
+                    result.customVector3 = SolveDynamicVector3(pi.customVector3, (int)pit + 84217 * operationIDMultiplier, owner);
+                    settingsToCheck[0] = pi.customVector3[1].settings;   
+                }
+                else if (pit == PatternInstructionType.SetCustomVector4
+                    || pit == PatternInstructionType.AddCustomVector4)
+                {
+                    result.customVector4 = SolveDynamicVector4(pi.customVector4, (int)pit + 64261 * operationIDMultiplier, owner);
+                    settingsToCheck[0] = pi.customVector4[1].settings;   
+                }
+                else if (pit == PatternInstructionType.SetCustomColor
+                    || pit == PatternInstructionType.AddCustomColor
+                    || pit == PatternInstructionType.OverlayCustomColor
+                    || pit == PatternInstructionType.MultiplyCustomColor)
+                {
+                    result.customColor = SolveDynamicColor(pi.customColor, (int)pit + 36283 * operationIDMultiplier, owner);
+                    settingsToCheck[0] = pi.customColor[1].settings;   
+                }
+                else if (pit == PatternInstructionType.SetCustomGradient)
+                {
+                    result.customGradient = SolveDynamicGradient(pi.customGradient, (int)pit + 87419 * operationIDMultiplier, owner);
+                    settingsToCheck[0] = pi.customGradient[1].settings;   
+                }
+                else if (pit == PatternInstructionType.SetCustomBool)
+                {
+                    result.customBool = SolveDynamicBool(pi.customBool, (int)pit + 58403 * operationIDMultiplier, owner);
+                    settingsToCheck[0] = pi.customBool[1].settings;   
+                }
+                else if (pit == PatternInstructionType.SetCustomString
+                    || pit == PatternInstructionType.AppendToCustomString)
+                {
+                    result.customString = SolveDynamicString(pi.customString, (int)pit + 85401 * operationIDMultiplier, owner);
+                    settingsToCheck[0] = pi.customString[1].settings;   
+                }
+                else if (pit == PatternInstructionType.SetCustomAnimationCurve)
+                {
+                    result.customAnimationCurve = SolveDynamicAnimationCurve(pi.customAnimationCurve, (int)pit + 66741 * operationIDMultiplier, owner);
+                    settingsToCheck[0] = pi.customAnimationCurve[1].settings;   
+                }
+                else if (pit == PatternInstructionType.SetCustomObject)
+                {
+                    result.customObjectReference = SolveDynamicObjectReference(pi.customObjectReference, (int)pit + 36041 * operationIDMultiplier, owner);
+                    settingsToCheck[0] = pi.customObjectReference[1].settings;   
+                }
+                else if (pit == PatternInstructionType.SetCustomQuaternion)
+                {
+                    result.customQuaternion = pi.customQuaternion;   
+                }
+                
+                // Cut for ensuring UI consistency, can be restored if a user ever needs it
+                /* *
+                else if (pit == PatternInstructionType.SetCustomRect)
+                {
+                    result.customRect = SolveDynamicRect(pi.customRect, (int)pit + 44871 * operationIDMultiplier, owner);
+                    settingsToCheck[0] = pi.customRect[1].settings;   
+                }
+                else if (pit == PatternInstructionType.SetCustomBounds)
+                {
+                    result.customBounds = pi.customBounds;   
+                }
+                /* */
             }
 
             // Reroll settings

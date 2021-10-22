@@ -19,6 +19,8 @@ namespace Dreamteck.Splines
         [HideInInspector]
         public bool emitFromShell = false;
         [HideInInspector]
+        public bool apply3DRotation = false;
+        [HideInInspector]
         public Vector2 scale = Vector2.one;
         [HideInInspector]
         public EmitPoint emitPoint = EmitPoint.Beginning;
@@ -86,6 +88,10 @@ namespace Dreamteck.Splines
         void TransformParticle(ref ParticleSystem.Particle particle, Transform trs)
         {
             particle.position = trs.TransformPoint(particle.position);
+            if (apply3DRotation)
+            {
+                
+            }
             particle.velocity = trs.TransformDirection(particle.velocity);
         }
 
@@ -110,6 +116,10 @@ namespace Dreamteck.Splines
                 Evaluate(controllers[index].GetSplinePercent(wrapMode, particles[index], motionType), evalResult);
                 ModifySample(evalResult);
                 particles[index].position = evalResult.position;
+                if (apply3DRotation)
+                {
+                    particles[index].rotation3D = evalResult.rotation.eulerAngles;
+                }
                 if (volumetric)
                 {
                     Vector3 right = -Vector3.Cross(evalResult.forward, evalResult.up);

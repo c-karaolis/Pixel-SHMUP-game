@@ -95,11 +95,29 @@ namespace Dreamteck.Splines
             {
                 if (value != _extrudeSpline)
                 {
-                    if (_extrudeSpline != null) _extrudeSpline.Unsubscribe(this);
+                    if (_extrudeSpline != null)
+                    {
+                        _extrudeSpline.Unsubscribe(this);
+                    }
                     _extrudeSpline = value;
-                    if (value != null) _extrudeSpline.Subscribe(this);
+                    if (value != null)
+                    {
+                        _extrudeSpline.Subscribe(this);
+                    }
                     Rebuild();
                 }
+            }
+        }
+
+        public Vector3 extrudeOffset
+        {
+            get { return _extrudeOffset; }
+            set { 
+                if(value != _extrudeOffset)
+                {
+                    _extrudeOffset = value;
+                    Rebuild();
+                } 
             }
         }
 
@@ -131,6 +149,9 @@ namespace Dreamteck.Splines
         [SerializeField]
         [HideInInspector]
         private SplineComputer _extrudeSpline;
+        [SerializeField]
+        [HideInInspector]
+        private Vector3 _extrudeOffset = Vector3.zero;
         [SerializeField]
         [HideInInspector]
         private SplineSample[] extrudeResults = new SplineSample[0];
@@ -276,12 +297,14 @@ namespace Dreamteck.Splines
                 //Generate cap vertices with flipped normals
                 for (int i = 0; i < surfaceVertexCount; i++)
                 {
-                    tsMesh.vertices[i + surfaceVertexCount] = extrudeResults[0].position + extrudeResults[0].rotation * identityVertices[i] + off;
+                    Vector3 vertexOffset = TransformOffset(extrudeResults[0], _extrudeOffset);
+                    tsMesh.vertices[i + surfaceVertexCount] = extrudeResults[0].position + (extrudeResults[0].rotation * identityVertices[i] + off) + vertexOffset;
                     tsMesh.normals[i + surfaceVertexCount] = -extrudeResults[0].forward;
                     tsMesh.colors[i + surfaceVertexCount] = tsMesh.colors[i] * extrudeResults[0].color;
                     tsMesh.uv[i + surfaceVertexCount] = new Vector2(1f - tsMesh.uv[i].x, tsMesh.uv[i].y);
 
-                    tsMesh.vertices[i] = extrudeResults[extrudeResults.Length - 1].position + extrudeResults[extrudeResults.Length - 1].rotation * identityVertices[i] + off;
+                    vertexOffset = TransformOffset(extrudeResults[extrudeResults.Length - 1], _extrudeOffset);
+                    tsMesh.vertices[i] = extrudeResults[extrudeResults.Length - 1].position + (extrudeResults[extrudeResults.Length - 1].rotation * identityVertices[i] + off) + vertexOffset;
                     tsMesh.normals[i] = extrudeResults[extrudeResults.Length - 1].forward;
                     tsMesh.colors[i] *= extrudeResults[extrudeResults.Length - 1].color;
                 }
@@ -293,7 +316,8 @@ namespace Dreamteck.Splines
                     int startIndex = surfaceVertexCount * 2 + i * sampleCount;
                     for (int n = 0; n < identityVertices.Length; n++)
                     {
-                        tsMesh.vertices[startIndex + n] = extrudeResults[i].position + extrudeResults[i].rotation * identityVertices[n] + off;
+                        Vector3 vertexOffset = TransformOffset(extrudeResults[i], _extrudeOffset);
+                        tsMesh.vertices[startIndex + n] = extrudeResults[i].position + (extrudeResults[i].rotation * identityVertices[n] + off) + vertexOffset;
                         tsMesh.normals[startIndex + n] = extrudeResults[i].rotation * identityNormals[n];
                         if (_uniformUvs) tsMesh.uv[startIndex + n] = new Vector2((float)n / (identityVertices.Length - 1) * _sideUvScale.x + _sideUvOffset.x, totalLength * _sideUvScale.y + _sideUvOffset.y);
                         else tsMesh.uv[startIndex + n] = new Vector2((float)n / (identityVertices.Length - 1) * _sideUvScale.x + _sideUvOffset.x, (float)i / (extrudeResults.Length - 1) * _sideUvScale.y + _sideUvOffset.y);

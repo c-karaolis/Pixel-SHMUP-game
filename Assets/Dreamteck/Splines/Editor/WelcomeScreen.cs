@@ -10,7 +10,7 @@ namespace Dreamteck.Splines.Editor
     [InitializeOnLoad]
     public static class PluginInfo
     {
-        public static string version = "2.09";
+        public static string version = "2.11";
         private static bool open = false;
         static PluginInfo()
         {

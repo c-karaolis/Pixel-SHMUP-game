@@ -14,6 +14,7 @@ namespace BulletPro.EditorScripts
 	{
 		SerializedProperty tags;
 		SerializedProperty defaultEmitterProfile;
+		SerializedProperty defaultBulletGizmoColor, defaultEmitterGizmoColor, defaultReceiverGizmoColor;
 		SerializedProperty maxAmountOfBullets, maxAmountOfReceivers;
 		SerializedProperty collisionHandler, computeShaders, maximumAmountOfCollisionsPerFrame;
 
@@ -21,6 +22,9 @@ namespace BulletPro.EditorScripts
 		{
 			tags = serializedObject.FindProperty("collisionTags");
 			defaultEmitterProfile = serializedObject.FindProperty("defaultEmitterProfile");
+			defaultBulletGizmoColor = serializedObject.FindProperty("defaultBulletGizmoColor");
+			defaultEmitterGizmoColor = serializedObject.FindProperty("defaultEmitterGizmoColor");
+			defaultReceiverGizmoColor = serializedObject.FindProperty("defaultReceiverGizmoColor");
 			maximumAmountOfCollisionsPerFrame = serializedObject.FindProperty("maxAmountOfCollisionsPerFrame");
 			computeShaders = serializedObject.FindProperty("computeShaders");
 			collisionHandler = serializedObject.FindProperty("collisionHandler");
@@ -49,6 +53,13 @@ namespace BulletPro.EditorScripts
 
 			EditorGUILayout.LabelField("General Settings", EditorStyles.boldLabel);
 			EditorGUILayout.PropertyField(defaultEmitterProfile);
+			GUILayout.Space(2);
+			EditorGUILayout.LabelField("Default Gizmo colors...");
+			EditorGUI.indentLevel += 1;
+			EditorGUILayout.PropertyField(defaultBulletGizmoColor, new GUIContent("for bullets :"));
+			EditorGUILayout.PropertyField(defaultEmitterGizmoColor, new GUIContent("for emitters :"));
+			EditorGUILayout.PropertyField(defaultReceiverGizmoColor, new GUIContent("for receivers :"));
+			EditorGUI.indentLevel -= 1;
 			EditorGUILayout.Space();
 			
 			EditorGUILayout.LabelField("Compute Shaders (GPU-based collisions)", EditorStyles.boldLabel);
@@ -61,7 +72,8 @@ namespace BulletPro.EditorScripts
 			int idx = computeShaders.enumValueIndex;
 
 			EditorGUI.BeginDisabledGroup(idx == 2);
-			EditorGUILayout.LabelField("Maximum amount (per frame, at once)");
+			GUILayout.Space(2);
+			EditorGUILayout.LabelField("Maximum amount (per frame, at once)...");
 			EditorGUI.indentLevel += 1;
 			EditorGUILayout.PropertyField(maxAmountOfBullets, new GUIContent("of bullets :"));
 			if (maxAmountOfBullets.intValue < 0) maxAmountOfBullets.intValue = 0;

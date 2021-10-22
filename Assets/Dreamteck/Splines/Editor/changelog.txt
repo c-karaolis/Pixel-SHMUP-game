@@ -1,3 +1,33 @@
+----- 2.11 -----
+FEATURE: Added new Spacing feature to the Configure Mesh window of the Spline Mesh component
+
+FIX: Fix for SplineComputer.ShiftNodes not preserving point coordinates
+FIX: Fix for Object Controller distance placing mode
+FIX: Fixed null reference in SplineFollower when creating it with AddComponent
+FIX: Fixes to SplineFollower Start Position setting
+
+API: Added ObjectController minObjectDistance and maxObjectDistance public properties
+API: SplineFollower.startPercent is no longer used. Use SplineFollower.SetPercent instead
+API: Added SplineTracer.GetPercent method which returns SplineTracer.result.percent;
+
+
+----- 2.10 -----
+FEATURE: Added option to orient the particles along the spline inside the Particle Controller
+FEATURE: Added 2D features to the Spline Tracers Motion panel - controlling 2D objects is now easier
+FEATURE: Added Create/Delete Node buttons to the Spline Editor when points are selected
+FEATURE: Added an "Extrude Offset" property to the Surface Generator which applies offseting along extrusion splines
+
+FIX: Fixed error "Platform name 'CloudRendering' not supported. Supported" in Unity 2020.2
+FIX: Fixed errors with ASMDEF files on older Unity versions
+FIX: SplinePositioner's position slider can now be easily recorded in Timeline and the Animation panel
+FIX: SampleCollection.Project method accuracy fix
+FIX: Fixed the rotation of Rigidbody2D components when used with a Spline Follower
+FIX: Fixed NullReference execption for Unity events when Spline Followers are created in runtime using AddComponent
+FIX: Fixed Object Controller Min. Scale X affecting the Z scale axis
+FIX: Fixed Undo when creating new points with the "Create Node" option toggled
+
+CHANGE: New Preset serialization system using JSON
+
 ----- 2.09 -----
 !!!DELETE THE OLD INSTALLATION BEFORE INSTALLING!!!
 

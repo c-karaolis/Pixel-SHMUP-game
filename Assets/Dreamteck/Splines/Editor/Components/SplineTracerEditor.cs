@@ -95,7 +95,31 @@
             }
             if (tracers.Length == 1)
             {
+                bool mightBe2d = false;
+                if(tracers[0].spline != null)
+                {
+                    mightBe2d = tracers[0].spline.is2D;
+                }
+                if (!mightBe2d)
+                {
+                    mightBe2d = physicsMode.intValue == (int)SplineTracer.PhysicsMode.Rigidbody2D;
+                }
+                if (!mightBe2d)
+                {
+                    if(tracer.GetComponentInChildren<SpriteRenderer>() != null)
+                    {
+                        mightBe2d = true;
+                    }
+                }
                 motionEditor.DrawInspector();
+
+                if (mightBe2d && !tracer.motion.is2D)
+                {
+                    EditorGUILayout.HelpBox(
+                        "The object is possibly set up for 2D but the rotation is applied in 3D. If the intention is for the object to be 2D, switch to 2D in the Motion panel.",
+                        MessageType.Warning);
+                }
+
                 cameraFoldout = EditorGUILayout.Foldout(cameraFoldout, "Camera preview");
                 if (cameraFoldout)
                 {

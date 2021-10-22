@@ -128,6 +128,9 @@ namespace Dreamteck.Splines.Editor
             Node node = obj.AddComponent<Node>();
             node.transform.localRotation = Quaternion.identity;
             node.transform.position = points[index].position;
+            Undo.SetCurrentGroupName("Create Node For Point " + index);
+            Undo.RegisterCreatedObjectUndo(obj, "Create Node object");
+            Undo.RegisterCompleteObjectUndo(dsEditor.spline, "Link Node");
             dsEditor.spline.ConnectNode(node, index);
         }
     }

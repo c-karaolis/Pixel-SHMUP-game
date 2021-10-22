@@ -17,8 +17,10 @@ namespace Dreamteck.Splines
         [HideInInspector]
         public bool autoStartPosition = false;
 
+        [SerializeField]
         [HideInInspector]
-        public bool follow = true;
+        [UnityEngine.Serialization.FormerlySerializedAs("follow")]
+        private bool _follow = true;
 
         /// <summary>
         /// If the follow mode is set to Uniform and there is an added offset in the motion panel, this will presserve the uniformity of the follow speed
@@ -42,6 +44,7 @@ namespace Dreamteck.Splines
             }
         }
 
+        [System.Obsolete("startPosition is obsolete. use SetPercent and GetPercent instead")]
         public double startPosition
         {
             get { return _startPosition; }
@@ -50,7 +53,10 @@ namespace Dreamteck.Splines
                 if (value != _startPosition)
                 {
                     _startPosition = DMath.Clamp01(value);
-                    if (!followStarted) SetPercent(_startPosition);
+                    if (!Application.isPlaying && !autoStartPosition)
+                    {
+                        SetPercent(_startPosition);
+                    }
                 }
             }
         }
@@ -67,6 +73,23 @@ namespace Dreamteck.Splines
                 {
                     if (value < 0f) value = 0f;
                     _followDuration = value;
+                }
+            }
+        }
+
+        public bool follow
+        {
+            get { return _follow; }
+            set
+            {
+                if(_follow != value)
+                {
+                    if (autoStartPosition)
+                    {
+                        Project(GetTransform().position, evalResult);
+                        SetPercent(evalResult.percent);
+                    }
+                    _follow = value;
                 }
             }
         }
@@ -105,16 +128,14 @@ namespace Dreamteck.Splines
         private FloatEvent _unityOnBeginningReached = null;
 
         private double lastClippedPercent = -1.0;
-        private bool followStarted = false;
-
-#if UNITY_EDITOR
-        public bool editorSetPosition = true;
-#endif
 
         protected override void Start()
         {
             base.Start();
-            if (follow && autoStartPosition) SetPercent(spline.Project(GetTransform().position).percent);
+            if (_follow && autoStartPosition)
+            {
+                SetPercent(spline.Project(GetTransform().position).percent);
+            }
         }
 
         protected override void LateRun()
@@ -123,29 +144,21 @@ namespace Dreamteck.Splines
 #if UNITY_EDITOR
             if (!Application.isPlaying) return;
 #endif
-            if (follow) Follow();
+            if (_follow) Follow();
         }
 
         protected override void PostBuild()
         {
             base.PostBuild();
             Evaluate(_result.percent, _result);
-            if (follow && !autoStartPosition) ApplyMotion();
+            if (sampleCount > 0)
+            {
+                if (_follow && !autoStartPosition) ApplyMotion();
+            }
         }
 
         void Follow()
         {
-            if (!followStarted)
-            {
-                if (autoStartPosition)
-                {
-                    Project(GetTransform().position, evalResult);
-                    SetPercent(evalResult.percent);
-                }
-                else SetPercent(_startPosition);
-            }
-
-            followStarted = true;
             switch (followMode)
             {
                 case FollowMode.Uniform:
@@ -160,7 +173,6 @@ namespace Dreamteck.Splines
 
         public void Restart(double startPosition = 0.0)
         {
-            followStarted = false;
             SetPercent(startPosition);
         }
 
@@ -253,7 +265,10 @@ namespace Dreamteck.Splines
                 {
                     onEndReached(startPercent);
                 }
-                _unityOnEndReached.Invoke((float)startPercent);
+                if (_unityOnEndReached != null)
+                {
+                    _unityOnEndReached.Invoke((float)startPercent);
+                }
             }
             else if (callOnBeginningReached)
             {
@@ -261,7 +276,10 @@ namespace Dreamteck.Splines
                 {
                     onBeginningReached(startPercent);
                 }
-                _unityOnBeginningReached.Invoke((float)startPercent);
+                if (_unityOnBeginningReached != null)
+                {
+                    _unityOnBeginningReached.Invoke((float)startPercent);
+                }
             }
             InvokeTriggers();
             InvokeNodes();
@@ -335,7 +353,10 @@ namespace Dreamteck.Splines
                 {
                     onEndReached(startPercent);
                 }
-                _unityOnEndReached.Invoke((float)startPercent);
+                if (_unityOnEndReached != null)
+                {
+                    _unityOnEndReached.Invoke((float)startPercent);
+                }
             }
             else if (beginningReached)
             {
@@ -343,7 +364,10 @@ namespace Dreamteck.Splines
                 {
                     onBeginningReached(startPercent);
                 }
-                _unityOnBeginningReached.Invoke((float)startPercent);
+                if (_unityOnBeginningReached != null)
+                {
+                    _unityOnBeginningReached.Invoke((float)startPercent);
+                }
             }
             InvokeTriggers();
             InvokeNodes();

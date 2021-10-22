@@ -166,7 +166,12 @@ namespace BulletPro
 			else
 			{
 				bvfx.GiveOwner(bullet, currentVFXIndex);
-				if (attach) bvfx.thisTransform.SetParent(self);
+				if (attach)
+				{
+					Vector3 oldScale = bvfx.thisTransform.localScale;
+					bvfx.thisTransform.SetParent(self);
+					bvfx.thisTransform.localScale = oldScale;
+				}
 			}
 			currentVFXIndex = -1;
 			return bvfx;
@@ -220,7 +225,12 @@ namespace BulletPro
 			else
 			{
 				bvfx.GiveOwner(bullet, currentVFXIndex);
-				if (attach) bvfx.thisTransform.SetParent(self);
+				if (attach)
+				{
+					Vector3 oldScale = bvfx.thisTransform.localScale;
+					bvfx.thisTransform.SetParent(self);
+					bvfx.thisTransform.localScale = oldScale;
+				}
 			}
 			currentVFXIndex = -1;
 			return bvfx;

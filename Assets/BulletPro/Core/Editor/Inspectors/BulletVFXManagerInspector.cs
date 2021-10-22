@@ -81,8 +81,10 @@ namespace BulletPro.EditorScripts
 					if (EditorGUIUtility.isProSkin) EditorStyles.label.normal.textColor = new Color(0, 1, 0, 1);
 					EditorGUILayout.BeginHorizontal();
 					EditorGUILayout.LabelField("Current pool : " + bm.effectPool.Length.ToString() + " VFX.");
-					if (GUILayout.Button("Add 100", EditorStyles.miniButton)) ModifyPool(100);
-					if (GUILayout.Button("Remove 100", EditorStyles.miniButton)) ModifyPool(-100);
+					if (GUILayout.Button("-100", EditorStyles.miniButton)) ModifyPool(-100);
+					if (GUILayout.Button("-10", EditorStyles.miniButton)) ModifyPool(-10);
+					if (GUILayout.Button("+10", EditorStyles.miniButton)) ModifyPool(10);
+					if (GUILayout.Button("+100", EditorStyles.miniButton)) ModifyPool(100);
 					EditorGUILayout.EndHorizontal();
 					if (bulletsHaveBeenReserialized) EditorGUILayout.LabelField("Newly added VFX have been prepared.");
 					EditorStyles.label.fontStyle = defF;

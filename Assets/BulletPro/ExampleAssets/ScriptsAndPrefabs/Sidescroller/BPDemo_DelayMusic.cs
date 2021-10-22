@@ -6,19 +6,22 @@ using UnityEngine;
 // But it's only used in the example scene and I recommend writing a better one that fits your needs.
 // Author : Simon Albou <albou.simon@gmail.com>
 
-public class BPDemo_DelayMusic : MonoBehaviour {
-
-	public AudioSource source;
-	public float delay;
-
-	void Start ()
+namespace BulletPro.DemoScripts
+{
+	public class BPDemo_DelayMusic : MonoBehaviour
 	{
-		StartCoroutine(PlayDelayed());	
-	}
+		public AudioSource source;
+		public float delay;
 
-	IEnumerator PlayDelayed()
-	{
-		yield return new WaitForSeconds(delay);
-		source.Play();
+		void Start ()
+		{
+			StartCoroutine(PlayDelayed());	
+		}
+
+		IEnumerator PlayDelayed()
+		{
+			yield return new WaitForSeconds(delay);
+			source.Play();
+		}
 	}
 }

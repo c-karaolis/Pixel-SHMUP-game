@@ -99,7 +99,7 @@ namespace BulletPro.EditorScripts
 				EditorGUI.indentLevel -= 2;
 			}
 
-            EditorGUILayout.Space(12);
+            GUILayout.Space(12);
 			EditorGUILayout.LabelField("When to play or stop this effect:", EditorStyles.boldLabel);
 			EditorGUI.indentLevel += 1;
 			EditorGUILayout.PropertyField(onBulletBirth, new GUIContent(onBulletBirth.displayName, "Trigger a VFX when the bullet is created."));
@@ -110,7 +110,7 @@ namespace BulletPro.EditorScripts
 			EditorGUILayout.PropertyField(onInvisible, new GUIContent(onInvisible.displayName, "Trigger a VFX when the bullet's sprite/mesh becomes invisible."));
 			EditorGUI.indentLevel -= 1;
 
-			EditorGUILayout.Space(12);
+			GUILayout.Space(12);
 			EditorGUILayout.LabelField("Override particle parameters based on the bullet:", EditorStyles.boldLabel);
 
             float oldLabelWidth = EditorGUIUtility.labelWidth;
@@ -134,7 +134,7 @@ namespace BulletPro.EditorScripts
 			EditorGUI.indentLevel -= 1;
             EditorGUIUtility.labelWidth = oldLabelWidth;
 
-            EditorGUILayout.Space(12);
+            GUILayout.Space(12);
             rlist.DoLayoutList();
 		}
 

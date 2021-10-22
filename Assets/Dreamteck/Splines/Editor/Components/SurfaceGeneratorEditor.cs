@@ -33,7 +33,24 @@ namespace Dreamteck.Splines.Editor
             EditorGUILayout.LabelField("Shape", EditorStyles.boldLabel);
             EditorGUILayout.PropertyField(expand, new GUIContent("Expand"));
             if (extrudeSpline.objectReferenceValue == null) EditorGUILayout.PropertyField(extrude, new GUIContent("Extrude"));
+            var lastExtrudeSpline = extrudeSpline.objectReferenceValue;
             EditorGUILayout.PropertyField(extrudeSpline, new GUIContent("Extrude Path"));
+            if(lastExtrudeSpline != extrudeSpline.objectReferenceValue)
+            {
+                if (lastExtrudeSpline != null)
+                {
+                    for (int i = 0; i < users.Length; i++)
+                    {
+                        ((SplineComputer)lastExtrudeSpline).Unsubscribe(users[i]);
+                    }
+                }
+                SplineComputer spline = (SplineComputer)extrudeSpline.objectReferenceValue;
+                for (int i = 0; i < users.Length; i++)
+                {
+                    spline.Subscribe(users[i]);
+                }
+            }
+
             if (extrudeSpline.objectReferenceValue != null)
             {
                 SerializedProperty extrudeClipFrom = serializedObject.FindProperty("_extrudeFrom");
@@ -43,6 +60,8 @@ namespace Dreamteck.Splines.Editor
                 EditorGUILayout.MinMaxSlider(new GUIContent("Extrude Clip Range:"), ref clipFrom, ref clipTo, 0f, 1f);
                 extrudeClipFrom.floatValue = clipFrom;
                 extrudeClipTo.floatValue = clipTo;
+                SerializedProperty extrudeOffset = serializedObject.FindProperty("_extrudeOffset");
+                EditorGUILayout.PropertyField(extrudeOffset);
             }
             bool change = false;
             if (EditorGUI.EndChangeCheck())

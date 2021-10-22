@@ -807,5 +807,16 @@ namespace Dreamteck.Splines {
                 }
             }
         }
+
+        /// <summary>
+        /// Returns the offset transformed by the sample
+        /// </summary>
+        /// <param name="sample">Source sample</param>
+        /// <param name="localOffset">Local offset to apply</param>
+        /// <returns></returns>
+        protected static Vector3 TransformOffset(SplineSample sample, Vector3 localOffset)
+        {
+            return (sample.right * localOffset.x + sample.up * localOffset.y + sample.forward * localOffset.z) * sample.size;
+        }
     }
 }

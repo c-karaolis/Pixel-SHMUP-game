@@ -55,7 +55,10 @@ namespace BulletPro
 				{
 					// Reset parent if applicable
 					if (effectPool[i].thisTransform.parent != self)
+					{
 						effectPool[i].thisTransform.SetParent(self);
+						effectPool[i].thisTransform.localScale = Vector3.one;
+					}
 					return effectPool[i];
 				}
 

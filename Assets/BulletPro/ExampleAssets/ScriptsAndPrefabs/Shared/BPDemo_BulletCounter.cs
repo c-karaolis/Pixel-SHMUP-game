@@ -7,19 +7,22 @@ using BulletPro;
 // But it's only used in the example scene and I recommend writing a better one that fits your needs.
 // Author : Simon Albou <albou.simon@gmail.com>
 
-[RequireComponent(typeof (Text))]
-public class BPDemo_BulletCounter : MonoBehaviour
+namespace BulletPro.DemoScripts
 {
-    const string display = "{0} bullets";
-    private Text text;
-
-    private void Start()
+    [RequireComponent(typeof (Text))]
+    public class BPDemo_BulletCounter : MonoBehaviour
     {
-        text = GetComponent<Text>();
-    }
+        const string display = "{0} bullets";
+        private Text text;
 
-    private void Update()
-    {
-        text.text = string.Format(display, BulletPoolManager.instance.currentAmountOfBullets);
+        private void Start()
+        {
+            text = GetComponent<Text>();
+        }
+
+        private void Update()
+        {
+            text.text = string.Format(display, BulletPoolManager.instance.currentAmountOfBullets);
+        }
     }
 }

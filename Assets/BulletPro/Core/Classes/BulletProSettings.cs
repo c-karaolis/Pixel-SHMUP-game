@@ -16,10 +16,29 @@ namespace BulletPro
 			get	{ return collisionTags[idx]; }
 			set { collisionTags[idx] = value; }
 		}
+
+		static BulletProSettings _instance;
+		public static BulletProSettings instance
+		{
+			get
+			{
+				if (_instance != null) return _instance;
+				else
+				{
+					BulletProSettings bps = Resources.Load("BulletProSettings") as BulletProSettings;
+					_instance = bps;
+					return _instance;
+				}
+			}
+		}
+
 		public CollisionTagLabels collisionTags;
 
 		[Tooltip("If specified, all the Emitter Profiles you create will look like this one.")]
 		public EmitterProfile defaultEmitterProfile;
+		public Color defaultBulletGizmoColor = Color.yellow;
+		public Color defaultEmitterGizmoColor = Color.cyan;
+		public Color defaultReceiverGizmoColor = Color.magenta;
 
 		[Tooltip("A reference to the Compute Shader in charge of collisions.")]
 		public ComputeShader collisionHandler;
@@ -31,7 +50,7 @@ namespace BulletPro
 		[Tooltip("How many receivers can be processed at once in the same single frame?")]
 		public int maxAmountOfReceivers = 200;
 
-		public static int buildNumber = 11;
+		public static int buildNumber = 14;
 	}
 
 	[System.Serializable]

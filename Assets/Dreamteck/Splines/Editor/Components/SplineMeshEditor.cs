@@ -449,6 +449,15 @@ namespace Dreamteck.Splines.Editor
                 definition.offset = EditorGUILayout.Vector3Field("Offset", definition.offset);
                 definition.rotation = EditorGUILayout.Vector3Field("Rotation", definition.rotation);
                 definition.scale = EditorGUILayout.Vector3Field("Scale", definition.scale);
+                var spacing = definition.spacing;
+                EditorGUILayout.BeginHorizontal();
+                EditorGUIUtility.labelWidth = 40;
+                EditorGUILayout.LabelField("Spacing");
+                spacing.front = EditorGUILayout.FloatField("Front", spacing.front);
+                spacing.back = EditorGUILayout.FloatField("Back", spacing.back);
+                definition.spacing = spacing;
+                EditorGUILayout.EndHorizontal();
+                EditorGUIUtility.labelWidth = 0;
                 EditorGUILayout.EndVertical();
                 EditorGUILayout.BeginVertical();
                 EditorGUILayout.LabelField("Faces", EditorStyles.boldLabel);

@@ -104,8 +104,10 @@ namespace BulletPro.EditorScripts
 					if (EditorGUIUtility.isProSkin) EditorStyles.label.normal.textColor = new Color(0, 1, 0, 1);
 					EditorGUILayout.BeginHorizontal();
 					EditorGUILayout.LabelField("Current pool : " + bp.pool.Length.ToString() + " bullets.");
-					if (GUILayout.Button("Add 100", EditorStyles.miniButton)) ModifyPool(100);
-					if (GUILayout.Button("Remove 100", EditorStyles.miniButton)) ModifyPool(-100);
+					if (GUILayout.Button("-100", EditorStyles.miniButton)) ModifyPool(-100);
+					if (GUILayout.Button("-10", EditorStyles.miniButton)) ModifyPool(-10);
+					if (GUILayout.Button("+10", EditorStyles.miniButton)) ModifyPool(10);
+					if (GUILayout.Button("+100", EditorStyles.miniButton)) ModifyPool(100);
 					EditorGUILayout.EndHorizontal();
 					EditorStyles.label.fontStyle = defF;
 					EditorStyles.label.normal.textColor = defC;
@@ -168,8 +170,10 @@ namespace BulletPro.EditorScripts
 						if (EditorGUIUtility.isProSkin) EditorStyles.label.normal.textColor = new Color(0, 1, 0, 1);
 						EditorGUILayout.BeginHorizontal();
 						EditorGUILayout.LabelField("Current pool : " + bp.meshPool.Length.ToString() + " 3D bullets.");
-						if (GUILayout.Button("Add 100", EditorStyles.miniButton)) ModifyMeshPool(100);
-						if (GUILayout.Button("Remove 100", EditorStyles.miniButton)) ModifyMeshPool(-100);
+						if (GUILayout.Button("-100", EditorStyles.miniButton)) ModifyMeshPool(-100);
+						if (GUILayout.Button("-10", EditorStyles.miniButton)) ModifyMeshPool(-10);
+						if (GUILayout.Button("+10", EditorStyles.miniButton)) ModifyMeshPool(10);
+						if (GUILayout.Button("+100", EditorStyles.miniButton)) ModifyMeshPool(100);
 						EditorGUILayout.EndHorizontal();
 						EditorStyles.label.fontStyle = defF;
 						EditorStyles.label.normal.textColor = defC;

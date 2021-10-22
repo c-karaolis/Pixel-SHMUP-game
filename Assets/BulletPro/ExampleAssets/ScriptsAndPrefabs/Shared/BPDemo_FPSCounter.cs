@@ -6,34 +6,37 @@ using UnityEngine.UI;
 // It is actually the exact same script as FPSCounter.cs from Standard Assets,
 // so you don't have to reimport it.
 
-[RequireComponent(typeof (Text))]
-public class BPDemo_FPSCounter : MonoBehaviour
+namespace BulletPro.DemoScripts
 {
-    const float fpsMeasurePeriod = 0.5f;
-    private int m_FpsAccumulator = 0;
-    private float m_FpsNextPeriod = 0;
-    private int m_CurrentFps;
-    const string display = "{0} FPS";
-    private Text m_Text;
-
-
-    private void Start()
+    [RequireComponent(typeof (Text))]
+    public class BPDemo_FPSCounter : MonoBehaviour
     {
-        m_FpsNextPeriod = Time.realtimeSinceStartup + fpsMeasurePeriod;
-        m_Text = GetComponent<Text>();
-    }
+        const float fpsMeasurePeriod = 0.5f;
+        private int m_FpsAccumulator = 0;
+        private float m_FpsNextPeriod = 0;
+        private int m_CurrentFps;
+        const string display = "{0} FPS";
+        private Text m_Text;
 
 
-    private void Update()
-    {
-        // measure average frames per second
-        m_FpsAccumulator++;
-        if (Time.realtimeSinceStartup > m_FpsNextPeriod)
+        private void Start()
         {
-            m_CurrentFps = (int) (m_FpsAccumulator/fpsMeasurePeriod);
-            m_FpsAccumulator = 0;
-            m_FpsNextPeriod += fpsMeasurePeriod;
-            m_Text.text = string.Format(display, m_CurrentFps);
+            m_FpsNextPeriod = Time.realtimeSinceStartup + fpsMeasurePeriod;
+            m_Text = GetComponent<Text>();
+        }
+
+
+        private void Update()
+        {
+            // measure average frames per second
+            m_FpsAccumulator++;
+            if (Time.realtimeSinceStartup > m_FpsNextPeriod)
+            {
+                m_CurrentFps = (int) (m_FpsAccumulator/fpsMeasurePeriod);
+                m_FpsAccumulator = 0;
+                m_FpsNextPeriod += fpsMeasurePeriod;
+                m_Text.text = string.Format(display, m_CurrentFps);
+            }
         }
     }
 }

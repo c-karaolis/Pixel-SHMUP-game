@@ -141,7 +141,7 @@ namespace BulletPro
 
 
 		// Reads BulletParams (from ShotParams) and emits bullets - called by PatternRuntimeInfo.Update()
-		public void ShootBullets(ShotParams sp)
+		public void ShootBullets(ShotParams sp, float timeOffset=0f)
 		{
 			if (!sp)
 			{
@@ -222,19 +222,19 @@ namespace BulletPro
 				else
 					bpToUse = solver.SolveDynamicBullet(sp.bulletParams, 417588, ParameterOwner.Shot);
 
-				EmitSingleBullet(bpToUse, spawn, minCoords, maxCoords);
+				EmitSingleBullet(bpToUse, spawn, minCoords, maxCoords, timeOffset);
 			}
 		}
 
 		// Overload that passes a TempEmissionData along the way, for dynamic parameters
-		public void ShootBullets(ShotParams sp, TempEmissionData ted)
+		public void ShootBullets(ShotParams sp, TempEmissionData ted, float timeOffset=0f)
 		{
 			solver.tempEmissionData = ted;
-			ShootBullets(sp);
+			ShootBullets(sp, timeOffset);
 		}
 
 		// Init and emit another bullet.
-		public void EmitSingleBullet(BulletParams bp, Vector3 delta, Vector2 minCoords, Vector2 maxCoords)
+		public void EmitSingleBullet(BulletParams bp, Vector3 delta, Vector2 minCoords, Vector2 maxCoords, float timeOffset=0f)
 		{
 			if (bp == null)
 			{
@@ -310,6 +310,7 @@ namespace BulletPro
 				// Case 1 : If delayed spawn from homing bullets, delta from ShotParams will only be applied at Prepare().
 				if (ms.isEnabled && ms.timeBeforeSpawn > 0)
 					ms.MemorizeSpawnDelta(delta);
+				// TODO : for extreme precision, moduleSpawn could memorize timeOffset and restore it at Prepare().
 
 				// Case 2 : apply homing delta then spawn delta now (in this order)
 				else
@@ -318,13 +319,20 @@ namespace BulletPro
 					b.self.position = b.self.position + self.up * delta.y + self.right * delta.x;
 					mh.LookAtTarget(mh.homingSpawnRate);
 					b.moduleMovement.Rotate(delta.z);
+					
+					if (timeOffset != 0)
+						b.moduleMovement.SimulateMovementOverTime(timeOffset * -1f, 1);
 				}
+
+				// TODO : timeOffset could be carried over the Spawn Module for extreme precision
 			}
 			// If not homing, just apply spawn delta now
 			else 
 			{
 				b.self.position = b.self.position + self.up * delta.y + self.right * delta.x;
 				b.moduleMovement.Rotate(delta.z);
+				if (timeOffset != 0)
+					b.moduleMovement.SimulateMovementOverTime(timeOffset * -1f, 1);
 			}
 
 			// Add additional behaviour if needed.

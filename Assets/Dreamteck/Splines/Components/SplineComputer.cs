@@ -318,7 +318,6 @@ namespace Dreamteck.Splines
         [SerializeField]
         private NodeLink[] nodes = new NodeLink[0];
         private bool rebuildPending = false;
-
         private bool _trsCheck = false;
         private Transform _trs = null;
         public Transform trs
@@ -371,7 +370,6 @@ namespace Dreamteck.Splines
         {
 #if UNITY_EDITOR
             isPlaying = Application.isPlaying;
-            if (!isPlaying) return; //Do not call rebuild on awake in the  editor
 #endif
         }
 
@@ -1095,7 +1093,7 @@ namespace Dreamteck.Splines
             if(forceUpdateAll) SetPointsDirty();
 #if UNITY_EDITOR
             //If it's the editor and it's not playing, then rebuild immediate
-            if (Application.isPlaying) queueResample = true;
+            if (isPlaying) queueResample = true;
             else
             {
                 if (editorUpdateMode == EditorUpdateMode.Default)
@@ -1708,6 +1706,9 @@ namespace Dreamteck.Splines
                 return;
             }
             DisconnectNode(pointIndex);
+            SplineSample sample = Evaluate(newPointIndex);
+            node.transform.position = sample.position;
+            node.transform.rotation = sample.rotation;
             ConnectNode(node, newPointIndex);
         }
 

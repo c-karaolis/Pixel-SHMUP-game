@@ -15,7 +15,7 @@ namespace BulletPro.EditorScripts
 	public class BulletInspector : Editor
 	{
 		// inidividual referencese
-		SerializedProperty gizmoColor, selfTr, selfRdr;
+		SerializedProperty useDefaultGizmoColor, gizmoColor, selfTr, selfRdr;
 
 		// emission
 		SerializedProperty poolParent;
@@ -34,6 +34,7 @@ namespace BulletPro.EditorScripts
 					Reserialize(b[i], b[i].renderMode == BulletRenderMode.Mesh);
 				}
 
+			useDefaultGizmoColor = serializedObject.FindProperty("useDefaultGizmoColor");
 			gizmoColor = serializedObject.FindProperty("gizmoColor");
 		}
 
@@ -41,7 +42,9 @@ namespace BulletPro.EditorScripts
 		{
 			serializedObject.Update();
 
-			EditorGUILayout.PropertyField(gizmoColor);
+			EditorGUILayout.PropertyField(useDefaultGizmoColor);
+			if (!useDefaultGizmoColor.boolValue)
+				EditorGUILayout.PropertyField(gizmoColor);
 
 			if (EditorApplication.isPlaying)
 			{

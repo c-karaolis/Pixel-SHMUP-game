@@ -113,6 +113,7 @@ namespace BulletPro
 		// Homing
 		public bool homing;
 		public CollisionTags homingTags;
+		public ChaseMode chaseMode;
 		public bool useSameTagsAsCollision; // if true, homingTags won't be used, collisionTags will be used instead
 		public DynamicFloat lookAtTargetAtSpawn; // from 0 to 1. 0 means regular spawn, 1 means spawn directly turned towards target
 		public DynamicFloat spawnOnTarget; // unclamped. Lerps spawn position towards target position, so 1 means spawnkill.
@@ -230,6 +231,7 @@ namespace BulletPro
 			lookAtTargetAtSpawn = new DynamicFloat(0f);
 			lookAtTargetAtSpawn.EnableSlider(-1f, 1f);
 			homingAngularSpeed = new DynamicFloat(90f);
+			chaseMode = ChaseMode.Standard;
 			homingAngleThreshold = new DynamicFloat(0f);
 			targetRefreshInterval = new DynamicFloat(0f);
 			preferredTarget = new DynamicEnum(0);
@@ -301,6 +303,8 @@ namespace BulletPro
 
 	// Homing settings : which target will we chase ?
 	public enum PreferredTarget { Oldest, Newest, Closest, Farthest, Random }
+	// Standard Chase pursues the target's position. Predictive Chase anticipates where target will be based on its speed.
+	public enum ChaseMode { DoNotChase, Standard, Predictive }
 
 	// Can help if we want to call Bullet.ChangeBulletParams() for only part of the params
 	[System.Flags]

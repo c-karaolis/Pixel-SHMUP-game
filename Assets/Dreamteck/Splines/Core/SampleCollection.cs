@@ -420,7 +420,7 @@ namespace Dreamteck.Splines
             for (int i = fromIndex; i < toIndex; i += step)
             {
                 if (i >= toIndex) i = toIndex-1;
-                Vector3 projected = LinearAlgebraUtility.ProjectOnLine(samples[i].position, samples[i + 1].position, position);
+                Vector3 projected = LinearAlgebraUtility.ProjectOnLine(samples[i].position, samples[Mathf.Min(i + step, toIndex)].position, position);
                 float dist = (position - projected).sqrMagnitude;
                 if (dist < minDist)
                 {

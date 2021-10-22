@@ -242,7 +242,7 @@ namespace Dreamteck.Splines.Editor
             EditorGUILayout.EndHorizontal();
         }
 
-        void PointPanel()
+        protected virtual void PointPanel()
         {
             if (points.Length == 0)
             {
@@ -250,7 +250,10 @@ namespace Dreamteck.Splines.Editor
                 return;
             }
             mainModule.DrawInspector();
-            PointMenu();
+            if (selectedPoints.Count > 0 && points.Length > 0)
+            {
+                PointMenu();
+            }
             if(selectedPoints.Count > 0)
             {
                 EditorGUILayout.BeginHorizontal();
@@ -391,9 +394,8 @@ namespace Dreamteck.Splines.Editor
         }
 
 
-        void PointMenu()
+        protected virtual void PointMenu()
         {
-            if (selectedPoints.Count == 0 || points.Length == 0) return;
             //Otherwise show the editing menu + the point selection menu
             Vector3 avgPos = Vector3.zero;
             Vector3 avgTan = Vector3.zero;

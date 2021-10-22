@@ -101,7 +101,8 @@ bool CircleCircle(ColliderInfo b, ColliderInfo r, out half3 collisionPoint)
 	half dist2 = x * x + y * y + z * z;
 	half radius = (b.size * b.scale + scaledReceiverRadius);
 
-	collisionPoint = b.position * 0.5 + r.position * 0.5;
+	//collisionPoint = b.position * 0.5 + r.position * 0.5;
+	collisionPoint = lerp(posR, posB, abs(scaledReceiverRadius/radius));
 
 	return (dist2 < (radius * radius));
 }

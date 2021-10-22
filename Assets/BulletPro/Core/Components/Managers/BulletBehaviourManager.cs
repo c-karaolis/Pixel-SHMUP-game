@@ -49,7 +49,7 @@ namespace BulletPro
 
 			for (int i = 0; i < pools.Count; i++)
 			{
-				if (pools[i].prefab == behaviourPrefab)
+				if (pools[i].prefab.name == behaviourPrefab.name)
 				{
 					succeeded = true;
 					pool = pools[i].pool;

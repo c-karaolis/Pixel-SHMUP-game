@@ -352,6 +352,32 @@ namespace Dreamteck.Splines
             }
         }
 
+        public float minObjectDistance
+        {
+            get { return _minObjectDistance; }
+            set
+            {
+                if (value != _minObjectDistance)
+                {
+                    _minObjectDistance = value;
+                    Rebuild();
+                }
+            }
+        }
+
+        public float maxObjectDistance
+        {
+            get { return _maxObjectDistance; }
+            set
+            {
+                if (value != _maxObjectDistance)
+                {
+                    _maxObjectDistance = value;
+                    Rebuild();
+                }
+            }
+        }
+
         [SerializeField]
         [HideInInspector]
         private float _evaluateOffset = 0f;
@@ -616,19 +642,7 @@ namespace Dreamteck.Splines
                 float percent = 0f;
                 if (spawned.Length > 1)
                 {
-                    if (_useCustomObjectDistance)
-                    {
-                        if (objectPositioning == Positioning.Clip)
-                        {
-                            distancePercentAccum = spline.Travel(distancePercentAccum, Mathf.Lerp(_minObjectDistance, _maxObjectDistance, (float)distanceRandomizer.NextDouble()));
-                        }
-                        else
-                        {
-                            distancePercentAccum = Travel(distancePercentAccum, Mathf.Lerp(_minObjectDistance, _maxObjectDistance, (float)distanceRandomizer.NextDouble()));
-                        }
-                        percent = (float)distancePercentAccum;
-                    } 
-                    else
+                    if(!_useCustomObjectDistance)
                     {
                         if (spline.isClosed)
                         {
@@ -638,8 +652,10 @@ namespace Dreamteck.Splines
                         {
                             percent = (float)i / (spawned.Length - 1);
                         }
+                    } else
+                    {
+                        percent = (float)distancePercentAccum;
                     }
-                    
                 }
 
                 percent += _evaluateOffset;
@@ -674,7 +690,7 @@ namespace Dreamteck.Splines
                         
                         if (_uniformScaleLerp)
                         {
-                            multiplier = Vector3.Lerp(new Vector3(_minScaleMultiplier.x, _minScaleMultiplier.y, _minScaleMultiplier.x), new Vector3(_maxScaleMultiplier.x, _maxScaleMultiplier.y, _maxScaleMultiplier.z), (float)scaleRandomizer.NextDouble());
+                            multiplier = Vector3.Lerp(new Vector3(_minScaleMultiplier.x, _minScaleMultiplier.y, _minScaleMultiplier.z), new Vector3(_maxScaleMultiplier.x, _maxScaleMultiplier.y, _maxScaleMultiplier.z), (float)scaleRandomizer.NextDouble());
                         } 
                         else
                         {
@@ -727,6 +743,17 @@ namespace Dreamteck.Splines
                 {
                     if (percent < clipFrom || percent > clipTo) spawned[i].active = false;
                     else spawned[i].active = true;
+                }
+                if (_useCustomObjectDistance)
+                {
+                    if (objectPositioning == Positioning.Clip)
+                    {
+                        distancePercentAccum = spline.Travel(distancePercentAccum, Mathf.Lerp(_minObjectDistance, _maxObjectDistance, (float)distanceRandomizer.NextDouble()));
+                    }
+                    else
+                    {
+                        distancePercentAccum = Travel(distancePercentAccum, Mathf.Lerp(_minObjectDistance, _maxObjectDistance, (float)distanceRandomizer.NextDouble()));
+                    }
                 }
             }
         }

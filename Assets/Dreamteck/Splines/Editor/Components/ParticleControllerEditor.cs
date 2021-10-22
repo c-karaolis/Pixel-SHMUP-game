@@ -18,6 +18,7 @@ namespace Dreamteck.Splines.Editor
 
             SerializedProperty emitPoint = serializedObject.FindProperty("emitPoint");
             SerializedProperty volumetric = serializedObject.FindProperty("volumetric");
+            SerializedProperty applyRotation = serializedObject.FindProperty("apply3DRotation");
             SerializedProperty emitFromShell = serializedObject.FindProperty("emitFromShell");
             SerializedProperty scale = serializedObject.FindProperty("scale");
             SerializedProperty motionType = serializedObject.FindProperty("motionType");
@@ -33,6 +34,7 @@ namespace Dreamteck.Splines.Editor
                 return;
             }
             EditorGUILayout.PropertyField(emitPoint);
+            EditorGUILayout.PropertyField(applyRotation);
             EditorGUILayout.PropertyField(volumetric);
             if (volumetric.boolValue)
             {

@@ -7,13 +7,16 @@ using BulletPro;
 // But it's only used in the example scene and I recommend writing a better one that fits your needs.
 // Author : Simon Albou <albou.simon@gmail.com>
 
-public class BPDemo_SidescrollCharEyeEffect : MonoBehaviour {
-
-	public BulletEmitter emitter;
-	public SpriteRenderer characterRenderer, eyeRenderer;
-	
-	void Update () {
-		bool displayEyes = characterRenderer.enabled && emitter.isPlaying;
-		eyeRenderer.enabled = displayEyes;
+namespace BulletPro.DemoScripts
+{
+	public class BPDemo_SidescrollCharEyeEffect : MonoBehaviour
+	{
+		public BulletEmitter emitter;
+		public SpriteRenderer characterRenderer, eyeRenderer;
+		
+		void Update () {
+			bool displayEyes = characterRenderer.enabled && emitter.isPlaying;
+			eyeRenderer.enabled = displayEyes;
+		}
 	}
 }

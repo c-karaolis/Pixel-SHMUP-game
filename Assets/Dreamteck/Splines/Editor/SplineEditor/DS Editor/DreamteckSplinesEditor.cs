@@ -109,7 +109,82 @@ namespace Dreamteck.Splines.Editor
             }
         }
 
+        protected override void PointMenu()
+        {
+            base.PointMenu();
+            EditorGUILayout.Space();
+            EditorGUILayout.LabelField("Nodes");
+            int nodesCount = 0;
+            for (int i = 0; i < selectedPoints.Count; i++)
+            {
+                if(spline.GetNode(selectedPoints[i]) != null)
+                {
+                    nodesCount ++;
+                }
+            }
 
+            if (nodesCount > 0)
+            {
+                EditorGUILayout.BeginHorizontal();
+                if(GUILayout.Button("Delete " + (nodesCount == 1 ? "Node" : "Nodes")))
+                {
+                    for (int i = 0; i < selectedPoints.Count; i++)
+                    {
+                        bool delete = true;
+                        Node node = spline.GetNode(selectedPoints[i]);
+                        if(node.GetConnections().Length > 1)
+                        {
+                            if(!EditorUtility.DisplayDialog("Delete Node", 
+                                "Node " + node.name + " has multiple connections. Are you sure you want to completely remove it?", "Yes", "No"))
+                            {
+                                delete = false;
+                            }
+                        }
+                        if (delete)
+                        {
+                            Undo.RegisterCompleteObjectUndo(spline, "Delete Node");
+                            Undo.DestroyObjectImmediate(node.gameObject);
+                            spline.DisconnectNode(selectedPoints[i]);
+                            EditorUtility.SetDirty(spline);
+                        }
+                    }
+                }
+                if (GUILayout.Button("Disconnect " + (nodesCount == 1 ? "Node" : "Nodes")))
+                {
+                    for (int i = 0; i < selectedPoints.Count; i++)
+                    {
+                        Undo.RegisterCompleteObjectUndo(spline, "Disconnect Node");
+                        spline.DisconnectNode(selectedPoints[i]);
+                        EditorUtility.SetDirty(spline);
+                    }
+                }
+                EditorGUILayout.EndHorizontal();
+            } else
+            {
+                if(GUILayout.Button(selectedPoints.Count == 1 ? "Add Node to Point" : "Add Nodes to Points"))
+                {
+                    for (int i = 0; i < selectedPoints.Count; i++)
+                    {
+                        SplineSample sample = spline.Evaluate(selectedPoints[i]);
+                        GameObject go = new GameObject(spline.name + "_Node_" + (spline.GetNodes().Count+1));
+                        go.transform.parent = spline.transform;
+                        go.transform.position = sample.position;
+                        if (spline.is2D)
+                        {
+                            go.transform.rotation = sample.rotation * Quaternion.Euler(90, -90, 0);
+                        }
+                        else
+                        {
+                            go.transform.rotation = sample.rotation;
+                        }
+                        Node node = go.AddComponent<Node>();
+                        Undo.RegisterCreatedObjectUndo(go, "Create Node");
+                        Undo.RegisterCompleteObjectUndo(spline, "Create Node");
+                        spline.ConnectNode(node, selectedPoints[i]);
+                    }
+                }
+            }
+        }
         protected override void OnModuleList(List<PointModule> list)
         {
             _createPointModule = new DSCreatePointModule(this);

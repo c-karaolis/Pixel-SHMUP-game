@@ -62,6 +62,7 @@ namespace BulletPro
 		public virtual void UpdateParameter(float deltaTime) { }
 	}
 
+	// A MicroAction whose goal is to change a value of type T over time.
 	public class MicroActionGeneric<T> : MicroActionTimer
 	{
 		protected T startValue, endValue;
@@ -70,5 +71,17 @@ namespace BulletPro
 			: base(thisBullet, lerpTime, lerpCurve, curveType) { }
 
 		public override void UpdateParameter(float deltaTime) { }
+	}
+
+	// A MicroAction whose goal is to change the value of a Custom Param from bullet.moduleParameters.
+	public class MicroActionCustomParam<T> : MicroActionGeneric<T>
+	{
+		protected string customParamName;
+
+		public MicroActionCustomParam(Bullet thisBullet, float lerpTime, AnimationCurve lerpCurve, string paramName, T inputValue, PatternCurveType curveType=PatternCurveType.None)
+			: base (thisBullet, lerpTime, lerpCurve, inputValue, curveType)
+		{
+			customParamName = paramName;
+		}
 	}
 }

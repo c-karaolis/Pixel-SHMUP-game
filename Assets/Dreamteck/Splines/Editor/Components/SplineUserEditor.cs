@@ -172,12 +172,32 @@ namespace Dreamteck.Splines.Editor
 
         void OnSetClipRangeDistance(float from, float to)
         {
+            int longest = 0;
+            float max = 0f;
             for (int i = 0; i < users.Length; i++)
             {
                 if (users[i].spline == null) continue;
-                users[i].clipFrom = users[i].spline.Travel(0.0, from);
-                users[i].clipTo = users[i].spline.Travel(0.0, to);
-                EditorUtility.SetDirty(users[i]);
+                float length = users[i].CalculateLength();
+                if(length > max)
+                {
+                    max = length;
+                    longest = i;
+                }
+            }
+            clipFromProperty = serializedObject.FindProperty("_clipFrom");
+            clipToProperty = serializedObject.FindProperty("_clipTo");
+            serializedObject.Update();
+            clipFromProperty.floatValue = (float)users[longest].spline.Travel(0.0, from);
+            clipToProperty.floatValue = (float)users[longest].spline.Travel(0.0, to);
+
+            serializedObject.ApplyModifiedProperties();
+
+            for (int i = 0; i < users.Length; i++)
+            {
+                if (users[i].spline == null) continue;
+                users[i].clipFrom = clipFromProperty.floatValue;
+                users[i].clipTo = clipToProperty.floatValue;
+                users[i].RebuildImmediate();
             }
         }
 
