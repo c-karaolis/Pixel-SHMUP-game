@@ -16,7 +16,7 @@ public class Row : MonoBehaviour
     public Transform startingPosition;
     public Vector2 distanceVector;
     public GameObject slotsGameObject;
-    public GameObject enemyPrefab;
+    public GameObject slotPrefab;
     public List<GameObject> allSlotGameObjects;
     public List<Slot> slots;
 
@@ -54,7 +54,7 @@ public class Row : MonoBehaviour
             }
 
             //TODO: change slots to enemies or add slot in enemies to show which slot is theirs?
-            GameObject newSlot = Instantiate(enemyPrefab, distanceVector, startingPosition.rotation, slotsGameObject.transform);
+            GameObject newSlot = Instantiate(slotPrefab, distanceVector, startingPosition.rotation, slotsGameObject.transform);
             newSlot.AddComponent<Slot>();
             slots.Add(newSlot.GetComponent<Slot>());
 

@@ -50,11 +50,11 @@ MonoBehaviour:
   overrideStartingPosition: 0
   overridedPosition: {x: 0, y: 0}
   distanceBetweenEnemies: 2
-  size: 10
+  numberOfSLots: 0
   startingPosition: {fileID: 4076405283703496965}
   distanceVector: {x: 0, y: 0}
   slotsGameObject: {fileID: 1389832781646424590}
-  enemyPrefab: {fileID: 8298695012692290563, guid: 6ee1bf381f719a948ab40731be17cda7, type: 3}
+  slotPrefab: {fileID: 6028508496649280701, guid: 8bda0438617b5cf42a35dac14fe22e4d, type: 3}
   allSlotGameObjects: []
   slots:
   - {fileID: 0}

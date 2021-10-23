@@ -18,7 +18,7 @@ MonoBehaviour:
       sortingLayer:
         name: Default
         Order: 1
-      darknessColor: {r: 0, g: 0, b: 0, a: 1}
+      darknessColor: {r: 0.8962264, g: 0.8962264, b: 0.8962264, a: 1}
       lightingResolution: 1
       dayLayers:
         list: []
@@ -38,7 +38,7 @@ MonoBehaviour:
           sortingIgnore: 0
           shadowEffect: 0
           shadowEffectLayer: 0
-          maskLit: 0
+          maskLit: 1
           maskLitDistance: 1
   eventPresets:
     list:
