@@ -9,6 +9,7 @@ public class Formation : MonoBehaviour
     public bool isVertical = true;
     public int numberOfRows;
     public int overrideRowNumberOfSlots = 0;
+    public int overrideDistanceBetweenSlots = 0;
     public Transform startingPosition;
     public float distanceBetweenRows = 1f;
     public Vector2 distanceVector;
@@ -50,6 +51,10 @@ public class Formation : MonoBehaviour
             if(overrideRowNumberOfSlots != 0)
             {
                 newRow.GetComponent<Row>().numberOfSlots = overrideRowNumberOfSlots;
+            }
+            if (overrideDistanceBetweenSlots != 0)
+            {
+                newRow.GetComponent<Row>().distanceBetweenEnemies = overrideDistanceBetweenSlots;
             }
             newRow.GetComponent<Row>().GenerateSlots();
             rows.Add(newRow.GetComponent<Row>());
