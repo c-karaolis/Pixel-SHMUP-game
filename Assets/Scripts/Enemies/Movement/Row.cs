@@ -12,7 +12,7 @@ public class Row : MonoBehaviour
     public bool overrideStartingPosition = false;
     public Vector2 overridedPosition;
     public float distanceBetweenEnemies = 1f;
-    public int numberOfSLots;
+    public int numberOfSlots;
     public Transform startingPosition;
     public Vector2 distanceVector;
     public GameObject slotsGameObject;
@@ -40,7 +40,7 @@ public class Row : MonoBehaviour
 
         }
 
-        for (int i = 0; i < numberOfSLots; i++)
+        for (int i = 0; i < numberOfSlots; i++)
         {
             distanceOffset += distanceBetweenEnemies;
 

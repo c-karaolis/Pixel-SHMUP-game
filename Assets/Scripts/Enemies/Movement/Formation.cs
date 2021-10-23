@@ -49,7 +49,7 @@ public class Formation : MonoBehaviour
             newRow.GetComponent<Row>().slotsGameObject.transform.position = distanceVector;
             if(overrideRowNumberOfSlots != 0)
             {
-                newRow.GetComponent<Row>().numberOfSLots = overrideRowNumberOfSlots;
+                newRow.GetComponent<Row>().numberOfSlots = overrideRowNumberOfSlots;
             }
             newRow.GetComponent<Row>().GenerateSlots();
             rows.Add(newRow.GetComponent<Row>());

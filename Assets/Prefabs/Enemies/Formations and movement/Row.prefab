@@ -50,7 +50,7 @@ MonoBehaviour:
   overrideStartingPosition: 0
   overridedPosition: {x: 0, y: 0}
   distanceBetweenEnemies: 2
-  numberOfSLots: 0
+  numberOfSlots: 5
   startingPosition: {fileID: 4076405283703496965}
   distanceVector: {x: 0, y: 0}
   slotsGameObject: {fileID: 1389832781646424590}
