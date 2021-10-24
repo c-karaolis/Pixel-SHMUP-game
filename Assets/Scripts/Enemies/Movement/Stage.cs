@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class Stage : MonoBehaviour
 {
-    EnemyWave[] enemyWaves;
+    List<EnemyWave> enemyWaves;
 
     //TODO: create a stageData SO for keeping stage data and waves, also see if possible to create a wave SO for easily creating waves?
     // Start is called before the first frame update
