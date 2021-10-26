@@ -6,7 +6,7 @@ namespace Foxlair.Player.Movement
     {
         private Vector2 screenBounds;
         private Vector2 mousePosition;
-        private Camera mainCamera;
+        public Camera mainCamera;
 
         private float playerSpriteWidth;
         private float playerSpriteHeight;
