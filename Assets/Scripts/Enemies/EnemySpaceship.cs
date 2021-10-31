@@ -8,8 +8,8 @@ namespace Foxlair.Enemies
         
         public override void Die()
         {
-         GameObject deathVisualEffects = Instantiate(deathVFX, transform);
-
+            //GameObject deathVisualEffects = Instantiate(deathVFX, transform);
+            animator.SetTrigger("Die");
         }
 
         public override void OnDeath()
