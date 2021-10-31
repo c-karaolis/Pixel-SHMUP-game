@@ -5,6 +5,8 @@ namespace Foxlair
 {
     public abstract class Spaceship : MonoBehaviour, IHealthOwner
     {
+        public GameObject deathVFX;
+        public GameObject deathSFX;
 
         public abstract void OnHealthLost(float damage);
 

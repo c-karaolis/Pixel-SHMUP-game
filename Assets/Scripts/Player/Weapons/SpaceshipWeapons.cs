@@ -76,7 +76,7 @@ namespace Foxlair.Player.Weapons
         }
 
         [Button]
-        public void ActivateSpecialWeapon(SpecialWeaponTypes specialWeaponType)
+        public void ActivateSpecialWeapon(SpecialWeaponTypes specialWeaponType = 0 )
         {
             if ((int)specialWeaponType <= availableSpecialWeapons.Count)
             {
@@ -87,8 +87,16 @@ namespace Foxlair.Player.Weapons
             }
         }
 
+        public void DefaultSpecialWeaponTestActivate()
+        {
+            DeactivateSpecialWeapon();
+            activeMainWeapon.Stop();
+            activeSpecialWeapon = specialWeapons[0];
+            activeSpecialWeapon.Play();
+        }
+
         [Button]
-        private void DeactivateSpecialWeapon()
+        public void DeactivateSpecialWeapon()
         {
             if (activeSpecialWeapon != null)
             {

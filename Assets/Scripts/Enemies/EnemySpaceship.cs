@@ -1,17 +1,20 @@
 using Foxlair.Tools.Events;
+using UnityEngine;
 
 namespace Foxlair.Enemies
 {
     public class EnemySpaceship : Spaceship
     {
+        
         public override void Die()
         {
-            throw new System.NotImplementedException();
+         GameObject deathVisualEffects = Instantiate(deathVFX, transform);
+
         }
 
         public override void OnDeath()
         {
-            throw new System.NotImplementedException();
+            Debug.Log(this.name + "died");
         }
 
         public override void OnHealthGained(float healAmount)
