@@ -19,6 +19,8 @@ namespace Foxlair
 
         public abstract void Die();
 
+        public abstract void OnDeathAnimationEnd();
+
         public virtual void Start()
         {
             animator = GetComponent<Animator>();

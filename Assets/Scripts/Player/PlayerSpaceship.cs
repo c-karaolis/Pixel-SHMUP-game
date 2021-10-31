@@ -13,6 +13,11 @@ namespace Foxlair.Player
             throw new System.NotImplementedException();
         }
 
+        public override void OnDeathAnimationEnd()
+        {
+            throw new System.NotImplementedException();
+        }
+
         public override void OnHealthGained(float healAmount)
         {
             throw new System.NotImplementedException();

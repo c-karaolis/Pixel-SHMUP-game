@@ -9,12 +9,19 @@ namespace Foxlair.Enemies
         public override void Die()
         {
             //GameObject deathVisualEffects = Instantiate(deathVFX, transform);
+            bulletReceiver.enabled = false;
             animator.SetTrigger("Die");
         }
 
         public override void OnDeath()
         {
             Debug.Log(this.name + "died");
+        }
+
+        public override void OnDeathAnimationEnd()
+        {
+            Debug.Log("Test animation event");
+            Destroy(gameObject);
         }
 
         public override void OnHealthGained(float healAmount)
