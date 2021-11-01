@@ -44,7 +44,7 @@ MonoBehaviour:
   m_Name: Bullet
   m_EditorClassIdentifier: 
   parameterType: 0
-  uniqueIndex: 9039432
+  uniqueIndex: 1125727
   profile: {fileID: 11400000}
   parent: {fileID: 114201774248674550}
   children: []
@@ -2477,7 +2477,7 @@ MonoBehaviour:
         parameterType: 0
         relativeTo: 0
         parameterName: 
-      defaultValue: 6
+      defaultValue: 12.67
     useSlider: 0
     sliderMin: 0
     sliderMax: 0
@@ -3881,7 +3881,7 @@ MonoBehaviour:
     sliderMin: 0
     sliderMax: 0
   speedOverLifetime:
-    enabled: 1
+    enabled: 0
     wrapMode:
       valueTree:
       - settings:
@@ -4332,7 +4332,7 @@ MonoBehaviour:
           indexOfTo: 0
           indexOfBlendedChildren: 
           weight: 0
-          headerTitle: 
+          headerTitle: Curve
           blendColor: {r: 0, g: 0, b: 0, a: 0}
           parameterType: 0
           relativeTo: 0
@@ -7669,7 +7669,7 @@ MonoBehaviour:
   m_Name: Shot
   m_EditorClassIdentifier: 
   parameterType: 1
-  uniqueIndex: 7341558
+  uniqueIndex: 13392282
   profile: {fileID: 11400000}
   parent: {fileID: 114917193883442684}
   children:
@@ -12443,7 +12443,7 @@ MonoBehaviour:
   m_Name: Root Emitter
   m_EditorClassIdentifier: 
   parameterType: 0
-  uniqueIndex: 16371051
+  uniqueIndex: 11763534
   profile: {fileID: 11400000}
   parent: {fileID: 0}
   children:
@@ -19554,7 +19554,7 @@ MonoBehaviour:
   m_Name: Pattern
   m_EditorClassIdentifier: 
   parameterType: 2
-  uniqueIndex: 7388328
+  uniqueIndex: 3604308
   profile: {fileID: 11400000}
   parent: {fileID: 114671512830859702}
   children:
@@ -34247,7 +34247,7 @@ MonoBehaviour:
             parameterType: 0
             relativeTo: 0
             parameterName: 
-          defaultValue: 0.5
+          defaultValue: 0.3
         useSlider: 0
         sliderMin: 0
         sliderMax: 0
@@ -43775,4 +43775,4 @@ MonoBehaviour:
   advancedFoldout: 0
   hasBeenSerializedOnce: 1
   focusedInstruction: -1
-  safetyForPlaymode: 9
+  safetyForPlaymode: 10

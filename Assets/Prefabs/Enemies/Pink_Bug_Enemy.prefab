@@ -14,7 +14,8 @@ GameObject:
   - component: {fileID: 8298695012692290591}
   - component: {fileID: 8298695012692290590}
   - component: {fileID: 8298695012692290561}
-  - component: {fileID: 8298695012692290560}
+  - component: {fileID: 1439761963612654360}
+  - component: {fileID: 887998264417824949}
   m_Layer: 0
   m_Name: Pink_Bug_Enemy
   m_TagString: Untagged
@@ -166,6 +167,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4363dffb68f058341b67a9c4b6c67ac4, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  animator: {fileID: 0}
+  audioSource: {fileID: 0}
+  deathVFX: {fileID: 3409480443960804193, guid: 3acd7827b3c62d84eb62f8b8fd50c96b, type: 3}
+  deathSFX: {fileID: 0}
 --- !u!114 &8298695012692290561
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -206,293 +211,118 @@ MonoBehaviour:
   healthRegeneration: 0
   unitHasHealthbar: 0
   healthBar: {fileID: 0}
---- !u!114 &8298695012692290560
-MonoBehaviour:
+--- !u!95 &1439761963612654360
+Animator:
+  serializedVersion: 3
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 8298695012692290563}
   m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 4ddc1a2536715a24095c464a2c394d5d, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  updateMethod: 0
-  _spline: {fileID: 0}
-  _autoUpdate: 1
-  _rotationModifier:
-    blend: 1
-    keys: []
-  _offsetModifier:
-    blend: 1
-    keys: []
-  _colorModifier:
-    blend: 1
-    keys: []
-  _sizeModifier:
-    blend: 1
-    keys: []
-  sampleCollection:
-    samples:
-    - position: {x: 4.843295, y: 1.6393244, z: 0}
-      up: {x: 0, y: 0, z: -1}
-      forward: {x: -0.82702696, y: -0.56216216, z: 0}
-      color: {r: 1, g: 1, b: 1, a: 1}
-      size: 1
-      percent: 0
-    - position: {x: 4.4595857, y: 1.3456537, z: 0}
-      up: {x: 0, y: 0, z: -1}
-      forward: {x: -0.7656264, y: -0.64328545, z: 0}
-      color: {r: 1, g: 1, b: 1, a: 1}
-      size: 1
-      percent: 0.037037037037037035
-    - position: {x: 4.0756903, y: 1.0025839, z: 0}
-      up: {x: 0, y: 0, z: -1}
-      forward: {x: -0.7299389, y: -0.68351245, z: 0}
-      color: {r: 1, g: 1, b: 1, a: 1}
-      size: 1
-      percent: 0.07407407407407407
-    - position: {x: 3.6917021, y: 0.6348144, z: 0}
-      up: {x: 0, y: 0, z: -1}
-      forward: {x: -0.71835005, y: -0.6956818, z: 0}
-      color: {r: 1, g: 1, b: 1, a: 1}
-      size: 1
-      percent: 0.1111111111111111
-    - position: {x: 3.307714, y: 0.26704502, z: 0}
-      up: {x: 0, y: 0, z: -1}
-      forward: {x: -0.729939, y: -0.6835124, z: 0}
-      color: {r: 1, g: 1, b: 1, a: 1}
-      size: 1
-      percent: 0.14814814814814814
-    - position: {x: 2.9238186, y: -0.07602498, z: 0}
-      up: {x: 0, y: 0, z: -1}
-      forward: {x: -0.7656265, y: -0.64328545, z: 0}
-      color: {r: 1, g: 1, b: 1, a: 1}
-      size: 1
-      percent: 0.18518518518518517
-    - position: {x: 2.5401092, y: -0.36969575, z: 0}
-      up: {x: 0, y: 0, z: -1}
-      forward: {x: -0.8270271, y: -0.56216216, z: 0}
-      color: {r: 1, g: 1, b: 1, a: 1}
-      size: 1
-      percent: 0.2222222222222222
-    - position: {x: 2.156678, y: -0.5892681, z: 0}
-      up: {x: 0, y: 0, z: -1}
-      forward: {x: -0.9102947, y: -0.41396078, z: 0}
-      color: {r: 1, g: 1, b: 1, a: 1}
-      size: 1
-      percent: 0.25925925925925924
-    - position: {x: 1.7736185, y: -0.71004176, z: 0}
-      up: {x: 0, y: 0, z: -1}
-      forward: {x: -0.9866707, y: -0.16273005, z: 0}
-      color: {r: 1, g: 1, b: 1, a: 1}
-      size: 1
-      percent: 0.2962962962962963
-    - position: {x: 1.3910232, y: -0.70731795, z: 0}
-      up: {x: 0, y: 0, z: -1}
-      forward: {x: -0.9823949, y: 0.18681608, z: 0}
-      color: {r: 1, g: 1, b: 1, a: 1}
-      size: 1
-      percent: 0.3333333333333333
-    - position: {x: 1.0089538, y: -0.5274879, z: 0}
-      up: {x: 0, y: 0, z: -1}
-      forward: {x: -0.80822587, y: 0.58887273, z: 0}
-      color: {r: 1, g: 1, b: 1, a: 1}
-      size: 1
-      percent: 0.37037037037037035
-    - position: {x: 0.6273494, y: -0.16844687, z: 0}
-      up: {x: 0, y: 0, z: -1}
-      forward: {x: -0.66259474, y: 0.7489781, z: 0}
-      color: {r: 1, g: 1, b: 1, a: 1}
-      size: 1
-      percent: 0.4074074074074074
-    - position: {x: 0.24611568, y: 0.317249, z: 0}
-      up: {x: 0, y: 0, z: -1}
-      forward: {x: -0.58268774, y: 0.8126961, z: 0}
-      color: {r: 1, g: 1, b: 1, a: 1}
-      size: 1
-      percent: 0.4444444444444444
-    - position: {x: -0.13483906, y: 0.8770435, z: 0}
-      up: {x: 0, y: 0, z: -1}
-      forward: {x: -0.54932624, y: 0.83560795, z: 0}
-      color: {r: 1, g: 1, b: 1, a: 1}
-      size: 1
-      percent: 0.48148148148148145
-    - position: {x: -0.5156083, y: 1.4583805, z: 0}
-      up: {x: 0, y: 0, z: -1}
-      forward: {x: -0.55233526, y: 0.83362204, z: 0}
-      color: {r: 1, g: 1, b: 1, a: 1}
-      size: 1
-      percent: 0.5185185185185185
-    - position: {x: -0.8962846, y: 2.0087037, z: 0}
-      up: {x: 0, y: 0, z: -1}
-      forward: {x: -0.5926885, y: 0.8054317, z: 0}
-      color: {r: 1, g: 1, b: 1, a: 1}
-      size: 1
-      percent: 0.5555555555555556
-    - position: {x: -1.2769604, y: 2.475457, z: 0}
-      up: {x: 0, y: 0, z: -1}
-      forward: {x: -0.68272156, y: 0.7306787, z: 0}
-      color: {r: 1, g: 1, b: 1, a: 1}
-      size: 1
-      percent: 0.5925925925925926
-    - position: {x: -1.6577301, y: 2.8060844, z: 0}
-      up: {x: 0, y: 0, z: -1}
-      forward: {x: -0.84096193, y: 0.5410944, z: 0}
-      color: {r: 1, g: 1, b: 1, a: 1}
-      size: 1
-      percent: 0.6296296296296297
-    - position: {x: -2.0386848, y: 2.9480288, z: 0}
-      up: {x: 0, y: 0, z: -1}
-      forward: {x: -0.9968981, y: 0.07870248, z: 0}
-      color: {r: 1, g: 1, b: 1, a: 1}
-      size: 1
-      percent: 0.6666666666666666
-    - position: {x: -2.4197636, y: 2.8991868, z: 0}
-      up: {x: 0, y: 0, z: -1}
-      forward: {x: -0.9515643, y: -0.30744988, z: 0}
-      color: {r: 1, g: 1, b: 1, a: 1}
-      size: 1
-      percent: 0.7037037037037037
-    - position: {x: -2.8008423, y: 2.711062, z: 0}
-      up: {x: 0, y: 0, z: -1}
-      forward: {x: -0.83765936, y: -0.54619306, z: 0}
-      color: {r: 1, g: 1, b: 1, a: 1}
-      size: 1
-      percent: 0.7407407407407407
-    - position: {x: -3.181921, y: 2.4115102, z: 0}
-      up: {x: 0, y: 0, z: -1}
-      forward: {x: -0.7403808, y: -0.6721877, z: 0}
-      color: {r: 1, g: 1, b: 1, a: 1}
-      size: 1
-      percent: 0.7777777777777778
-    - position: {x: -3.5629997, y: 2.0283887, z: 0}
-      up: {x: 0, y: 0, z: -1}
-      forward: {x: -0.6758141, y: -0.7370721, z: 0}
-      color: {r: 1, g: 1, b: 1, a: 1}
-      size: 1
-      percent: 0.8148148148148148
-    - position: {x: -3.9440784, y: 1.5895538, z: 0}
-      up: {x: 0, y: 0, z: -1}
-      forward: {x: -0.6400924, y: -0.768298, z: 0}
-      color: {r: 1, g: 1, b: 1, a: 1}
-      size: 1
-      percent: 0.8518518518518519
-    - position: {x: -4.325157, y: 1.1228626, z: 0}
-      up: {x: 0, y: 0, z: -1}
-      forward: {x: -0.62872225, y: -0.7776299, z: 0}
-      color: {r: 1, g: 1, b: 1, a: 1}
-      size: 1
-      percent: 0.8888888888888888
-    - position: {x: -4.706236, y: 0.6561713, z: 0}
-      up: {x: 0, y: 0, z: -1}
-      forward: {x: -0.64009225, y: -0.768298, z: 0}
-      color: {r: 1, g: 1, b: 1, a: 1}
-      size: 1
-      percent: 0.9259259259259259
-    - position: {x: -5.0873146, y: 0.21733645, z: 0}
-      up: {x: 0, y: 0, z: -1}
-      forward: {x: -0.67581415, y: -0.73707205, z: 0}
-      color: {r: 1, g: 1, b: 1, a: 1}
-      size: 1
-      percent: 0.9629629629629629
-    - position: {x: -5.4683933, y: -0.16578507, z: 0}
-      up: {x: 0, y: 0, z: -1}
-      forward: {x: -0.74038076, y: -0.67218775, z: 0}
-      color: {r: 1, g: 1, b: 1, a: 1}
-      size: 1
-      percent: 1
-    optimizedIndices: 
-    sampleMode: 0
-    clipFrom: 0
-    clipTo: 1
-    loopSamples: 0
-  clipFromSample:
-    position: {x: 4.843295, y: 1.6393244, z: 0}
-    up: {x: 0, y: 0, z: -1}
-    forward: {x: -0.82702696, y: -0.56216216, z: 0}
-    color: {r: 1, g: 1, b: 1, a: 1}
-    size: 1
-    percent: 0
-  clipToSample:
-    position: {x: -5.4683933, y: -0.16578507, z: 0}
-    up: {x: 0, y: 0, z: -1}
-    forward: {x: -0.74038076, y: -0.67218775, z: 0}
-    color: {r: 1, g: 1, b: 1, a: 1}
-    size: 1
-    percent: 1
-  _loopSamples: 0
-  _clipFrom: 0
-  _clipTo: 1
-  animClipFrom: 0
-  animClipTo: 1
-  _sampleCount: 28
-  startSampleIndex: 0
-  multithreaded: 0
-  buildOnAwake: 0
-  buildOnEnable: 0
-  _isUpdated: 1
-  applyDirectionRotation: 0
-  useTriggers: 0
-  triggerGroup: 0
-  _direction: 1
-  _dontLerpDirection: 0
-  _physicsMode: 0
-  _motion:
-    _hasOffset: 0
-    _hasRotationOffset: 0
-    _offset: {x: 0, y: 0}
-    _rotationOffset: {x: 0, y: 0, z: 0}
-    _baseScale: {x: 1, y: 1, z: 1}
-    _2dMode: 0
-    velocityHandleMode: 0
-    applyPositionX: 1
-    applyPositionY: 1
-    applyPositionZ: 0
-    applyPosition2D: 1
-    retainLocalPosition: 0
-    direction: 1
-    applyRotationX: 0
-    applyRotationY: 0
-    applyRotationZ: 0
-    applyRotation2D: 1
-    retainLocalRotation: 0
-    applyScaleX: 0
-    applyScaleY: 0
-    applyScaleZ: 0
-    targetUser: {fileID: 8298695012692290560}
-  targetRigidbody: {fileID: 0}
-  targetRigidbody2D: {fileID: 0}
-  targetTransform: {fileID: 8298695012692290586}
-  _result:
-    position: {x: 4.843295, y: 1.6393244, z: 0}
-    up: {x: 0, y: 0, z: -1}
-    forward: {x: -0.82702696, y: -0.56216216, z: 0}
-    color: {r: 1, g: 1, b: 1, a: 1}
-    size: 1
-    percent: 0
-  _finalResult:
-    position: {x: 4.843295, y: 1.6393244, z: 0}
-    up: {x: 0, y: 0, z: -1}
-    forward: {x: -0.82702696, y: -0.56216216, z: 0}
-    color: {r: 1, g: 1, b: 1, a: 1}
-    size: 1
-    percent: 0
-  wrapMode: 0
-  followMode: 0
-  autoStartPosition: 0
-  _follow: 1
-  preserveUniformSpeedWithOffset: 0
-  _followSpeed: 1
-  _followDuration: 1
-  _startPosition: 0
-  _speedModifier:
-    blend: 1
-    keys: []
-  _unityOnEndReached:
-    m_PersistentCalls:
-      m_Calls: []
-  _unityOnBeginningReached:
-    m_PersistentCalls:
-      m_Calls: []
+  m_Avatar: {fileID: 0}
+  m_Controller: {fileID: 9100000, guid: 31931e3dc38d581409047c39105bfab9, type: 2}
+  m_CullingMode: 0
+  m_UpdateMode: 0
+  m_ApplyRootMotion: 0
+  m_LinearVelocityBlending: 0
+  m_WarningMessage: 
+  m_HasTransformHierarchy: 1
+  m_AllowConstantClipSamplingOptimization: 1
+  m_KeepAnimatorControllerStateOnDisable: 0
+--- !u!82 &887998264417824949
+AudioSource:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8298695012692290563}
+  m_Enabled: 1
+  serializedVersion: 4
+  OutputAudioMixerGroup: {fileID: 0}
+  m_audioClip: {fileID: 0}
+  m_PlayOnAwake: 1
+  m_Volume: 1
+  m_Pitch: 1
+  Loop: 0
+  Mute: 0
+  Spatialize: 0
+  SpatializePostEffects: 0
+  Priority: 128
+  DopplerLevel: 1
+  MinDistance: 1
+  MaxDistance: 500
+  Pan2D: 0
+  rolloffMode: 0
+  BypassEffects: 0
+  BypassListenerEffects: 0
+  BypassReverbZones: 0
+  rolloffCustomCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 1
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    - serializedVersion: 3
+      time: 1
+      value: 0
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
+  panLevelCustomCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 0
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
+  spreadCustomCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 0
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
+  reverbZoneMixCustomCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 1
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4

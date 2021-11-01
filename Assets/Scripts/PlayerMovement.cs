@@ -1,4 +1,5 @@
 using UnityEngine;
+using UnityEngine.EventSystems;
 
 namespace Foxlair.Player.Movement
 {
@@ -32,7 +33,8 @@ namespace Foxlair.Player.Movement
 
         void Update()
         {
-            if (!Input.GetButton("Fire1")) { return; }
+            //TODO: remove second condition when remove testing UI?
+            if (!Input.GetButton("Fire1") || EventSystem.current.IsPointerOverGameObject()) { return; }
 
             mousePosition = Camera.main.ScreenToWorldPoint(Input.mousePosition);
 
