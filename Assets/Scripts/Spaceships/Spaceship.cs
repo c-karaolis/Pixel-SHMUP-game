@@ -9,6 +9,7 @@ namespace Foxlair
     {
         public Animator animator;
         public AudioSource audioSource;
+        public AudioClip deathSFX;
         public BulletReceiver bulletReceiver;
 
         public abstract void OnHealthLost(float damage);

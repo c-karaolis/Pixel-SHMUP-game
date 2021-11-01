@@ -10,6 +10,7 @@ namespace Foxlair.Enemies
         {
             //GameObject deathVisualEffects = Instantiate(deathVFX, transform);
             bulletReceiver.enabled = false;
+            audioSource.PlayOneShot(deathSFX);
             animator.SetTrigger("Die");
         }
 
