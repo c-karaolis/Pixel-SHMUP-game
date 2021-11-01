@@ -10,8 +10,7 @@ namespace Foxlair.Enemies
         {
             //GameObject deathVisualEffects = Instantiate(deathVFX, transform);
             bulletReceiver.enabled = false;
-            if (deathSFX)
-            audioSource.PlayOneShot(deathSFX);
+            if (deathSFX) audioSource.PlayOneShot(deathSFX);
             animator.SetTrigger("Die");
         }
 
@@ -33,6 +32,7 @@ namespace Foxlair.Enemies
 
         public override void OnHealthLost(float damage)
         {
+            animator.SetTrigger("Hit");
             //TODO: do X amount of damage to Enemies.
             //FoxlairEventManager.Instance.EnemyHealthSystem_OnHealthLost_Event(damage);
         }
