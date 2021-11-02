@@ -1,3 +1,4 @@
+using DG.Tweening;
 using Foxlair.Tools.Events;
 using UnityEngine;
 
@@ -17,12 +18,11 @@ namespace Foxlair.Enemies
 
         public override void OnDeath()
         {
-            Debug.Log(this.name + "died");
+            FoxlairEventManager.Instance.EnemyHealthSystem_OnDeath_Event(this);
         }
 
         public override void OnDeathAnimationEnd()
         {
-            Debug.Log("Test animation event");
             Destroy(gameObject);
         }
 
@@ -33,7 +33,9 @@ namespace Foxlair.Enemies
 
         public override void OnHealthLost(float damage)
         {
+            transform.DOShakePosition(0.1f,0.1f,2,90,false,false);
             animator.SetTrigger("Hit");
+
             //TODO: do X amount of damage to Enemies.
             //FoxlairEventManager.Instance.EnemyHealthSystem_OnHealthLost_Event(damage);
         }

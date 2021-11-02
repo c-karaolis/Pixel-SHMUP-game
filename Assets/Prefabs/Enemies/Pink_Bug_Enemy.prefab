@@ -169,8 +169,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   animator: {fileID: 0}
   audioSource: {fileID: 0}
-  deathVFX: {fileID: 3409480443960804193, guid: 3acd7827b3c62d84eb62f8b8fd50c96b, type: 3}
-  deathSFX: {fileID: 0}
+  deathSFX: {fileID: 8300000, guid: d29d0c4698b30804c9cdfb0b24162856, type: 3}
+  bulletReceiver: {fileID: 0}
 --- !u!114 &8298695012692290561
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -205,8 +205,8 @@ MonoBehaviour:
     - Name: healthOwner
       Entry: 10
       Data: 0
-  health: 1000
-  maxHealth: 1000
+  health: 10
+  maxHealth: 10
   unitRegeneratesHealth: 0
   healthRegeneration: 0
   unitHasHealthbar: 0
