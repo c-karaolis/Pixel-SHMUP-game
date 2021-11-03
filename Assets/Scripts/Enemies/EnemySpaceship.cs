@@ -13,7 +13,6 @@ namespace Foxlair.Enemies
             bulletReceiver.enabled = false;
             animator.SetTrigger("Die");
             if (deathSFX) audioSource.PlayOneShot(deathSFX);
-
         }
 
         public override void OnDeath()
