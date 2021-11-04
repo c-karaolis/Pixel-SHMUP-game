@@ -81,6 +81,9 @@ MonoBehaviour:
   emitterProfile: {fileID: 11400000, guid: aadc068142919774aac55c7fca919cb8, type: 2}
   patternOrigin: {fileID: 1547231849}
   playAtStart: 0
+  useDefaultGizmoColor: 1
+  gizmoColor: {r: 0, g: 1, b: 0, a: 1}
+  gizmoSize: 0.5
 --- !u!1 &1833093971
 GameObject:
   m_ObjectHideFlags: 0
@@ -158,6 +161,9 @@ MonoBehaviour:
   emitterProfile: {fileID: 11400000, guid: b3be5a2f0d7bffd4f912c337aaaaf5e7, type: 2}
   patternOrigin: {fileID: 6749533536037640304}
   playAtStart: 0
+  useDefaultGizmoColor: 1
+  gizmoColor: {r: 0, g: 1, b: 0, a: 1}
+  gizmoSize: 0.5
 --- !u!1 &1784573893784165653
 GameObject:
   m_ObjectHideFlags: 0
@@ -205,9 +211,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e86f4117f9bae9e44a9570d576b6c63b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  boundsWidthOffset: 3
-  boundsHeightOffset: 1.5
-  traversalSmoothness: 0.01
+  mainCamera: {fileID: 0}
+  boundsWidthOffset: 15
+  boundsHeightOffset: 15
+  traversalSmoothness: 0.083
 --- !u!212 &1784573893784165656
 SpriteRenderer:
   m_ObjectHideFlags: 0
@@ -227,7 +234,7 @@ SpriteRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 10754, guid: 0000000000000000f000000000000000, type: 0}
+  - {fileID: 0}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -271,7 +278,55 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: eee3c77866afff042bb4433a9c9f6811, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  activeMainWeapon: {fileID: 0}
+  serializationData:
+    SerializedFormat: 2
+    SerializedBytes: 
+    ReferencedUnityObjects:
+    - {fileID: 3446542989555330934}
+    SerializedBytesString: 
+    Prefab: {fileID: 0}
+    PrefabModificationsReferencedUnityObjects: []
+    PrefabModifications: []
+    SerializationNodes:
+    - Name: specialWeapons
+      Entry: 7
+      Data: 0|System.Collections.Generic.Dictionary`2[[Foxlair.Enums.SpecialWeaponTypes,
+        Assembly-CSharp],[BulletPro.BulletEmitter, Assembly-CSharp]], mscorlib
+    - Name: comparer
+      Entry: 7
+      Data: 1|System.Collections.Generic.EnumEqualityComparer`1[[Foxlair.Enums.SpecialWeaponTypes,
+        Assembly-CSharp]], mscorlib
+    - Name: 
+      Entry: 12
+      Data: 0
+    - Name: 
+      Entry: 13
+      Data: 
+    - Name: 
+      Entry: 8
+      Data: 
+    - Name: 
+      Entry: 12
+      Data: 1
+    - Name: 
+      Entry: 7
+      Data: 
+    - Name: $k
+      Entry: 3
+      Data: 0
+    - Name: $v
+      Entry: 10
+      Data: 0
+    - Name: 
+      Entry: 8
+      Data: 
+    - Name: 
+      Entry: 13
+      Data: 
+    - Name: 
+      Entry: 8
+      Data: 
+  activeMainWeapon: {fileID: 4725940089852688054}
   activeSpecialWeapon: {fileID: 0}
   mainWeaponsParentObject: {fileID: 75913062}
   specialWeaponsParentObject: {fileID: 1833093971}
@@ -282,9 +337,9 @@ MonoBehaviour:
   - {fileID: 4725940089852688054}
   - {fileID: 4407804161331561905}
   - {fileID: 2437687661987254543}
-  specialWeapons:
+  availableSpecialWeapons:
   - {fileID: 3446542989555330934}
-  activeMainWeaponIndex: 0
+  activeMainWeaponIndex: 2
 --- !u!1 &4530976689866619058
 GameObject:
   m_ObjectHideFlags: 0
@@ -296,7 +351,7 @@ GameObject:
   - component: {fileID: 1658976554993809317}
   - component: {fileID: 3446542989555330934}
   m_Layer: 0
-  m_Name: Super
+  m_Name: Default
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -331,6 +386,9 @@ MonoBehaviour:
   emitterProfile: {fileID: 11400000, guid: 1d6a7df13b3e1ed45aa76490240171f9, type: 2}
   patternOrigin: {fileID: 1658976554993809317}
   playAtStart: 0
+  useDefaultGizmoColor: 1
+  gizmoColor: {r: 0, g: 1, b: 0, a: 1}
+  gizmoSize: 0.5
 --- !u!1 &4661350965165143072
 GameObject:
   m_ObjectHideFlags: 0
@@ -377,6 +435,9 @@ MonoBehaviour:
   emitterProfile: {fileID: 11400000, guid: f7dd7c6029afb5047b71642de9fd5fe4, type: 2}
   patternOrigin: {fileID: 6057965573600325237}
   playAtStart: 0
+  useDefaultGizmoColor: 1
+  gizmoColor: {r: 0, g: 1, b: 0, a: 1}
+  gizmoSize: 0.5
 --- !u!1 &6115443021242981562
 GameObject:
   m_ObjectHideFlags: 0
@@ -423,6 +484,9 @@ MonoBehaviour:
   emitterProfile: {fileID: 11400000, guid: 9ec2c1f69cec0c247b247c28f00e9aac, type: 2}
   patternOrigin: {fileID: 4452839597301671296}
   playAtStart: 0
+  useDefaultGizmoColor: 1
+  gizmoColor: {r: 0, g: 1, b: 0, a: 1}
+  gizmoSize: 0.5
 --- !u!1 &8726363253580107246
 GameObject:
   m_ObjectHideFlags: 0
@@ -469,3 +533,6 @@ MonoBehaviour:
   emitterProfile: {fileID: 11400000, guid: 53f7688f8130f224d8ef252062931269, type: 2}
   patternOrigin: {fileID: 8654502768476943897}
   playAtStart: 0
+  useDefaultGizmoColor: 1
+  gizmoColor: {r: 0, g: 1, b: 0, a: 1}
+  gizmoSize: 0.5
