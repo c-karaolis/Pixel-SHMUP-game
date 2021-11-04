@@ -33,7 +33,7 @@ namespace BulletPro.EditorScripts
 			GameObject go = bm.gameObject;
 
 			#if UNITY_2019_1_OR_NEWER
-			bool isPrefabOriginal = ((UnityEditor.Experimental.SceneManagement.PrefabStageUtility.GetCurrentPrefabStage() != null) || (Selection.GetFiltered<GameObject>(SelectionMode.ExcludePrefab).Length == 0));
+			bool isPrefabOriginal = ((UnityEditor.SceneManagement.PrefabStageUtility.GetCurrentPrefabStage() != null) || (Selection.GetFiltered<GameObject>(SelectionMode.ExcludePrefab).Length == 0));
 			#elif UNITY_2018_3_OR_NEWER
 			bool isPrefabOriginal = UnityEditor.Experimental.SceneManagement.PrefabStageUtility.GetCurrentPrefabStage() != null;			
 			#elif UNITY_2018_2_OR_NEWER
