@@ -66,7 +66,6 @@ TextureImporter:
   streamingMipmaps: 0
   streamingMipmapsPriority: 0
   vTOnly: 0
-  ignoreMasterTextureLimit: 0
   grayScaleToAlpha: 0
   generateCubemap: 6
   cubemapConvolution: 0
@@ -416,20 +415,6 @@ TextureImporter:
     edges: []
     weights: []
     secondaryTextures: []
-    nameFileIdTable:
-      LightningBarrier_0: 21300000
-      LightningBarrier_2: 21300004
-      LightningBarrier_7: 21300014
-      LightningBarrier_1: 21300002
-      LightningBarrier_3: 21300006
-      LightningBarrier_11: 21300022
-      LightningBarrier_4: 21300008
-      LightningBarrier_5: 21300010
-      LightningBarrier_6: 21300012
-      LightningBarrier_9: 21300018
-      LightningBarrier_12: 21300024
-      LightningBarrier_8: 21300016
-      LightningBarrier_10: 21300020
   spritePackingTag: 
   pSDRemoveMatte: 0
   pSDShowRemoveMatteOption: 0

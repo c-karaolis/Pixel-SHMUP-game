@@ -72,7 +72,6 @@ TextureImporter:
   streamingMipmaps: 0
   streamingMipmapsPriority: 0
   vTOnly: 0
-  ignoreMasterTextureLimit: 0
   grayScaleToAlpha: 0
   generateCubemap: 6
   cubemapConvolution: 0
@@ -509,23 +508,6 @@ TextureImporter:
     edges: []
     weights: []
     secondaryTextures: []
-    nameFileIdTable:
-      ExplosionFX_Realistic_14: 21300028
-      ExplosionFX_Realistic_0: 21300000
-      ExplosionFX_Realistic_2: 21300004
-      ExplosionFX_Realistic_7: 21300014
-      ExplosionFX_Realistic_1: 21300002
-      ExplosionFX_Realistic_12: 21300024
-      ExplosionFX_Realistic_3: 21300006
-      ExplosionFX_Realistic_5: 21300010
-      ExplosionFX_Realistic_13: 21300026
-      ExplosionFX_Realistic_11: 21300022
-      ExplosionFX_Realistic_4: 21300008
-      ExplosionFX_Realistic_10: 21300020
-      ExplosionFX_Realistic_15: 21300030
-      ExplosionFX_Realistic_6: 21300012
-      ExplosionFX_Realistic_8: 21300016
-      ExplosionFX_Realistic_9: 21300018
   spritePackingTag: 
   pSDRemoveMatte: 0
   pSDShowRemoveMatteOption: 0
