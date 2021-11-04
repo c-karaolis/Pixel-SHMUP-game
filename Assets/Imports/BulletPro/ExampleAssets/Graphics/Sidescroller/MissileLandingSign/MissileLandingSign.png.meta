@@ -84,6 +84,7 @@ TextureImporter:
   streamingMipmaps: 0
   streamingMipmapsPriority: 0
   vTOnly: 0
+  ignoreMasterTextureLimit: 0
   grayScaleToAlpha: 0
   generateCubemap: 6
   cubemapConvolution: 0
@@ -580,6 +581,27 @@ TextureImporter:
     edges: []
     weights: []
     secondaryTextures: []
+    nameFileIdTable:
+      MissileLandingSign (1)_1: 21300002
+      MissileLandingSign (1)_7: 21300014
+      MissileLandingSign (1)_5: 21300010
+      MissileLandingSign (1)_8: 21300016
+      MissileLandingSign (1)_16: 21300032
+      MissileLandingSign (1)_3: 21300006
+      MissileLandingSign (1)_17: 21300034
+      MissileLandingSign (1)_18: 21300036
+      MissileLandingSign (1)_14: 21300028
+      MissileLandingSign (1)_0: 21300000
+      MissileLandingSign (1)_11: 21300022
+      MissileLandingSign (1)_9: 21300018
+      MissileLandingSign (1)_12: 21300024
+      MissileLandingSign (1)_4: 21300008
+      MissileLandingSign (1)_10: 21300020
+      MissileLandingSign (1)_15: 21300030
+      MissileLandingSign (1)_6: 21300012
+      MissileLandingSign (1)_2: 21300004
+      MissileLandingSign (1)_19: 21300038
+      MissileLandingSign (1)_13: 21300026
   spritePackingTag: 
   pSDRemoveMatte: 0
   pSDShowRemoveMatteOption: 0

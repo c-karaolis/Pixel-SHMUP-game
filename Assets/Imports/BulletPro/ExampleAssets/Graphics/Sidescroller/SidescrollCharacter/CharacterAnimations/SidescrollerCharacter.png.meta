@@ -114,6 +114,7 @@ TextureImporter:
   streamingMipmaps: 0
   streamingMipmapsPriority: 0
   vTOnly: 0
+  ignoreMasterTextureLimit: 0
   grayScaleToAlpha: 0
   generateCubemap: 6
   cubemapConvolution: 0
@@ -820,6 +821,37 @@ TextureImporter:
     edges: []
     weights: []
     secondaryTextures: []
+    nameFileIdTable:
+      SidescrollerCharacter_1: 21300002
+      SidescrollerCharacter_15: 21300030
+      SidescrollerCharacter_6: 21300012
+      SidescrollerCharacter_29: 21300058
+      SidescrollerCharacter_13: 21300026
+      SidescrollerCharacter_12: 21300024
+      SidescrollerCharacter_18: 21300036
+      SidescrollerCharacter_10: 21300020
+      SidescrollerCharacter_14: 21300028
+      SidescrollerCharacter_20: 21300040
+      SidescrollerCharacter_28: 21300056
+      SidescrollerCharacter_7: 21300014
+      SidescrollerCharacter_23: 21300046
+      SidescrollerCharacter_3: 21300006
+      SidescrollerCharacter_4: 21300008
+      SidescrollerCharacter_9: 21300018
+      SidescrollerCharacter_16: 21300032
+      SidescrollerCharacter_27: 21300054
+      SidescrollerCharacter_11: 21300022
+      SidescrollerCharacter_0: 21300000
+      SidescrollerCharacter_17: 21300034
+      SidescrollerCharacter_22: 21300044
+      SidescrollerCharacter_5: 21300010
+      SidescrollerCharacter_8: 21300016
+      SidescrollerCharacter_24: 21300048
+      SidescrollerCharacter_19: 21300038
+      SidescrollerCharacter_2: 21300004
+      SidescrollerCharacter_25: 21300050
+      SidescrollerCharacter_21: 21300042
+      SidescrollerCharacter_26: 21300052
   spritePackingTag: 
   pSDRemoveMatte: 0
   pSDShowRemoveMatteOption: 0

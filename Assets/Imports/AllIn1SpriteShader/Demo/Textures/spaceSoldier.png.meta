@@ -1,7 +1,10 @@
 fileFormatVersion: 2
 guid: 519dafacd208bb64c83d5124be03b09d
 TextureImporter:
-  internalIDToNameTable: []
+  internalIDToNameTable:
+  - first:
+      213: -7390147391288916661
+    second: spaceSoldier_0
   externalObjects: {}
   serializedVersion: 11
   mipmaps:
@@ -24,6 +27,7 @@ TextureImporter:
   streamingMipmaps: 0
   streamingMipmapsPriority: 0
   vTOnly: 0
+  ignoreMasterTextureLimit: 0
   grayScaleToAlpha: 0
   generateCubemap: 6
   cubemapConvolution: 0
@@ -157,6 +161,8 @@ TextureImporter:
     edges: []
     weights: []
     secondaryTextures: []
+    nameFileIdTable:
+      spaceSoldier_0: -7390147391288916661
   spritePackingTag: 
   pSDRemoveMatte: 0
   pSDShowRemoveMatteOption: 0
