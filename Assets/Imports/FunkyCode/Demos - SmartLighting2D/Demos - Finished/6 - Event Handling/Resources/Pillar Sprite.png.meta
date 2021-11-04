@@ -99,7 +99,6 @@ TextureImporter:
   streamingMipmaps: 0
   streamingMipmapsPriority: 0
   vTOnly: 0
-  ignoreMasterTextureLimit: 0
   grayScaleToAlpha: 0
   generateCubemap: 6
   cubemapConvolution: 0
@@ -713,32 +712,6 @@ TextureImporter:
     edges: []
     weights: []
     secondaryTextures: []
-    nameFileIdTable:
-      Pillar Sprite_1: -7148351197923653215
-      Pillar Sprite_9: -5333288534551202401
-      Pillar Sprite_17: 1023218737170025462
-      Pillar Sprite_6: 7520262287726861144
-      Pillar Sprite_10: 817946198768058665
-      Pillar Sprite_8: 8494530446909283722
-      Pillar Sprite_15: -1791717620467159389
-      Pillar Sprite_18: 3911002186038351971
-      Pillar Sprite_21: -6759851845282749977
-      Pillar Sprite_20: 5143227228131663696
-      Pillar Sprite_22: 8646097343289927499
-      Pillar Sprite_7: 2050085640347182045
-      Pillar Sprite_24: 2087553023528986693
-      Pillar Sprite_2: 9053610645077243199
-      Pillar Sprite_0: -5306758757387658514
-      Pillar Sprite_4: 1356261178637515254
-      Pillar Sprite_14: 6072924865758976356
-      Pillar Sprite_13: 8610082884887980359
-      Pillar Sprite_19: -3782858031677973315
-      Pillar Sprite_11: -8877218605649024566
-      Pillar Sprite_3: -7387284507979429649
-      Pillar Sprite_5: -7962219191585054680
-      Pillar Sprite_16: 5661620531379221087
-      Pillar Sprite_23: 6867141352252835983
-      Pillar Sprite_12: 330568653815197952
   spritePackingTag: 
   pSDRemoveMatte: 0
   pSDShowRemoveMatteOption: 0

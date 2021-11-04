@@ -51,7 +51,6 @@ TextureImporter:
   streamingMipmaps: 0
   streamingMipmapsPriority: 0
   vTOnly: 0
-  ignoreMasterTextureLimit: 0
   grayScaleToAlpha: 0
   generateCubemap: 6
   cubemapConvolution: 0
@@ -317,16 +316,6 @@ TextureImporter:
     edges: []
     weights: []
     secondaryTextures: []
-    nameFileIdTable:
-      Nuke_1: 21300002
-      Nuke_6: 21300012
-      Nuke_2: 21300004
-      Nuke_5: 21300010
-      Nuke_8: 21300016
-      Nuke_0: 21300000
-      Nuke_3: 21300006
-      Nuke_4: 21300008
-      Nuke_7: 21300014
   spritePackingTag: 
   pSDRemoveMatte: 0
   pSDShowRemoveMatteOption: 0
