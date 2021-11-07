@@ -24,7 +24,7 @@ public class PathInputDemo : MonoBehaviour
     public float progress = 0f;
 
     //references
-    private splineMove move;
+    private SplineMove move;
     private Animator animator;
 
 
@@ -33,7 +33,7 @@ public class PathInputDemo : MonoBehaviour
     void Start()
     {
         animator = GetComponent<Animator>();
-        move = GetComponent<splineMove>();
+        move = GetComponent<SplineMove>();
         move.StartMove();
         move.Pause();
         progress = 0f;

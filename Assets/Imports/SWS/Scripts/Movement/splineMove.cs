@@ -18,7 +18,7 @@ namespace SWS
     /// <summary>
     /// Movement script: linear or curved splines.
     /// <summary>
-    public class splineMove : MonoBehaviour
+    public class SplineMove : MonoBehaviour
     {
         /// <summary>
         /// Path component to use for movement.

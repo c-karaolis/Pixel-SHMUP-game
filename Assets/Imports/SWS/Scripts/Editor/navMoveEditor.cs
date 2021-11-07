@@ -12,7 +12,7 @@ namespace SWS
     /// <summary>
     /// Custom inspector for navMove.
     /// <summary>
-    [CustomEditor(typeof(navMove))]
+    [CustomEditor(typeof(NavMove))]
     public class navMoveEditor : moveEditor
     {
         public override void OnInspectorGUI()
@@ -83,7 +83,7 @@ namespace SWS
 
         //draws a red dot at the walker's path starting point
         [DrawGizmo(GizmoType.Active)]
-        static void DrawGizmoStartPoint(navMove script, GizmoType gizmoType)
+        static void DrawGizmoStartPoint(NavMove script, GizmoType gizmoType)
         {
             if (script.pathContainer == null) return;
 

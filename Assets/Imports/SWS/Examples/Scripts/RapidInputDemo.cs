@@ -54,7 +54,7 @@ public class RapidInputDemo : MonoBehaviour
     public float maxPitch = 2;
 
     //reference to movement script
-    private splineMove move;
+    private SplineMove move;
     //current speed
     private float currentSpeed;
     //time passed since start
@@ -64,7 +64,7 @@ public class RapidInputDemo : MonoBehaviour
     //get references
     void Start()
     {
-        move = GetComponent<splineMove>();
+        move = GetComponent<SplineMove>();
         if (!move)
         {
             Debug.LogWarning(gameObject.name + " missing movement script!");

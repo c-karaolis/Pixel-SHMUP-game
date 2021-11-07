@@ -12,8 +12,8 @@ namespace SWS
     /// <summary>
     /// Custom inspector for splineMove.
     /// <summary>
-    [CustomEditor(typeof(splineMove))]
-    public class splineMoveEditor : moveEditor
+    [CustomEditor(typeof(SplineMove))]
+    public class SplineMoveEditor : moveEditor
     {
         //called whenever the inspector gui gets rendered
         public override void OnInspectorGUI()
@@ -120,7 +120,7 @@ namespace SWS
 
         //draws a red dot at the walker's path starting point
         [DrawGizmo(GizmoType.Active)]
-        static void DrawGizmoStartPoint(splineMove script, GizmoType gizmoType)
+        static void DrawGizmoStartPoint(SplineMove script, GizmoType gizmoType)
         {
             if (script.pathContainer == null) return;
 

@@ -16,7 +16,7 @@ namespace SWS
     /// Movement script: pathfinding using Unity NavMesh agents.
     /// <summary>
     [RequireComponent(typeof(NavMeshAgent))]
-    public class navMove : MonoBehaviour
+    public class NavMove : MonoBehaviour
     {
         /// <summary>
         /// Path component to use for movement.

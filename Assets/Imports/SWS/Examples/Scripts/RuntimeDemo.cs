@@ -81,7 +81,7 @@ public class RuntimeDemo : MonoBehaviour
             GameObject path = (GameObject)Instantiate(example1.pathPrefab, pos, Quaternion.identity);
             
             //start movement on the new path
-            walker.GetComponent<splineMove>().SetPath(WaypointManager.Paths[path.name]);
+            walker.GetComponent<SplineMove>().SetPath(WaypointManager.Paths[path.name]);
             
             //example only
             example1.done = true;
@@ -248,7 +248,7 @@ public class RuntimeDemo : MonoBehaviour
     [System.Serializable]
     public class ExampleClass2
     {
-        public splineMove moveRef;
+        public SplineMove moveRef;
         public string pathName1;
         public string pathName2;
     }
@@ -256,25 +256,25 @@ public class RuntimeDemo : MonoBehaviour
     [System.Serializable]
     public class ExampleClass3
     {
-        public splineMove moveRef;
+        public SplineMove moveRef;
     }
 
     [System.Serializable]
     public class ExampleClass4
     {
-        public splineMove moveRef;
+        public SplineMove moveRef;
     }
 
     [System.Serializable]
     public class ExampleClass5
     {
-        public splineMove moveRef;
+        public SplineMove moveRef;
     }
 
     [System.Serializable]
     public class ExampleClass6
     {
-        public splineMove moveRef;
+        public SplineMove moveRef;
         public GameObject target;
         public bool done = false;
     }

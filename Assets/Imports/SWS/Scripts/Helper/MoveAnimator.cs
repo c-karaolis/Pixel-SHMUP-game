@@ -16,7 +16,7 @@ namespace SWS
     public class MoveAnimator : MonoBehaviour
     {
         //movement script references
-        private splineMove sMove;
+        private SplineMove sMove;
         private NavMeshAgent nAgent;
         //Mecanim animator reference
         private Animator animator;
@@ -29,7 +29,7 @@ namespace SWS
         {
             animator = GetComponentInChildren<Animator>();
 
-            sMove = GetComponent<splineMove>();
+            sMove = GetComponent<SplineMove>();
             if (!sMove)
                 nAgent = GetComponent<NavMeshAgent>();
 

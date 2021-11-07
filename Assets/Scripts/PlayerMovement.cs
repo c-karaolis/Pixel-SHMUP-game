@@ -33,8 +33,8 @@ namespace Foxlair.Player.Movement
 
         void Update()
         {
-            //TODO: remove second condition when remove testing UI?
-            if (!Input.GetButton("Fire1") || EventSystem.current.IsPointerOverGameObject()) { return; }
+            //TODO: add function condition to check if mouse position is within bounds?
+            if (!Input.GetButton("Fire1")) { return; }
 
             mousePosition = Camera.main.ScreenToWorldPoint(Input.mousePosition);
 

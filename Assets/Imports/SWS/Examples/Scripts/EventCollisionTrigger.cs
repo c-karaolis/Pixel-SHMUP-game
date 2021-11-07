@@ -63,7 +63,7 @@ namespace SWS
             Collider[] colliders = Physics.OverlapSphere(position, radius);
             foreach (Collider hit in colliders)
             {
-                navMove move = hit.GetComponent<navMove>();
+                NavMove move = hit.GetComponent<NavMove>();
                 if (move != null)
                 {
                     move.Stop();

@@ -39,7 +39,7 @@ public class EventReceiver : MonoBehaviour
         {
             case 1:
             case 3:
-                GetComponent<splineMove>().Pause(3);
+                GetComponent<SplineMove>().Pause(3);
                 break;
         }
     }
@@ -67,7 +67,7 @@ public class EventReceiver : MonoBehaviour
     {
         //get references
         NavMeshAgent agent = GetComponent<NavMeshAgent>();
-        navMove myMove = GetComponent<navMove>();
+        NavMove myMove = GetComponent<NavMove>();
         GameObject tar = (GameObject)target as GameObject;
 
         //increase agent speed

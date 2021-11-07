@@ -21,14 +21,14 @@ public class CameraInputDemo : MonoBehaviour
     public string infoText = "Welcome to this customized input example";
 
     //reference to the movement script
-    private splineMove myMove;
+    private SplineMove myMove;
 
 
     //get references at start
     //initialize movement but don't start it yet
     void Start()
     {
-        myMove = gameObject.GetComponent<splineMove>();
+        myMove = gameObject.GetComponent<SplineMove>();
         myMove.StartMove();
         myMove.Pause();
     }
