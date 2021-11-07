@@ -2,6 +2,7 @@ using BulletPro;
 using UnityEngine;
 using Newtonsoft.Json;
 using Sirenix.OdinInspector;
+using Foxlair.Core;
 
 namespace Foxlair.Tools.BulletProBridges
 {

@@ -138,22 +138,6 @@ PrefabInstance:
       propertyPath: serializationData.Prefab
       value: 
       objectReference: {fileID: 6793873107838209014, guid: 8b2ff625643e7f54cbc1ee64b7e74ca7, type: 3}
-    - target: {fileID: 7275344363742416741, guid: 8b2ff625643e7f54cbc1ee64b7e74ca7, type: 3}
-      propertyPath: m_LocalPosition.z
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 7275344364263364729, guid: 8b2ff625643e7f54cbc1ee64b7e74ca7, type: 3}
-      propertyPath: m_LocalPosition.z
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 7275344364771734587, guid: 8b2ff625643e7f54cbc1ee64b7e74ca7, type: 3}
-      propertyPath: m_LocalPosition.z
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 7275344364984303938, guid: 8b2ff625643e7f54cbc1ee64b7e74ca7, type: 3}
-      propertyPath: m_LocalPosition.z
-      value: 0
-      objectReference: {fileID: 0}
     - target: {fileID: 7769955271856806737, guid: 8b2ff625643e7f54cbc1ee64b7e74ca7, type: 3}
       propertyPath: m_RootOrder
       value: 0

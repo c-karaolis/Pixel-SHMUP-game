@@ -3,7 +3,7 @@ using Sirenix.OdinInspector;
 using UnityEngine;
 using UnityEngine.UI;
 
-namespace Foxlair
+namespace Foxlair.Core
 {
     public class HealthSystem : SerializedMonoBehaviour
     {

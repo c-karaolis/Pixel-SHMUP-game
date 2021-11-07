@@ -48,6 +48,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7d300ed5ba9e29d4ab5cc073c9447704, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  stageData: {fileID: 11400000, guid: c9452a0274f6d0141822ed09ba17fed4, type: 2}
 --- !u!1001 &99977479659559837
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -120,6 +121,22 @@ PrefabInstance:
     - target: {fileID: 3614289122628521701, guid: 4b5c5daa72accad47bb39c6aec932dd4, type: 3}
       propertyPath: m_Name
       value: WaveManager
+      objectReference: {fileID: 0}
+    - target: {fileID: 7203950009689012935, guid: 4b5c5daa72accad47bb39c6aec932dd4, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7203950010208120283, guid: 4b5c5daa72accad47bb39c6aec932dd4, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7203950011181573116, guid: 4b5c5daa72accad47bb39c6aec932dd4, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7203950011270977157, guid: 4b5c5daa72accad47bb39c6aec932dd4, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 8566386349975710208, guid: 4b5c5daa72accad47bb39c6aec932dd4, type: 3}
       propertyPath: m_RootOrder
@@ -263,7 +280,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 1784573893784165655, guid: f1651bef2186768469e72d2fbcb5b2eb, type: 3}
       propertyPath: m_LocalPosition.z
-      value: -0.88455635
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 1784573893784165655, guid: f1651bef2186768469e72d2fbcb5b2eb, type: 3}
       propertyPath: m_LocalRotation.w

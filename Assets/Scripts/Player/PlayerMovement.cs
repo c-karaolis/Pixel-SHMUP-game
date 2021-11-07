@@ -30,7 +30,7 @@ namespace Foxlair.Player.Movement
 
             mousePosition = Vector2.zero;
         }
-
+        
         void Update()
         {
             //TODO: add function condition to check if mouse position is within bounds?
