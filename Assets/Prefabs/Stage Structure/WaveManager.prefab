@@ -44,6 +44,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 93cbead463c26a44598c016406fc507f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  enemyWaves: []
+  currentWave: 0
+  waveDelay: 5
 --- !u!1001 &3874680656083437125
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -69,7 +72,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 6213898599420476546, guid: 393fe9f6e944f4f4191e9ee98a7be62f, type: 3}
       propertyPath: m_LocalPosition.z
-      value: -0.9373039
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 6213898599420476546, guid: 393fe9f6e944f4f4191e9ee98a7be62f, type: 3}
       propertyPath: m_LocalRotation.w
@@ -97,6 +100,18 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 6213898599420476546, guid: 393fe9f6e944f4f4191e9ee98a7be62f, type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6213898599974972318, guid: 393fe9f6e944f4f4191e9ee98a7be62f, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6213898601061683392, guid: 393fe9f6e944f4f4191e9ee98a7be62f, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6213898601283216825, guid: 393fe9f6e944f4f4191e9ee98a7be62f, type: 3}
+      propertyPath: m_LocalPosition.z
       value: 0
       objectReference: {fileID: 0}
     m_RemovedComponents: []

@@ -122,22 +122,6 @@ PrefabInstance:
       propertyPath: m_Name
       value: WaveManager
       objectReference: {fileID: 0}
-    - target: {fileID: 7203950009689012935, guid: 4b5c5daa72accad47bb39c6aec932dd4, type: 3}
-      propertyPath: m_LocalPosition.z
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 7203950010208120283, guid: 4b5c5daa72accad47bb39c6aec932dd4, type: 3}
-      propertyPath: m_LocalPosition.z
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 7203950011181573116, guid: 4b5c5daa72accad47bb39c6aec932dd4, type: 3}
-      propertyPath: m_LocalPosition.z
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 7203950011270977157, guid: 4b5c5daa72accad47bb39c6aec932dd4, type: 3}
-      propertyPath: m_LocalPosition.z
-      value: 0
-      objectReference: {fileID: 0}
     - target: {fileID: 8566386349975710208, guid: 4b5c5daa72accad47bb39c6aec932dd4, type: 3}
       propertyPath: m_RootOrder
       value: 3
