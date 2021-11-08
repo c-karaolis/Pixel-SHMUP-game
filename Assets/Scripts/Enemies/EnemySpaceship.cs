@@ -1,20 +1,41 @@
 using DG.Tweening;
 using Foxlair.Tools.Events;
 using SWS;
+using System;
+using System.Collections.Generic;
 using UnityEngine;
 
 namespace Foxlair.Enemies
 {
     public class EnemySpaceship : Spaceship
     {
+        #region Fields
         EnemyWave enemyWave;
         SplineMove splineMove;
-        Slot occupiedSlot;
+        public Slot occupiedSlot;
+        #endregion
 
+        #region Methods
         void Awake()
         {
             splineMove = GetComponent<SplineMove>();
             splineMove.movementEndEvent += OnMovementEnd;
+            AssignToSlot();
+        }
+
+        private void AssignToSlot()
+        {
+           // if (!enemyWave.formation)
+           //     return;
+           // List<Slot> slots = enemyWave.formation.GetSlots();
+           //foreach (Slot slot in slots)
+           // {
+           //     if (slot.enemySpaceship)
+           //         continue;
+
+           //     occupiedSlot = slot;
+           //     occupiedSlot.enemySpaceship = this;
+           // }
         }
 
         public override void Die()
@@ -43,7 +64,7 @@ namespace Foxlair.Enemies
 
         public override void OnHealthLost(float damage)
         {
-            transform.DOShakePosition(0.1f,0.05f,2,90,false,true);
+            transform.DOShakePosition(0.1f, 0.05f, 2, 90, false, true);
             animator.SetTrigger("Hit");
             //TODO: do X amount of damage to Enemies.
             //FoxlairEventManager.Instance.EnemyHealthSystem_OnHealthLost_Event(damage);
@@ -52,11 +73,11 @@ namespace Foxlair.Enemies
         void OnMovementEnd()
         {
             Debug.Log("Movement end");
-            LookForSlot();
+            GoToSlot();
         }
-        void LookForSlot()
+        void GoToSlot()
         {
-
+            transform.DOMove(occupiedSlot.transform.position,1f);
         }
 
 
@@ -65,4 +86,5 @@ namespace Foxlair.Enemies
             splineMove.movementEndEvent -= OnMovementEnd;
         }
     }
+    #endregion
 }

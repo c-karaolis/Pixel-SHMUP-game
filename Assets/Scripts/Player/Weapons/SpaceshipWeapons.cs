@@ -1,25 +1,24 @@
 using BulletPro;
 using Foxlair.Enums;
-using Sirenix.OdinInspector;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 
 namespace Foxlair.Player.Weapons
 {
-    public class SpaceshipWeapons : SerializedMonoBehaviour
+    public class SpaceshipWeapons : MonoBehaviour
     {
         #region Fields
-        [ReadOnly] public BulletEmitter activeMainWeapon = null;
-        [ReadOnly] public BulletEmitter activeSpecialWeapon = null;
+        public BulletEmitter activeMainWeapon = null;
+        public BulletEmitter activeSpecialWeapon = null;
 
-        [SerializeField] [Required] private GameObject mainWeaponsParentObject = null;
-        [SerializeField] [Required] private GameObject specialWeaponsParentObject = null;
+        [SerializeField] private GameObject mainWeaponsParentObject = null;
+        [SerializeField] private GameObject specialWeaponsParentObject = null;
         [SerializeField] private bool activateWeaponsOnStart = true;
         [SerializeField] private BulletEmitter[] mainWeapons;
         [SerializeField] private List<BulletEmitter> availableSpecialWeapons;
-        [SerializeField] [ReadOnly] private int activeMainWeaponIndex = 0;
-        [SerializeField] [ReadOnly] private Dictionary<SpecialWeaponTypes, BulletEmitter> specialWeapons;
+        [SerializeField] private int activeMainWeaponIndex = 0;
+        [SerializeField] private Dictionary<SpecialWeaponTypes, BulletEmitter> specialWeapons;
 
         #endregion
 
@@ -44,7 +43,6 @@ namespace Foxlair.Player.Weapons
 
         }
 
-        [Button]
         public void UpgradeMainWeapon()
         {
             if (activeMainWeaponIndex + 1 < mainWeapons.Length)
@@ -75,7 +73,6 @@ namespace Foxlair.Player.Weapons
             activeMainWeapon = null;
         }
 
-        [Button]
         public void ActivateSpecialWeapon(SpecialWeaponTypes specialWeaponType = 0 )
         {
             if ((int)specialWeaponType <= availableSpecialWeapons.Count)
@@ -95,7 +92,6 @@ namespace Foxlair.Player.Weapons
             activeSpecialWeapon.Play();
         }
 
-        [Button]
         public void DeactivateSpecialWeapon()
         {
             if (activeSpecialWeapon != null)
@@ -107,7 +103,6 @@ namespace Foxlair.Player.Weapons
             activeMainWeapon.Play();
         }
 
-        [Button]
         public void ResetMainWeapon()
         {
             DeactivateMainWeapon();

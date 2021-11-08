@@ -1,32 +1,29 @@
 using Foxlair.Interfaces;
-using Sirenix.OdinInspector;
 using UnityEngine;
 using UnityEngine.UI;
 
 namespace Foxlair.Core
 {
-    public class HealthSystem : SerializedMonoBehaviour
+    public class HealthSystem : MonoBehaviour
     {
 
-        [SerializeField] [ReadOnly] float health;
-        [Required] [SerializeField] float maxHealth;
+        [SerializeField] float health;
+        [SerializeField] float maxHealth;
 
         [Header("Min/Max damage and armor")]
-        [Required] [SerializeField] private readonly float minDamageCanReceive = 1f;
-        [Required] [SerializeField] private readonly float maxDamageCanReceive = 999f;
-        [Required] [SerializeField] private readonly float armor = 0f;
+        [SerializeField] private readonly float minDamageCanReceive = 1f;
+        [SerializeField] private readonly float maxDamageCanReceive = 999f;
+        [SerializeField] private readonly float armor = 0f;
 
         [Header("Customisation per unit")]
         [SerializeField] bool unitRegeneratesHealth = false;
-        [ShowIf("unitRegeneratesHealth")]
         [SerializeField] float healthRegeneration;
         [SerializeField] bool unitHasHealthbar = false;
-        [ShowIf("unitHasHealthbar")]
         public Image healthBar;
 
 
 
-        [SerializeField] [ReadOnly] IHealthOwner healthOwner;
+        [SerializeField] IHealthOwner healthOwner;
 
         private void OnValidate()
         {
@@ -36,9 +33,9 @@ namespace Foxlair.Core
             {
                 maxHealth = 50f;
             }
-            
-                health = maxHealth;
-            
+
+            health = maxHealth;
+
         }
 
         public void TakeDamage(float damage)

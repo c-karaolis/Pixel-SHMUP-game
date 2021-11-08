@@ -1,7 +1,5 @@
 using BulletPro;
 using UnityEngine;
-using Newtonsoft.Json;
-using Sirenix.OdinInspector;
 using Foxlair.Core;
 
 namespace Foxlair.Tools.BulletProBridges
@@ -9,7 +7,7 @@ namespace Foxlair.Tools.BulletProBridges
     [RequireComponent(typeof(BulletReceiver),typeof(HealthSystem))]
     public class BulletProToFoxlairHealthSystemBridge : MonoBehaviour
     {
-        [Required][SerializeField] HealthSystem healthSystem;
+        [SerializeField] HealthSystem healthSystem;
         private void OnValidate()
         {
             healthSystem = GetComponent<HealthSystem>();

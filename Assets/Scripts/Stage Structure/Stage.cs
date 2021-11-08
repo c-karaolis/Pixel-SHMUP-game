@@ -2,7 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-namespace Foxlair.Enemies
+namespace Foxlair.StageStructure
 {
     public class Stage : MonoBehaviour
     {

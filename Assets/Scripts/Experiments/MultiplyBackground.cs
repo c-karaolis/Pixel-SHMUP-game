@@ -1,5 +1,3 @@
-using Sirenix.OdinInspector;
-using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -61,7 +59,6 @@ public class MultiplyBackground : MonoBehaviour
         //// Setting new position
         //transform.position = startPos + Vector2.up * newPos;
     }
-    [Button]
     void GenerateClones()
     {
         if(transform.childCount != backgroundLayers.Count)
@@ -119,7 +116,6 @@ public class MultiplyBackground : MonoBehaviour
         }
     }
 
-    [Button]
     void DeleteClones()
     {
         Transform[] transforms;

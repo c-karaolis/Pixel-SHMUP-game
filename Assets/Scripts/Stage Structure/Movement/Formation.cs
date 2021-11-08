@@ -1,10 +1,10 @@
-using Sirenix.OdinInspector;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
 public class Formation : MonoBehaviour
 {
+    #region  Fields
     public List<Row> rows;
     public bool isVertical = true;
     public int numberOfRows;
@@ -16,8 +16,31 @@ public class Formation : MonoBehaviour
     public GameObject rowsGameObject;
     public GameObject rowPrefab;
     public List<GameObject> allRowGameObjects;
+    #endregion
 
-    [Button]
+    #region  Methods
+    public int GetSlotsCount()
+    {
+        int count = 0;
+        foreach (Row row in rows)
+        {
+            count += row.slots.Count;
+        }
+        return count;
+    }
+
+    public List<Slot> GetSlots()
+    {
+        List<Slot> slots = new List<Slot>();
+        foreach (Row row in rows)
+        {
+            slots.AddRange(row.slots);
+        }
+        return slots;
+    }
+    #endregion
+
+    #region Generation
     public void GenerateRows()
     {
         if (rowsGameObject == null)
@@ -48,7 +71,7 @@ public class Formation : MonoBehaviour
             newRow.GetComponent<Row>().formation = this;
             newRow.GetComponent<Row>().overridedPosition = distanceVector;
             newRow.GetComponent<Row>().slotsGameObject.transform.position = distanceVector;
-            if(overrideRowNumberOfSlots != 0)
+            if (overrideRowNumberOfSlots != 0)
             {
                 newRow.GetComponent<Row>().numberOfSlots = overrideRowNumberOfSlots;
             }
@@ -85,7 +108,6 @@ public class Formation : MonoBehaviour
         }
     }
 
-    [Button]
     public void RemoveAllRows()
     {
 
@@ -104,5 +126,5 @@ public class Formation : MonoBehaviour
         allRowGameObjects = new List<GameObject>();
     }
 
-
+    #endregion
 }

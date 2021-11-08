@@ -15,13 +15,14 @@ namespace Foxlair.Tools.Events
         public Action Currency_OnCurrencyChanged_Event;
         #endregion
 
-        #region Enemy Health System
+        #region Enemy Events
         public Action<float> EnemyHealthSystem_OnHealthGained_Event;
         public Action<float> EnemyHealthSystem_OnHealthLost_Event;
         public Action<EnemySpaceship> EnemyHealthSystem_OnDeath_Event;
+        public Action<EnemySpaceship> Enemy_OnBirth_Event;
         #endregion
 
-        #region Player Health System
+        #region Player Events
         public Action<float> PlayerHealthSystem_OnHealthGained_Event;
         public Action<float> PlayerHealthSystem_OnHealthLost_Event;
         public Action PlayerHealthSystem_OnPlayerDeath_Event;

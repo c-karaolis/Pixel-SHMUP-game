@@ -1,12 +1,10 @@
-using Sirenix.OdinInspector;
-using System;
-using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
 [ExecuteInEditMode]
 public class Row : MonoBehaviour
 {
+    #region  Fields
     public Formation formation;
     public bool isVertical = true;
     public bool overrideStartingPosition = false;
@@ -19,8 +17,12 @@ public class Row : MonoBehaviour
     public GameObject slotPrefab;
     public List<GameObject> allSlotGameObjects;
     public List<Slot> slots;
+    #endregion
 
-    [Button]
+    #region  Methods
+    #endregion
+
+    #region Generation
     public void GenerateSlots()
     {
         if (slotsGameObject == null)
@@ -55,7 +57,7 @@ public class Row : MonoBehaviour
 
             //TODO: change slots to enemies or add slot in enemies to show which slot is theirs?
             GameObject newSlot = Instantiate(slotPrefab, distanceVector, startingPosition.rotation, slotsGameObject.transform);
-            newSlot.AddComponent<Slot>();
+           // newSlot.AddComponent<Slot>();
             slots.Add(newSlot.GetComponent<Slot>());
 
         }
@@ -75,7 +77,6 @@ public class Row : MonoBehaviour
             allSlotGameObjects.Add(child.gameObject);
         }
     }
-    [Button]
     public void RemoveAllSlots()
     {
 
@@ -93,4 +94,5 @@ public class Row : MonoBehaviour
         slots = new List<Slot>();
         allSlotGameObjects = new List<GameObject>();
     }
+    #endregion
 }
