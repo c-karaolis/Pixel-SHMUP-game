@@ -1,3 +1,5 @@
+using Foxlair.Enemies;
+using Foxlair.Tools.Events;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
@@ -18,12 +20,29 @@ public class Row : MonoBehaviour
     public GameObject slotPrefab;
     public List<GameObject> allSlotGameObjects;
     public List<Slot> slots;
+    public RowAnimation rowAnimation;
     #endregion
 
     #region  Methods
     private void Awake()
     {
         slots = GetComponentsInChildren<Slot>().ToList();
+    }
+
+    private void Start()
+    {
+        FoxlairEventManager.Instance.Enemy_OnReachedSlot_Event += OnEnemyReachedSlot;
+        rowAnimation = GetComponent<RowAnimation>();
+    }
+
+    void OnEnemyReachedSlot(EnemySpaceship enemySpaceship,Slot slot)
+    {
+        if(slot == slots[slots.Count-1])
+        rowAnimation.StartRowAnimation();
+    }
+    private void OnDestroy()
+    {
+        FoxlairEventManager.Instance.Enemy_OnReachedSlot_Event -= OnEnemyReachedSlot;
     }
     #endregion
 

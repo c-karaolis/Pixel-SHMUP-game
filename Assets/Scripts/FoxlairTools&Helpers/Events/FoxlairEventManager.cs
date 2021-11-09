@@ -20,6 +20,7 @@ namespace Foxlair.Tools.Events
         public Action<float> EnemyHealthSystem_OnHealthLost_Event;
         public Action<EnemySpaceship> EnemyHealthSystem_OnDeath_Event;
         public Action<EnemySpaceship> Enemy_OnBirth_Event;
+        public Action<EnemySpaceship, Slot> Enemy_OnReachedSlot_Event;
         #endregion
 
         #region Player Events

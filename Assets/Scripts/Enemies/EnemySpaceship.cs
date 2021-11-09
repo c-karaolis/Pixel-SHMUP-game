@@ -84,9 +84,14 @@ namespace Foxlair.Enemies
             AssignToSlot();
 
         }
+        void OnReachedSlot()
+        {
+            transform.parent = occupiedSlot.transform;
+            FoxlairEventManager.Instance.Enemy_OnReachedSlot_Event(this, occupiedSlot);
+        }
         void GoToSlot()
         {
-            transform.DOMove(occupiedSlot.transform.position,1f);
+            transform.DOMove(occupiedSlot.transform.position,1f).OnComplete(OnReachedSlot);
         }
 
 

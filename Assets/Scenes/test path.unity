@@ -123,6 +123,17 @@ NavMeshSettings:
     debug:
       m_Flags: 0
   m_NavMeshData: {fileID: 0}
+--- !u!114 &352541362 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 6793873107838209014, guid: 8b2ff625643e7f54cbc1ee64b7e74ca7, type: 3}
+  m_PrefabInstance: {fileID: 6923268607019453065}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: eee3c77866afff042bb4433a9c9f6811, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &491247801
 GameObject:
   m_ObjectHideFlags: 0
@@ -526,7 +537,7 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 0}
+      - m_Target: {fileID: 352541362}
         m_TargetAssemblyTypeName: Foxlair.Player.Weapons.SpaceshipWeapons, Assembly-CSharp
         m_MethodName: DeactivateSpecialWeapon
         m_Mode: 1
@@ -659,7 +670,7 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 0}
+      - m_Target: {fileID: 352541362}
         m_TargetAssemblyTypeName: Foxlair.Player.Weapons.SpaceshipWeapons, Assembly-CSharp
         m_MethodName: ResetMainWeapon
         m_Mode: 1
@@ -1060,7 +1071,7 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 0}
+      - m_Target: {fileID: 352541362}
         m_TargetAssemblyTypeName: Foxlair.Player.Weapons.SpaceshipWeapons, Assembly-CSharp
         m_MethodName: DefaultSpecialWeaponTestActivate
         m_Mode: 1
@@ -1404,7 +1415,7 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 0}
+      - m_Target: {fileID: 352541362}
         m_TargetAssemblyTypeName: Foxlair.Player.Weapons.SpaceshipWeapons, Assembly-CSharp
         m_MethodName: UpgradeMainWeapon
         m_Mode: 1

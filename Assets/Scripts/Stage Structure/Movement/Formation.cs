@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
@@ -25,6 +26,21 @@ public class Formation : MonoBehaviour
     {
         rows = GetComponentsInChildren<Row>().ToList();
         slots = GetSlots();
+
+        AttachAnimationScripts();
+    }
+
+    private void AttachAnimationScripts()
+    {
+        foreach (Row row in rows)
+        {
+            RowAnimation rowAnimation = row.gameObject.AddComponent<RowAnimation>();
+            if (isVertical)
+            {
+                rowAnimation.horizontal = true;
+            }
+            else { rowAnimation.horizontal = false; }
+        }
     }
 
     public int GetSlotsCount()
