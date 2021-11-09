@@ -172,6 +172,8 @@ MonoBehaviour:
   audioSource: {fileID: 0}
   deathSFX: {fileID: 8300000, guid: d29d0c4698b30804c9cdfb0b24162856, type: 3}
   bulletReceiver: {fileID: 0}
+  enemyWave: {fileID: 0}
+  occupiedSlot: {fileID: 0}
 --- !u!114 &8298695012692290561
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -184,28 +186,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ab32940deed415a4fb92d93431b21ee3, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  serializationData:
-    SerializedFormat: 2
-    SerializedBytes: 
-    ReferencedUnityObjects:
-    - {fileID: 8298695012692290590}
-    SerializedBytesString: 
-    Prefab: {fileID: 0}
-    PrefabModificationsReferencedUnityObjects: []
-    PrefabModifications: []
-    SerializationNodes:
-    - Name: minDamageCanReceive
-      Entry: 4
-      Data: 1
-    - Name: maxDamageCanReceive
-      Entry: 4
-      Data: 999
-    - Name: armor
-      Entry: 4
-      Data: 1
-    - Name: healthOwner
-      Entry: 10
-      Data: 0
   health: 10
   maxHealth: 10
   unitRegeneratesHealth: 0
@@ -357,7 +337,7 @@ MonoBehaviour:
     m_PreInfinity: 2
     m_PostInfinity: 2
     m_RotationOrder: 4
-  loopType: 1
+  loopType: 0
   waypoints: []
   pathType: 1
   pathMode: 3

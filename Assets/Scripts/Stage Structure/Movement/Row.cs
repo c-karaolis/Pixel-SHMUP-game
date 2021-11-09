@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 
 [ExecuteInEditMode]
@@ -20,6 +21,10 @@ public class Row : MonoBehaviour
     #endregion
 
     #region  Methods
+    private void Awake()
+    {
+        slots = GetComponentsInChildren<Slot>().ToList();
+    }
     #endregion
 
     #region Generation

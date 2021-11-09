@@ -10,7 +10,7 @@ namespace Foxlair.Enemies
     public class EnemySpaceship : Spaceship
     {
         #region Fields
-        EnemyWave enemyWave;
+        public EnemyWave enemyWave;
         SplineMove splineMove;
         public Slot occupiedSlot;
         #endregion
@@ -20,22 +20,29 @@ namespace Foxlair.Enemies
         {
             splineMove = GetComponent<SplineMove>();
             splineMove.movementEndEvent += OnMovementEnd;
-            AssignToSlot();
         }
 
+        public override void Start()
+        {
+            base.Start();
+
+        }
         private void AssignToSlot()
         {
-           // if (!enemyWave.formation)
-           //     return;
-           // List<Slot> slots = enemyWave.formation.GetSlots();
-           //foreach (Slot slot in slots)
-           // {
-           //     if (slot.enemySpaceship)
-           //         continue;
+            List<Slot> slots = enemyWave.formation.slots;
+            foreach (Slot slot in slots)
+            {
+                if (slot.enemySpaceship == null)
+                {
+                    Debug.Log("setting slot: " + slot);
+                    occupiedSlot = slot;
+                    occupiedSlot.enemySpaceship = this;
+                    break;
+                }
 
-           //     occupiedSlot = slot;
-           //     occupiedSlot.enemySpaceship = this;
-           // }
+            }
+            GoToSlot();
+
         }
 
         public override void Die()
@@ -49,6 +56,7 @@ namespace Foxlair.Enemies
 
         public override void OnDeath()
         {
+            occupiedSlot.enemySpaceship = null;
             FoxlairEventManager.Instance.EnemyHealthSystem_OnDeath_Event(this);
         }
 
@@ -73,7 +81,8 @@ namespace Foxlair.Enemies
         void OnMovementEnd()
         {
             Debug.Log("Movement end");
-            GoToSlot();
+            AssignToSlot();
+
         }
         void GoToSlot()
         {

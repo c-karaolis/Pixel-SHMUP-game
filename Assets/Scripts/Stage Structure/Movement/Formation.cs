@@ -1,11 +1,13 @@
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 
 public class Formation : MonoBehaviour
 {
     #region  Fields
     public List<Row> rows;
+    public List<Slot> slots;
     public bool isVertical = true;
     public int numberOfRows;
     public int overrideRowNumberOfSlots = 0;
@@ -19,6 +21,12 @@ public class Formation : MonoBehaviour
     #endregion
 
     #region  Methods
+    private void Awake()
+    {
+        rows = GetComponentsInChildren<Row>().ToList();
+        slots = GetSlots();
+    }
+
     public int GetSlotsCount()
     {
         int count = 0;

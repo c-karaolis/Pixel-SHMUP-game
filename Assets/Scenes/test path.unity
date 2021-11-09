@@ -1676,10 +1676,18 @@ PrefabInstance:
       propertyPath: serializationData.Prefab
       value: 
       objectReference: {fileID: 6793873107838209014, guid: 8b2ff625643e7f54cbc1ee64b7e74ca7, type: 3}
+    - target: {fileID: 7275344363742416742, guid: 8b2ff625643e7f54cbc1ee64b7e74ca7, type: 3}
+      propertyPath: numberOfSpawns
+      value: 10
+      objectReference: {fileID: 0}
     - target: {fileID: 7275344364263364730, guid: 8b2ff625643e7f54cbc1ee64b7e74ca7, type: 3}
       propertyPath: formation
       value: 
       objectReference: {fileID: 1566187139}
+    - target: {fileID: 7275344364771734588, guid: 8b2ff625643e7f54cbc1ee64b7e74ca7, type: 3}
+      propertyPath: numberOfSpawns
+      value: 10
+      objectReference: {fileID: 0}
     - target: {fileID: 7769955271856806737, guid: 8b2ff625643e7f54cbc1ee64b7e74ca7, type: 3}
       propertyPath: m_RootOrder
       value: 5
@@ -1736,6 +1744,10 @@ PrefabInstance:
     - target: {fileID: 7997234401985135753, guid: 89f7c5453cb960f43b154498254b34f6, type: 3}
       propertyPath: m_Name
       value: BulletPro Scene Setup
+      objectReference: {fileID: 0}
+    - target: {fileID: 7997234401985135753, guid: 89f7c5453cb960f43b154498254b34f6, type: 3}
+      propertyPath: m_IsActive
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 7997234401985135755, guid: 89f7c5453cb960f43b154498254b34f6, type: 3}
       propertyPath: m_RootOrder

@@ -23,23 +23,25 @@ namespace Foxlair.Core
 
 
 
-        [SerializeField] IHealthOwner healthOwner;
-
-        private void OnValidate()
+        [SerializeField]public IHealthOwner healthOwner;
+              
+        private void Awake()
         {
             healthOwner = GetComponent<IHealthOwner>();
-
             if (maxHealth == 0f)
             {
                 maxHealth = 50f;
             }
 
             health = maxHealth;
-
         }
-
         public void TakeDamage(float damage)
         {
+            if (healthOwner == null)
+            {
+                Debug.Log("EMPTY HEALTH OWNER");
+                return;
+            }
             damage -= armor;
             if (damage < minDamageCanReceive) { damage = minDamageCanReceive; }
             if (damage > maxDamageCanReceive) { damage = maxDamageCanReceive; }
