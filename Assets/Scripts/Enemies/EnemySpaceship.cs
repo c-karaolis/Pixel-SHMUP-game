@@ -56,6 +56,7 @@ namespace Foxlair.Enemies
 
         public override void OnDeath()
         {
+            if(occupiedSlot)
             occupiedSlot.enemySpaceship = null;
             FoxlairEventManager.Instance.EnemyHealthSystem_OnDeath_Event?.Invoke(this);
         }

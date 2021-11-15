@@ -1649,6 +1649,14 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 2029897995975948623, guid: 8b2ff625643e7f54cbc1ee64b7e74ca7, type: 3}
+      propertyPath: enemyWaves.Array.size
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 2029897995975948623, guid: 8b2ff625643e7f54cbc1ee64b7e74ca7, type: 3}
+      propertyPath: enemyWaves.Array.data[0]
+      value: 
+      objectReference: {fileID: 6213898599420476544, guid: 393fe9f6e944f4f4191e9ee98a7be62f, type: 3}
     - target: {fileID: 2069919149851335089, guid: 8b2ff625643e7f54cbc1ee64b7e74ca7, type: 3}
       propertyPath: m_LocalScale.x
       value: 0.27
@@ -1681,6 +1689,10 @@ PrefabInstance:
       propertyPath: formation
       value: 
       objectReference: {fileID: 1566187139}
+    - target: {fileID: 7275344364263364731, guid: 8b2ff625643e7f54cbc1ee64b7e74ca7, type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 7275344364771734588, guid: 8b2ff625643e7f54cbc1ee64b7e74ca7, type: 3}
       propertyPath: numberOfSpawns
       value: 10
@@ -1699,7 +1711,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 7769955271856806737, guid: 8b2ff625643e7f54cbc1ee64b7e74ca7, type: 3}
       propertyPath: m_LocalPosition.z
-      value: -1.2111188
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 7769955271856806737, guid: 8b2ff625643e7f54cbc1ee64b7e74ca7, type: 3}
       propertyPath: m_LocalRotation.w

@@ -11,12 +11,12 @@ namespace Foxlair.StageStructure
         GameObject currentEnemyWave;
         int NumberOfWaves { get { return enemyWaves.Count; } }
 
-        public int currentWave = -1;
+        int currentWave = -1;
         public float waveDelay = 5f;
 
         void Start()
         {
-
+            StartCoroutine(SpawnWave(true,0f));
         }
 
         void Update()
@@ -36,6 +36,7 @@ namespace Foxlair.StageStructure
             {
                 _delay = waveDelay;
             }
+
             FoxlairEventManager.Instance.WaveManager_OnSpawnProcedureStarted_Event?.Invoke(_delay);
             currentEnemyWave = null;
 
