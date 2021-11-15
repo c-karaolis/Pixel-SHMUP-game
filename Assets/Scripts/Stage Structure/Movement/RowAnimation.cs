@@ -37,8 +37,8 @@ public class RowAnimation : MonoBehaviour
     {
         mySequence = DOTween.Sequence();
         float transformY = transform.position.y;
-        mySequence.Append(transform.DOMoveY(transformY - 0.3f,1f, false))
-          .Append(transform.DOMoveY(transformY, 1f, false));
+        mySequence.Append(transform.DOMoveY(transformY - 0.3f,1f, false).SetSpeedBased(true))
+          .Append(transform.DOMoveY(transformY, 1f, false).SetSpeedBased(true));
         mySequence.SetLoops(-1,LoopType.Restart);
     }
 

@@ -57,7 +57,7 @@ namespace Foxlair.Enemies
         public override void OnDeath()
         {
             occupiedSlot.enemySpaceship = null;
-            FoxlairEventManager.Instance.EnemyHealthSystem_OnDeath_Event(this);
+            FoxlairEventManager.Instance.EnemyHealthSystem_OnDeath_Event?.Invoke(this);
         }
 
         public override void OnDeathAnimationEnd()
@@ -87,7 +87,7 @@ namespace Foxlair.Enemies
         void OnReachedSlot()
         {
             transform.parent = occupiedSlot.transform;
-            FoxlairEventManager.Instance.Enemy_OnReachedSlot_Event(this, occupiedSlot);
+            FoxlairEventManager.Instance.Enemy_OnReachedSlot_Event?.Invoke(this, occupiedSlot);
         }
         void GoToSlot()
         {

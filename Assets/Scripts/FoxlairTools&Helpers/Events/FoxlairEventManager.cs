@@ -1,6 +1,7 @@
 ﻿using System;
 using Foxlair.Achievements;
 using Foxlair.Enemies;
+using UnityEngine;
 
 namespace Foxlair.Tools.Events
 {
@@ -21,6 +22,10 @@ namespace Foxlair.Tools.Events
         public Action<EnemySpaceship> EnemyHealthSystem_OnDeath_Event;
         public Action<EnemySpaceship> Enemy_OnBirth_Event;
         public Action<EnemySpaceship, Slot> Enemy_OnReachedSlot_Event;
+        #endregion
+
+        #region Stage Events
+        public Action<float> WaveManager_OnSpawnProcedureStarted_Event;
         #endregion
 
         #region Player Events

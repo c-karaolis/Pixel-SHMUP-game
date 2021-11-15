@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 
-[ExecuteInEditMode]
+[RequireComponent(typeof(RowAnimation))]
 public class Row : MonoBehaviour
 {
     #region  Fields
@@ -27,12 +27,13 @@ public class Row : MonoBehaviour
     private void Awake()
     {
         slots = GetComponentsInChildren<Slot>().ToList();
+        rowAnimation = GetComponent<RowAnimation>();
+
     }
 
     private void Start()
     {
         FoxlairEventManager.Instance.Enemy_OnReachedSlot_Event += OnEnemyReachedSlot;
-        rowAnimation = GetComponent<RowAnimation>();
     }
 
     void OnEnemyReachedSlot(EnemySpaceship enemySpaceship,Slot slot)
