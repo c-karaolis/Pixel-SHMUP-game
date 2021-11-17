@@ -1767,6 +1767,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: Player
       objectReference: {fileID: 0}
+    - target: {fileID: 1784573893784165654, guid: f1651bef2186768469e72d2fbcb5b2eb, type: 3}
+      propertyPath: traversalSmoothness
+      value: 0.339
+      objectReference: {fileID: 0}
     - target: {fileID: 1784573893784165655, guid: f1651bef2186768469e72d2fbcb5b2eb, type: 3}
       propertyPath: m_RootOrder
       value: 1
@@ -1916,10 +1920,5 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 93cbead463c26a44598c016406fc507f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  enemyWaves:
-  - {fileID: 6213898599420476544, guid: bde422f263f60c146a67a3bd8c8a73af, type: 3}
-  - {fileID: 6213898599420476544, guid: bde422f263f60c146a67a3bd8c8a73af, type: 3}
-  - {fileID: 6213898599420476544, guid: bde422f263f60c146a67a3bd8c8a73af, type: 3}
-  - {fileID: 6213898599420476544, guid: bde422f263f60c146a67a3bd8c8a73af, type: 3}
-  - {fileID: 6213898599420476544, guid: bde422f263f60c146a67a3bd8c8a73af, type: 3}
-  waveDelay: 0
+  enemyWaves: []
+  waveDelay: 5

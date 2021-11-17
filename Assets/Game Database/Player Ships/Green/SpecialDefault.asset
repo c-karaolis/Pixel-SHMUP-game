@@ -44,7 +44,7 @@ MonoBehaviour:
   m_Name: Bullet
   m_EditorClassIdentifier: 
   parameterType: 0
-  uniqueIndex: 1870384
+  uniqueIndex: 13029395
   profile: {fileID: 11400000}
   parent: {fileID: 114201774248674550}
   children: []
@@ -7285,7 +7285,7 @@ MonoBehaviour:
           parameterType: 0
           relativeTo: 0
           parameterName: 
-        defaultValue: 50
+        defaultValue: 1
       useSlider: 0
       sliderMin: 0
       sliderMax: 0
@@ -7669,7 +7669,7 @@ MonoBehaviour:
   m_Name: Shot
   m_EditorClassIdentifier: 
   parameterType: 1
-  uniqueIndex: 2516125
+  uniqueIndex: 4253064
   profile: {fileID: 11400000}
   parent: {fileID: 114917193883442684}
   children:
@@ -12443,7 +12443,7 @@ MonoBehaviour:
   m_Name: Root Emitter
   m_EditorClassIdentifier: 
   parameterType: 0
-  uniqueIndex: 4455404
+  uniqueIndex: 10692104
   profile: {fileID: 11400000}
   parent: {fileID: 0}
   children:
@@ -19554,7 +19554,7 @@ MonoBehaviour:
   m_Name: Pattern
   m_EditorClassIdentifier: 
   parameterType: 2
-  uniqueIndex: 6197986
+  uniqueIndex: 3383905
   profile: {fileID: 11400000}
   parent: {fileID: 114671512830859702}
   children:
