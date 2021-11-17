@@ -330,7 +330,7 @@ MonoBehaviour:
   lookAhead: 0
   sizeToAdd: 0
   timeValue: 1
-  speed: 3.23
+  speed: 4
   animEaseType:
     serializedVersion: 2
     m_Curve: []
