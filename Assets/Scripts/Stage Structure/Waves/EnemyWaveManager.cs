@@ -9,22 +9,25 @@ namespace Foxlair.StageStructure
     {
         public List<GameObject> enemyWaves;
         GameObject currentEnemyWave;
-        int NumberOfWaves { get { return enemyWaves.Count; } }
-
+        int numberOfWaves;
         int currentWave = -1;
         public float waveDelay = 5f;
 
-        void Start()
+        EnemyWave EnemyWave
         {
-            StartCoroutine(SpawnWave(true,0f));
+            get
+            {
+                return currentEnemyWave.GetComponent<EnemyWave>();
+            }
         }
 
-        void Update()
+        void OnEnemyWaveCleared(EnemyWave enemyWave)
         {
-
+            Destroy(enemyWave.gameObject);
+            StartCoroutine(SpawnWave());
         }
 
-        IEnumerator SpawnWave(bool useCustomDelay = false,float delay = 0f)
+        IEnumerator SpawnWave(bool useCustomDelay = false, float delay = 0f)
         {
             float _delay;
 
@@ -43,7 +46,17 @@ namespace Foxlair.StageStructure
             yield return new WaitForSeconds(_delay);
 
             currentEnemyWave = Instantiate(enemyWaves[currentWave + 1]);
-
         }
+        void Start()
+        {
+            FoxlairEventManager.Instance.EnemyWave_OnWaveCleared_Event += OnEnemyWaveCleared;
+            numberOfWaves = enemyWaves.Count;
+            StartCoroutine(SpawnWave(true, 0f));
+        }
+        private void OnDestroy()
+        {
+            FoxlairEventManager.Instance.EnemyWave_OnWaveCleared_Event -= OnEnemyWaveCleared;
+        }
+
     }
 }

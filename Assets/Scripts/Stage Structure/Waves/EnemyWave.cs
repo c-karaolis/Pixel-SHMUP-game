@@ -26,5 +26,12 @@ public class EnemyWave : MonoBehaviour
     private void OnEnemyDeath(EnemySpaceship enemySpaceship)
     {
         enemies.Remove(enemySpaceship);
+        if (enemies.Count == 0)
+            OnWaveCleared();
+    }
+
+    private void OnWaveCleared()
+    {
+        FoxlairEventManager.Instance.EnemyWave_OnWaveCleared_Event?.Invoke(this);
     }
 }

@@ -14,5 +14,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   stage: 0
   enemyWavePrefabs:
-  - {fileID: 6213898599420476544, guid: 393fe9f6e944f4f4191e9ee98a7be62f, type: 3}
+  - {fileID: 6213898599420476544, guid: 86bf62f9f99a91a45bfcd75d3542b53b, type: 3}
+  - {fileID: 6213898599420476544, guid: bde422f263f60c146a67a3bd8c8a73af, type: 3}
+  - {fileID: 6213898599420476544, guid: bde422f263f60c146a67a3bd8c8a73af, type: 3}
+  - {fileID: 6213898599420476544, guid: bde422f263f60c146a67a3bd8c8a73af, type: 3}
   timeBetweenEnemyWaves: 0
