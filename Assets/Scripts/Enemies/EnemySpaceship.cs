@@ -25,6 +25,8 @@ namespace Foxlair.Enemies
         public override void Start()
         {
             base.Start();
+            AssignToSlot();
+
 
         }
         private void AssignToSlot()
@@ -41,7 +43,6 @@ namespace Foxlair.Enemies
                 }
 
             }
-            GoToSlot();
 
         }
 
@@ -49,16 +50,18 @@ namespace Foxlair.Enemies
         {
             //GameObject deathVisualEffects = Instantiate(deathVFX, transform);
             splineMove.ChangeSpeed(splineMove.speed / 3);
+            if(bulletReceiver != null)
             bulletReceiver.enabled = false;
+            if(animator != null)
             animator.SetTrigger("Die");
-            if (deathSFX) audioSource.PlayOneShot(deathSFX);
+            if (deathSFX && audioSource) audioSource.PlayOneShot(deathSFX);
         }
 
         public override void OnDeath()
         {
             if(occupiedSlot)
             occupiedSlot.enemySpaceship = null;
-            FoxlairEventManager.Instance.EnemyHealthSystem_OnDeath_Event?.Invoke(this);
+            FoxlairEventManager.Instance.EnemyHealthSystem_OnDeath_Event?.Invoke(this,enemyWave);
         }
 
         public override void OnDeathAnimationEnd()
@@ -73,8 +76,9 @@ namespace Foxlair.Enemies
 
         public override void OnHealthLost(float damage)
         {
-            transform.DOShakePosition(0.1f, 0.05f, 2, 90, false, true);
-            animator.SetTrigger("Hit");
+            //transform.DOShakePosition(0.1f, 0.05f, 2, 90, false, true);
+            //if(animator)
+            //animator.SetTrigger("Hit");
             //TODO: do X amount of damage to Enemies.
             //FoxlairEventManager.Instance.EnemyHealthSystem_OnHealthLost_Event(damage);
         }
@@ -82,7 +86,8 @@ namespace Foxlair.Enemies
         void OnMovementEnd()
         {
             Debug.Log("Movement end");
-            AssignToSlot();
+            GoToSlot();
+
 
         }
         void OnReachedSlot()

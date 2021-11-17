@@ -48,6 +48,15 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   formation: {fileID: 9004215736285367405}
   enemies: []
+  numberOfEnemies: 0
+  enemiesThatDied: []
+  pathContainers:
+  - {fileID: 6213898600734599973}
+  - {fileID: 6213898599574149820}
+  spawnInterval: 0.3
+  enemyPrefab: {fileID: 8298695012692290563, guid: 6ee1bf381f719a948ab40731be17cda7, type: 3}
+  spawnPosition: {x: 0, y: 0}
+  numberOfSpawns: 20
 --- !u!1 &6213898599453021856
 GameObject:
   m_ObjectHideFlags: 0
@@ -171,7 +180,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!4 &6213898599633665539
 Transform:
   m_ObjectHideFlags: 0
@@ -412,11 +421,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   enemyWave: {fileID: 0}
-  spawnPosition: {x: 4.77, y: 2.64}
-  enemyPrefab: {fileID: 8298695012692290563, guid: 6ee1bf381f719a948ab40731be17cda7, type: 3}
-  spawnInterval: 0.8
-  numberOfSpawns: 10
-  pathContainer: {fileID: 6213898600734599973}
 --- !u!1 &6213898600096718758
 GameObject:
   m_ObjectHideFlags: 0
@@ -869,11 +873,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   enemyWave: {fileID: 0}
-  spawnPosition: {x: 4.72, y: 7.96}
-  enemyPrefab: {fileID: 8298695012692290563, guid: 6ee1bf381f719a948ab40731be17cda7, type: 3}
-  spawnInterval: 0.8
-  numberOfSpawns: 10
-  pathContainer: {fileID: 6213898599574149820}
 --- !u!1 &6213898601103570528
 GameObject:
   m_ObjectHideFlags: 0
@@ -929,7 +928,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 6213898601283216831}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 5.905034, y: 5.745304, z: 0.9373038}
+  m_LocalPosition: {x: 5.905034, y: 5.745304, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 6213898600734599972}
