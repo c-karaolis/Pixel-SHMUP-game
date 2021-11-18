@@ -60,7 +60,7 @@ public class EnemyWave : MonoBehaviour
         
             for (int i = 0; i < spawnsPerPath; i++)
             {
-                GameObject enemy = Instantiate(enemyPrefab, spawnPosition, transform.rotation);
+                GameObject enemy = Instantiate(enemyPrefab, new Vector3(100,100,0), transform.rotation);
                 EnemySpaceship enemyComponent = enemy.GetComponent<EnemySpaceship>();
                 SplineMove splineFollower = enemy.GetComponent<SplineMove>();
                 splineFollower.pathContainer = pathManager;

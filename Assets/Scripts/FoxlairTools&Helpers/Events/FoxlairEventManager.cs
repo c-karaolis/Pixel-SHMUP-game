@@ -1,6 +1,7 @@
 ﻿using System;
 using Foxlair.Achievements;
 using Foxlair.Enemies;
+using Foxlair.StageStructure;
 using UnityEngine;
 
 namespace Foxlair.Tools.Events
@@ -27,6 +28,8 @@ namespace Foxlair.Tools.Events
         #region Stage Events
         public Action<float> WaveManager_OnSpawnProcedureStarted_Event;
         public Action<EnemyWave> EnemyWave_OnWaveCleared_Event;
+        public Action<Stage, EnemyWaveManager> Stage_OnStageCleared_Event;
+        public Action<Stage, EnemyWaveManager> Stage_OnStageRestart_Event;
         #endregion
 
         #region Player Events

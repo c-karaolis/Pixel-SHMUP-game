@@ -25,10 +25,10 @@ MonoBehaviour:
   displayHelpHierarchy: 0
   displayHelpRecycleBin: 0
   displayHelpImport: 0
-  foldoutImport: 0
-  foldoutExport: 0
-  foldoutEmptyBin: 0
-  foldoutCompactMode: 0
+  foldoutImport: 1
+  foldoutExport: 1
+  foldoutEmptyBin: 1
+  foldoutCompactMode: 1
   currentParamsSelected: {fileID: 114027673760526898}
   numberOfSubAssets: 4
 --- !u!114 &114027673760526898
@@ -44,7 +44,7 @@ MonoBehaviour:
   m_Name: Bullet
   m_EditorClassIdentifier: 
   parameterType: 0
-  uniqueIndex: 13029395
+  uniqueIndex: 2333943
   profile: {fileID: 11400000}
   parent: {fileID: 114201774248674550}
   children: []
@@ -156,7 +156,7 @@ MonoBehaviour:
         indexOfTo: 0
         indexOfBlendedChildren: 
         weight: 0
-        headerTitle: 
+        headerTitle: Sprite
         blendColor: {r: 0, g: 0, b: 0, a: 0}
         parameterType: 0
         relativeTo: 0
@@ -1548,7 +1548,7 @@ MonoBehaviour:
       unless: 0
       canceller: 0
     onCollision:
-      enabled: 0
+      enabled: 1
       behaviour: 0
       unless: 0
       canceller: 0
@@ -1558,7 +1558,7 @@ MonoBehaviour:
       unless: 0
       canceller: 0
     onBulletDeath:
-      enabled: 1
+      enabled: 0
       behaviour: 0
       unless: 0
       canceller: 0
@@ -2362,7 +2362,7 @@ MonoBehaviour:
   foldoutVFX: 1
   hideSpriteList: 0
   vfxOpened: 0
-  currentlyDisplayedModule: 8
+  currentlyDisplayedModule: 2
   canMove: 1
   canCollide: 1
   isVisible: 1
@@ -2477,7 +2477,7 @@ MonoBehaviour:
         parameterType: 0
         relativeTo: 0
         parameterName: 
-      defaultValue: 12.67
+      defaultValue: 5
     useSlider: 0
     sliderMin: 0
     sliderMax: 0
@@ -2778,20 +2778,20 @@ MonoBehaviour:
               time: 0
               value: 0
               inSlope: 0
-              outSlope: 1
-              tangentMode: 0
-              weightedMode: 0
-              inWeight: 0.33333334
-              outWeight: 0.33333334
-            - serializedVersion: 3
-              time: 1
-              value: 1
-              inSlope: 1
               outSlope: 0
               tangentMode: 0
               weightedMode: 0
-              inWeight: 0.33333334
-              outWeight: 0.33333334
+              inWeight: 0
+              outWeight: 0
+            - serializedVersion: 3
+              time: 0.02063331
+              value: 1.0000492
+              inSlope: -1.3171455
+              outSlope: -1.3171455
+              tangentMode: 0
+              weightedMode: 0
+              inWeight: 1
+              outWeight: 0
             m_PreInfinity: 2
             m_PostInfinity: 2
             m_RotationOrder: 4
@@ -2820,16 +2820,142 @@ MonoBehaviour:
         combinedInterpolationFactors: 0
         index: 1
         indexOfParent: 0
-        indexOfFrom: 0
-        indexOfTo: 0
+        indexOfFrom: 2
+        indexOfTo: 3
         indexOfBlendedChildren: 
         weight: 0
-        headerTitle: 
+        headerTitle: Start Scale
         blendColor: {r: 0, g: 0, b: 0, a: 0}
         parameterType: 0
         relativeTo: 0
         parameterName: 
-      defaultValue: 0.5
+      defaultValue: 0.4
+    - settings:
+        valueType: 0
+        interpolationValue:
+          interpolationFactor: 0
+          repartitionCurve:
+            serializedVersion: 2
+            m_Curve:
+            - serializedVersion: 3
+              time: 0
+              value: 0
+              inSlope: 0
+              outSlope: 1
+              tangentMode: 0
+              weightedMode: 0
+              inWeight: 0
+              outWeight: 0
+            - serializedVersion: 3
+              time: 1
+              value: 1
+              inSlope: 1
+              outSlope: 0
+              tangentMode: 0
+              weightedMode: 0
+              inWeight: 0
+              outWeight: 0
+            m_PreInfinity: 2
+            m_PostInfinity: 2
+            m_RotationOrder: 4
+          shareValueBetweenInstances: 0
+          rerollFrequency: 0
+          interpolationFactorFromShot: 0
+          interpolationFactorFromPattern: 0
+          interpolationFactorFromBullet: 0
+          relativeTo: 0
+          parameterName: 
+          loopDepth: 0
+          useComplexRerollSequence: 0
+          checkEveryNLoops: 0
+          loopSequence: 0
+          period: 0
+          wrapMode: 0
+          sortMode: 0
+          sortDirection: 0
+          repartitionTexture: {fileID: 0}
+          centerX: 0
+          centerY: 0
+          radius: 0
+          wrapPoint: 0
+          countClockwise: 0
+          differentValuesPerShot: 0
+        combinedInterpolationFactors: 0
+        index: 2
+        indexOfParent: 1
+        indexOfFrom: 0
+        indexOfTo: 0
+        indexOfBlendedChildren: 
+        weight: 0
+        headerTitle: 'Start Scale : "From"'
+        blendColor: {r: 0, g: 0, b: 0, a: 0}
+        parameterType: 0
+        relativeTo: 0
+        parameterName: 
+      defaultValue: 0.01
+    - settings:
+        valueType: 0
+        interpolationValue:
+          interpolationFactor: 0
+          repartitionCurve:
+            serializedVersion: 2
+            m_Curve:
+            - serializedVersion: 3
+              time: 0
+              value: 0
+              inSlope: 0
+              outSlope: 1
+              tangentMode: 0
+              weightedMode: 0
+              inWeight: 0
+              outWeight: 0
+            - serializedVersion: 3
+              time: 1
+              value: 1
+              inSlope: 1
+              outSlope: 0
+              tangentMode: 0
+              weightedMode: 0
+              inWeight: 0
+              outWeight: 0
+            m_PreInfinity: 2
+            m_PostInfinity: 2
+            m_RotationOrder: 4
+          shareValueBetweenInstances: 0
+          rerollFrequency: 0
+          interpolationFactorFromShot: 0
+          interpolationFactorFromPattern: 0
+          interpolationFactorFromBullet: 0
+          relativeTo: 0
+          parameterName: 
+          loopDepth: 0
+          useComplexRerollSequence: 0
+          checkEveryNLoops: 0
+          loopSequence: 0
+          period: 0
+          wrapMode: 0
+          sortMode: 0
+          sortDirection: 0
+          repartitionTexture: {fileID: 0}
+          centerX: 0
+          centerY: 0
+          radius: 0
+          wrapPoint: 0
+          countClockwise: 0
+          differentValuesPerShot: 0
+        combinedInterpolationFactors: 0
+        index: 3
+        indexOfParent: 1
+        indexOfFrom: 0
+        indexOfTo: 0
+        indexOfBlendedChildren: 
+        weight: 0
+        headerTitle: 'Start Scale : "To"'
+        blendColor: {r: 0, g: 0, b: 0, a: 0}
+        parameterType: 0
+        relativeTo: 0
+        parameterName: 
+      defaultValue: 0.4
     useSlider: 0
     sliderMin: 0
     sliderMax: 0
@@ -2951,19 +3077,14 @@ MonoBehaviour:
     tagList: 22
   colliders:
   - colliderType: 0
-    size: 0.3
-    offset: {x: 0, y: 0, z: 0}
+    size: 0.17
+    offset: {x: 0, y: -0.03, z: 0}
     lineStart: {x: 0, y: 0}
     lineEnd: {x: 0, y: 0}
-  - colliderType: 1
-    size: 0.3
-    offset: {x: 0, y: 0, z: 0}
-    lineStart: {x: 0, y: -0.89}
-    lineEnd: {x: 0, y: -0.36}
   dieOnCollision: 1
   deathTiming: 0
   maxSimultaneousCollisionsPerFrame: 1
-  shapeFoldout: 1
+  shapeFoldout: 0
   collisionTagsFoldout: 1
   homing: 0
   homingTags:
@@ -4854,7 +4975,7 @@ MonoBehaviour:
           m_RotationOrder: 4
       forceZeroToOne: 1
   scaleOverLifetime:
-    enabled: 0
+    enabled: 1
     wrapMode:
       valueTree:
       - settings:
@@ -5323,8 +5444,8 @@ MonoBehaviour:
             inWeight: 0.33333334
             outWeight: 0.33333334
           - serializedVersion: 3
-            time: 1
-            value: 1
+            time: 0.016662598
+            value: 0.9919281
             inSlope: 0
             outSlope: 0
             tangentMode: 0
@@ -7669,7 +7790,7 @@ MonoBehaviour:
   m_Name: Shot
   m_EditorClassIdentifier: 
   parameterType: 1
-  uniqueIndex: 4253064
+  uniqueIndex: 4636607
   profile: {fileID: 11400000}
   parent: {fileID: 114917193883442684}
   children:
@@ -12443,7 +12564,7 @@ MonoBehaviour:
   m_Name: Root Emitter
   m_EditorClassIdentifier: 
   parameterType: 0
-  uniqueIndex: 10692104
+  uniqueIndex: 15336868
   profile: {fileID: 11400000}
   parent: {fileID: 0}
   children:
@@ -14762,7 +14883,7 @@ MonoBehaviour:
   foldoutVFX: 0
   hideSpriteList: 0
   vfxOpened: 0
-  currentlyDisplayedModule: 4
+  currentlyDisplayedModule: 5
   canMove: 0
   canCollide: 0
   isVisible: 0
@@ -19554,7 +19675,7 @@ MonoBehaviour:
   m_Name: Pattern
   m_EditorClassIdentifier: 
   parameterType: 2
-  uniqueIndex: 3383905
+  uniqueIndex: 10537486
   profile: {fileID: 11400000}
   parent: {fileID: 114671512830859702}
   children:
@@ -34247,7 +34368,7 @@ MonoBehaviour:
             parameterType: 0
             relativeTo: 0
             parameterName: 
-          defaultValue: 0.3
+          defaultValue: 0.1
         useSlider: 0
         sliderMin: 0
         sliderMax: 0
@@ -43775,4 +43896,4 @@ MonoBehaviour:
   advancedFoldout: 0
   hasBeenSerializedOnce: 1
   focusedInstruction: -1
-  safetyForPlaymode: 10
+  safetyForPlaymode: 12
