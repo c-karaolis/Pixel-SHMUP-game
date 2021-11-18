@@ -45,7 +45,6 @@ namespace Foxlair.StageStructure
                 Debug.Log("stage cleared");
                 yield break;
             }
-           // Debug.Log("spawning wave: " + currentWave);
             float _delay;
 
             if (useCustomDelay)
@@ -57,7 +56,6 @@ namespace Foxlair.StageStructure
                 _delay = waveDelay;
             }
 
-            Debug.Log(_delay);
             FoxlairEventManager.Instance.WaveManager_OnSpawnProcedureStarted_Event?.Invoke(_delay);
 
             yield return new WaitForSeconds(_delay);

@@ -17,7 +17,7 @@ public class EnemyWave : MonoBehaviour
     public float spawnInterval;
     public GameObject enemyPrefab;
     public Vector2 spawnPosition;
-
+    bool isCleared = false;
     public int numberOfSpawns;
     int spawnsPerPath;
 
@@ -49,9 +49,8 @@ public class EnemyWave : MonoBehaviour
         if(!enemiesThatDied.Contains(enemySpaceship))
         enemiesThatDied.Add(enemySpaceship);
 
-
         enemies.Remove(enemySpaceship);
-        if (enemiesThatDied.Count == numberOfSpawns)
+        if (enemiesThatDied.Count == numberOfSpawns && !isCleared)
         {
             OnWaveCleared();
         }
@@ -75,6 +74,7 @@ public class EnemyWave : MonoBehaviour
 
     private void OnWaveCleared()
     {
+        isCleared = true;
         FoxlairEventManager.Instance.EnemyWave_OnWaveCleared_Event?.Invoke(this);
     }
 }

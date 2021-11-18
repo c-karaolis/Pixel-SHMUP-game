@@ -86,10 +86,7 @@ namespace Foxlair.Player.Weapons
 
         public void DefaultSpecialWeaponTestActivate()
         {
-            DeactivateSpecialWeapon();
-            activeMainWeapon.Stop();
-            activeSpecialWeapon = specialWeapons[0];
-            activeSpecialWeapon.Play();
+            ActivateSpecialWeapon();
         }
 
         public void DeactivateSpecialWeapon()
