@@ -27,8 +27,6 @@ namespace Foxlair.Enemies
         {
             base.Start();
             AssignToSlot();
-
-
         }
         private void AssignToSlot()
         {
