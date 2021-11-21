@@ -24,17 +24,23 @@ namespace Foxlair.Player.Weapons
 
         private void OnValidate()
         {
-            specialWeapons = new Dictionary<SpecialWeaponTypes, BulletEmitter>();
 
             mainWeapons = mainWeaponsParentObject.GetComponentsInChildren<BulletEmitter>();
             availableSpecialWeapons = specialWeaponsParentObject.GetComponentsInChildren<BulletEmitter>().ToList();
+
+          
+        }
+
+        private void Awake()
+        {
+            specialWeapons = new Dictionary<SpecialWeaponTypes, BulletEmitter>();
 
             for (int i = 0; i < availableSpecialWeapons.Count; i++)
             {
                 specialWeapons.Add((SpecialWeaponTypes)i, availableSpecialWeapons[i]);
             }
-        }
 
+        }
         void Start()
         {
             activeMainWeaponIndex = 0;
@@ -83,7 +89,7 @@ namespace Foxlair.Player.Weapons
                 activeSpecialWeapon.Play();
             }
         }
-
+         
         public void DefaultSpecialWeaponTestActivate()
         {
             ActivateSpecialWeapon();
