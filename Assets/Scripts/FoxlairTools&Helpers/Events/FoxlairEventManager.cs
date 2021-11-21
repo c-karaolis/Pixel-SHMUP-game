@@ -20,14 +20,14 @@ namespace Foxlair.Tools.Events
         #region Enemy Events
         public Action<float> EnemyHealthSystem_OnHealthGained_Event;
         public Action<float> EnemyHealthSystem_OnHealthLost_Event;
-        public Action<EnemySpaceship,EnemyWave> EnemyHealthSystem_OnDeath_Event;
+        public Action<EnemySpaceship,EnemyFormationWave> EnemyHealthSystem_OnDeath_Event;
         public Action<EnemySpaceship> Enemy_OnBirth_Event;
         public Action<EnemySpaceship, Slot> Enemy_OnReachedSlot_Event;
         #endregion
 
         #region Stage Events
         public Action<float> WaveManager_OnSpawnProcedureStarted_Event;
-        public Action<EnemyWave> EnemyWave_OnWaveCleared_Event;
+        public Action<EnemyFormationWave> EnemyWave_OnWaveCleared_Event;
         public Action<Stage, EnemyWaveManager> Stage_OnStageCleared_Event;
         public Action<Stage, EnemyWaveManager> Stage_OnStageRestart_Event;
         #endregion

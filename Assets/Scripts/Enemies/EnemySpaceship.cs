@@ -10,7 +10,7 @@ namespace Foxlair.Enemies
     public class EnemySpaceship : Spaceship
     {
         #region Fields
-        public EnemyWave enemyWave;
+        public EnemyFormationWave enemyWave;
         SplineMove splineMove;
         public Slot occupiedSlot;
         #endregion

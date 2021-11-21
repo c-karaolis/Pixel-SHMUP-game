@@ -18,7 +18,7 @@ public class CameraShake : MonoBehaviour
         FoxlairEventManager.Instance.EnemyHealthSystem_OnDeath_Event += OnEnemyDeath;
     }
 
-    private void OnEnemyDeath(EnemySpaceship enemySpaceship,EnemyWave enemyWave)
+    private void OnEnemyDeath(EnemySpaceship enemySpaceship,EnemyFormationWave enemyWave)
     {
         //transform.DOShakePosition(0.2f,.4f, 50, 90, false, true);
         impulseSource.GenerateImpulse();

@@ -18,25 +18,25 @@ namespace Foxlair.StageStructure
         {
             stage = GetComponentInParent<Stage>();
         }
-        EnemyWave EnemyWave
+        EnemyFormationWave EnemyWave
         {
             get
             {
-                return currentEnemyWave.GetComponent<EnemyWave>();
+                return currentEnemyWave.GetComponent<EnemyFormationWave>();
             }
         }
 
-        void OnEnemyWaveCleared(EnemyWave enemyWave)
+        void OnEnemyWaveCleared(EnemyFormationWave enemyWave)
         {
             Debug.Log("CLEARED");
-            if(enemyWave == currentEnemyWave.GetComponent<EnemyWave>())
+            if(enemyWave == currentEnemyWave.GetComponent<EnemyFormationWave>())
             {
                 StartCoroutine(CleanupWave(enemyWave));
             }
             StartCoroutine(SpawnWave());
         }
 
-        IEnumerator CleanupWave(EnemyWave enemyWave)
+        IEnumerator CleanupWave(EnemyFormationWave enemyWave)
         {
             yield return new WaitForSeconds(.5f);
 
