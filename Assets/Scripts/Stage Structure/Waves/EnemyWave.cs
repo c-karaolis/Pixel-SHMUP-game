@@ -1,18 +1,40 @@
+using Foxlair.Enemies;
+using Foxlair.Tools.Events;
+using SWS;
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class EnemyWave : MonoBehaviour
+namespace Foxlair.StageStructure
 {
-    // Start is called before the first frame update
-    void Start()
+    public class EnemyWave : Wave
     {
-        
-    }
 
-    // Update is called once per frame
-    void Update()
-    {
-        
+        public List<EnemySpaceship> enemiesThatDied;
+        public List<PathManager> pathContainers;
+        bool isCleared = false;
+
+
+        void Start()
+        {
+            FoxlairEventManager.Instance.EnemyHealthSystem_OnDeath_Event += OnEnemyDeath;
+        }
+
+        void OnDestroy()
+        {
+            FoxlairEventManager.Instance.EnemyHealthSystem_OnDeath_Event -= OnEnemyDeath;
+        }
+
+        private void OnEnemyDeath(EnemySpaceship enemySpaceship, EnemyFormationWave enemyWave)
+        {
+            OnWaveCleared();
+        }
+
+        private void OnWaveCleared()
+        {
+            isCleared = true;
+            FoxlairEventManager.Instance.EnemyWave_OnWaveCleared_Event?.Invoke(this);
+        }
     }
 }

@@ -1,4 +1,5 @@
 using DG.Tweening;
+using Foxlair.StageStructure;
 using Foxlair.Tools.Events;
 using SWS;
 using System;

@@ -6,61 +6,63 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class EnemyFormationWave : MonoBehaviour
+namespace Foxlair.StageStructure
 {
-    public Formation formation;
-
-    public List<EnemySpaceship> enemies;
-    public int numberOfEnemies = 0;
-    public List<EnemySpaceship> enemiesThatDied;
-    public List<PathManager> pathContainers;
-    public float spawnInterval;
-    public GameObject enemyPrefab;
-    public Vector2 spawnPosition;
-    bool isCleared = false;
-    public int numberOfSpawns;
-    int spawnsPerPath;
-
-
-    void Start()
+    public class EnemyFormationWave : Wave
     {
-        FoxlairEventManager.Instance.EnemyHealthSystem_OnDeath_Event += OnEnemyDeath;
-        spawnsPerPath = numberOfSpawns / pathContainers.Count;
+        public Formation formation;
 
-        foreach (PathManager pathManager in pathContainers)
+        public List<EnemySpaceship> enemies;
+        public int numberOfEnemies = 0;
+        public List<EnemySpaceship> enemiesThatDied;
+        public List<PathManager> pathContainers;
+        public float spawnInterval;
+        public GameObject enemyPrefab;
+        public Vector2 spawnPosition;
+        bool isCleared = false;
+        public int numberOfSpawns;
+        int spawnsPerPath;
+
+
+        void Start()
         {
-            StartCoroutine(SpawnEnemy(pathManager));
-        }
-    }
+            FoxlairEventManager.Instance.EnemyHealthSystem_OnDeath_Event += OnEnemyDeath;
+            spawnsPerPath = numberOfSpawns / pathContainers.Count;
 
-    void OnDestroy()
-    {
-        FoxlairEventManager.Instance.EnemyHealthSystem_OnDeath_Event -= OnEnemyDeath;
-    }
-
-    private void OnEnemyDeath(EnemySpaceship enemySpaceship,EnemyFormationWave enemyWave)
-    {
-
-        if (enemyWave != this)
-        {
-            return;
+            foreach (PathManager pathManager in pathContainers)
+            {
+                StartCoroutine(SpawnEnemy(pathManager));
+            }
         }
 
-        if(!enemiesThatDied.Contains(enemySpaceship))
-        enemiesThatDied.Add(enemySpaceship);
-
-        enemies.Remove(enemySpaceship);
-        if (enemiesThatDied.Count == numberOfSpawns && !isCleared)
+        void OnDestroy()
         {
-            OnWaveCleared();
+            FoxlairEventManager.Instance.EnemyHealthSystem_OnDeath_Event -= OnEnemyDeath;
         }
-    }
-    IEnumerator SpawnEnemy(PathManager pathManager)
-    {
-        
+
+        private void OnEnemyDeath(EnemySpaceship enemySpaceship, EnemyFormationWave enemyWave)
+        {
+
+            if (enemyWave != this)
+            {
+                return;
+            }
+
+            if (!enemiesThatDied.Contains(enemySpaceship))
+                enemiesThatDied.Add(enemySpaceship);
+
+            enemies.Remove(enemySpaceship);
+            if (enemiesThatDied.Count == numberOfSpawns && !isCleared)
+            {
+                OnWaveCleared();
+            }
+        }
+        IEnumerator SpawnEnemy(PathManager pathManager)
+        {
+
             for (int i = 0; i < spawnsPerPath; i++)
             {
-                GameObject enemy = Instantiate(enemyPrefab, new Vector3(100,100,0), transform.rotation);
+                GameObject enemy = Instantiate(enemyPrefab, new Vector3(100, 100, 0), transform.rotation);
                 EnemySpaceship enemyComponent = enemy.GetComponent<EnemySpaceship>();
                 SplineMove splineFollower = enemy.GetComponent<SplineMove>();
                 splineFollower.pathContainer = pathManager;
@@ -68,13 +70,14 @@ public class EnemyFormationWave : MonoBehaviour
                 enemyComponent.enemyWave = this;
                 //FoxlairEventManager.Instance.Enemy_OnBirth_Event(enemyComponent);
                 yield return new WaitForSeconds(spawnInterval);
-            }        
-        //yield return null;
-    }
+            }
+            //yield return null;
+        }
 
-    private void OnWaveCleared()
-    {
-        isCleared = true;
-        FoxlairEventManager.Instance.EnemyWave_OnWaveCleared_Event?.Invoke(this);
+        private void OnWaveCleared()
+        {
+            isCleared = true;
+            FoxlairEventManager.Instance.EnemyWave_OnWaveCleared_Event?.Invoke(this);
+        }
     }
 }

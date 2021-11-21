@@ -27,7 +27,7 @@ namespace Foxlair.Tools.Events
 
         #region Stage Events
         public Action<float> WaveManager_OnSpawnProcedureStarted_Event;
-        public Action<EnemyFormationWave> EnemyWave_OnWaveCleared_Event;
+        public Action<Wave> EnemyWave_OnWaveCleared_Event;
         public Action<Stage, EnemyWaveManager> Stage_OnStageCleared_Event;
         public Action<Stage, EnemyWaveManager> Stage_OnStageRestart_Event;
         #endregion

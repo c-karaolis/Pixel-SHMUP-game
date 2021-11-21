@@ -26,7 +26,7 @@ namespace Foxlair.StageStructure
             }
         }
 
-        void OnEnemyWaveCleared(EnemyFormationWave enemyWave)
+        void OnEnemyWaveCleared(Wave enemyWave)
         {
             Debug.Log("CLEARED");
             if(enemyWave == currentEnemyWave.GetComponent<EnemyFormationWave>())
@@ -36,7 +36,7 @@ namespace Foxlair.StageStructure
             StartCoroutine(SpawnWave());
         }
 
-        IEnumerator CleanupWave(EnemyFormationWave enemyWave)
+        IEnumerator CleanupWave(Wave enemyWave)
         {
             yield return new WaitForSeconds(.5f);
 
