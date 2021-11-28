@@ -1,4 +1,5 @@
 using Foxlair.Enemies;
+using Foxlair.Interfaces;
 using Foxlair.Tools.Events;
 using SWS;
 using System;
@@ -12,9 +13,9 @@ namespace Foxlair.StageStructure
     {
         public Formation formation;
 
-        public List<EnemySpaceship> enemies;
+        private List<IEnemy> enemies;
         public int numberOfEnemies = 0;
-        public List<EnemySpaceship> enemiesThatDied;
+        private List<IEnemy> enemiesThatDied;
         public List<PathManager> pathContainers;
         public float spawnInterval;
         public GameObject enemyPrefab;
@@ -26,6 +27,8 @@ namespace Foxlair.StageStructure
 
         void Start()
         {
+            enemies = new List<IEnemy>();
+            enemiesThatDied = new List<IEnemy>();
             FoxlairEventManager.Instance.EnemyHealthSystem_OnDeath_Event += OnEnemyDeath;
             spawnsPerPath = numberOfSpawns / pathContainers.Count;
 
@@ -40,7 +43,7 @@ namespace Foxlair.StageStructure
             FoxlairEventManager.Instance.EnemyHealthSystem_OnDeath_Event -= OnEnemyDeath;
         }
 
-        private void OnEnemyDeath(EnemySpaceship enemySpaceship, EnemyFormationWave enemyWave)
+        private void OnEnemyDeath(IEnemy enemySpaceship, Wave enemyWave)
         {
 
             if (enemyWave != this)
@@ -66,6 +69,8 @@ namespace Foxlair.StageStructure
                 EnemySpaceship enemyComponent = enemy.GetComponent<EnemySpaceship>();
                 SplineMove splineFollower = enemy.GetComponent<SplineMove>();
                 splineFollower.pathContainer = pathManager;
+                Debug.Log(enemyComponent);
+                Debug.Log(enemies);
                 enemies.Add(enemyComponent);
                 enemyComponent.enemyWave = this;
                 //FoxlairEventManager.Instance.Enemy_OnBirth_Event(enemyComponent);

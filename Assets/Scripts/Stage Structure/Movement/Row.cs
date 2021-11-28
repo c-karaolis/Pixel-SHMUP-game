@@ -1,4 +1,5 @@
 using Foxlair.Enemies;
+using Foxlair.Interfaces;
 using Foxlair.Tools.Events;
 using System.Collections.Generic;
 using System.Linq;
@@ -36,7 +37,7 @@ public class Row : MonoBehaviour
         FoxlairEventManager.Instance.Enemy_OnReachedSlot_Event += OnEnemyReachedSlot;
     }
 
-    void OnEnemyReachedSlot(EnemySpaceship enemySpaceship,Slot slot)
+    void OnEnemyReachedSlot(IEnemy enemySpaceship,Slot slot)
     {
         if(slot == slots[slots.Count-1])
         rowAnimation.StartRowAnimation();

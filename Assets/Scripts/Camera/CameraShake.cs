@@ -6,6 +6,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using Cinemachine;
 using Foxlair.StageStructure;
+using Foxlair.Interfaces;
 
 public class CameraShake : MonoBehaviour
 {
@@ -20,7 +21,7 @@ public class CameraShake : MonoBehaviour
         FoxlairEventManager.Instance.EnemyHealthSystem_OnDeath_Event += OnEnemyDeath;
     }
 
-    private void OnEnemyDeath(EnemySpaceship enemySpaceship,EnemyFormationWave enemyWave)
+    private void OnEnemyDeath(IEnemy enemySpaceship,Wave enemyWave)
     {
         //transform.DOShakePosition(0.2f,.4f, 50, 90, false, true);
         impulseSource.GenerateImpulse();

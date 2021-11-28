@@ -1,4 +1,5 @@
 using Foxlair.Enemies;
+using Foxlair.Interfaces;
 using Foxlair.Tools.Events;
 using SWS;
 using System;
@@ -26,7 +27,7 @@ namespace Foxlair.StageStructure
             FoxlairEventManager.Instance.EnemyHealthSystem_OnDeath_Event -= OnEnemyDeath;
         }
 
-        private void OnEnemyDeath(EnemySpaceship enemySpaceship, EnemyFormationWave enemyWave)
+        private void OnEnemyDeath(IEnemy enemySpaceship, Wave enemyWave)
         {
             OnWaveCleared();
         }
