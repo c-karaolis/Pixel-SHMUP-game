@@ -1,4 +1,5 @@
 using DG.Tweening;
+using Foxlair.Interfaces;
 using Foxlair.StageStructure;
 using Foxlair.Tools.Events;
 using SWS;
@@ -8,7 +9,7 @@ using UnityEngine;
 
 namespace Foxlair.Enemies
 {
-    public class EnemySpaceship : Spaceship
+    public class EnemySpaceship : Spaceship, IEnemy
     {
         #region Fields
         public EnemyFormationWave enemyWave;
