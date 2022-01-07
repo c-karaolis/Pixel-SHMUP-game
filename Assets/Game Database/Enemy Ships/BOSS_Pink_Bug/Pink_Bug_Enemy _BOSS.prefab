@@ -1,5 +1,103 @@
 %YAML 1.1
 %TAG !u! tag:unity3d.com,2011:
+--- !u!1 &2226696279007724334
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 6671316893259580614}
+  - component: {fileID: 7926829027957982749}
+  m_Layer: 0
+  m_Name: SpecialWeaponEmitter
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &6671316893259580614
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2226696279007724334}
+  m_LocalRotation: {x: 0, y: 0, z: 1, w: 0}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 8298695012692290586}
+  m_RootOrder: 1
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 180}
+--- !u!114 &7926829027957982749
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2226696279007724334}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a676b285f069c3c4884c27e78d0fc696, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  emitterProfile: {fileID: 11400000, guid: 28cfa535b4362b74ea6914328c94b4c9, type: 2}
+  patternOrigin: {fileID: 6671316893259580614}
+  playAtStart: 0
+  useDefaultGizmoColor: 1
+  gizmoColor: {r: 0, g: 1, b: 0, a: 1}
+  gizmoSize: 0.5
+--- !u!1 &7307063821601121359
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 6662746764907420817}
+  - component: {fileID: 2032138096297755585}
+  m_Layer: 0
+  m_Name: MainWeaponEmitter
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &6662746764907420817
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7307063821601121359}
+  m_LocalRotation: {x: 0, y: 0, z: 1, w: 0}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 8298695012692290586}
+  m_RootOrder: 0
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 180}
+--- !u!114 &2032138096297755585
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7307063821601121359}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a676b285f069c3c4884c27e78d0fc696, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  emitterProfile: {fileID: 11400000, guid: 73f1f5ce1ba293b428ca6971b1521938, type: 2}
+  patternOrigin: {fileID: 6662746764907420817}
+  playAtStart: 0
+  useDefaultGizmoColor: 1
+  gizmoColor: {r: 0, g: 1, b: 0, a: 1}
+  gizmoSize: 0.5
 --- !u!1 &8298695012692290563
 GameObject:
   m_ObjectHideFlags: 0
@@ -17,7 +115,8 @@ GameObject:
   - component: {fileID: 887998264417824949}
   - component: {fileID: 1947662400}
   - component: {fileID: 6554546141228826351}
-  - component: {fileID: 2062377622018435177}
+  - component: {fileID: 7497703755150538072}
+  - component: {fileID: 1905714335372305138}
   m_Layer: 0
   m_Name: Pink_Bug_Enemy _BOSS
   m_TagString: Untagged
@@ -35,7 +134,9 @@ Transform:
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 4.843295, y: 1.6393244, z: 0}
   m_LocalScale: {x: 3, y: 3, z: 3}
-  m_Children: []
+  m_Children:
+  - {fileID: 6662746764907420817}
+  - {fileID: 6671316893259580614}
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -169,8 +270,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ab32940deed415a4fb92d93431b21ee3, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  health: 1000
-  maxHealth: 1000
+  health: 2500
+  maxHealth: 2500
   unitRegeneratesHealth: 0
   healthRegeneration: 0
   unitHasHealthbar: 0
@@ -320,7 +421,7 @@ MonoBehaviour:
     m_PreInfinity: 2
     m_PostInfinity: 2
     m_RotationOrder: 4
-  loopType: 0
+  loopType: 2
   waypoints: []
   pathType: 1
   pathMode: 3
@@ -384,7 +485,7 @@ PolygonCollider2D:
       - {x: 0.25901163, y: -0.29110438}
       - {x: 0.11487627, y: -0.05004704}
       - {x: 0.34599945, y: -0.13148373}
---- !u!114 &2062377622018435177
+--- !u!114 &7497703755150538072
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -393,12 +494,35 @@ MonoBehaviour:
   m_GameObject: {fileID: 8298695012692290563}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: a65a51cdebbb64a4ca7db4ab7ac26594, type: 3}
+  m_Script: {fileID: 11500000, guid: 87dd4799f34e2c445a2a212d6fce5d82, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  animator: {fileID: 0}
-  audioSource: {fileID: 0}
+  animator: {fileID: 1439761963612654360}
+  audioSource: {fileID: 887998264417824949}
   deathSFX: {fileID: 8300000, guid: d29d0c4698b30804c9cdfb0b24162856, type: 3}
-  bulletReceiver: {fileID: 0}
+  bulletReceiver: {fileID: 8298695012692290588}
   enemyWave: {fileID: 0}
-  occupiedSlot: {fileID: 0}
+  spaceshipWeapons: {fileID: 0}
+--- !u!114 &1905714335372305138
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8298695012692290563}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f8a97d5b9c48d7f44a484feb45e3200f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  activeMainWeapon: {fileID: 2032138096297755585}
+  activeSpecialWeapon: {fileID: 7926829027957982749}
+  hasIdleWeapon: 0
+  mainWeaponsParentObject: {fileID: 0}
+  specialWeaponsParentObject: {fileID: 0}
+  activateWeaponsOnStart: 1
+  mainWeapons:
+  - {fileID: 11400000, guid: 73f1f5ce1ba293b428ca6971b1521938, type: 2}
+  availableSpecialWeapons:
+  - {fileID: 11400000, guid: 28cfa535b4362b74ea6914328c94b4c9, type: 2}
+  activeMainWeaponIndex: 0

@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: Pattern
   m_EditorClassIdentifier: 
   parameterType: 2
-  uniqueIndex: 14947251
+  uniqueIndex: 4589565
   profile: {fileID: 11400000}
   parent: {fileID: 4546278660008413823}
   children:
@@ -19956,7 +19956,7 @@ MonoBehaviour:
             parameterType: 0
             relativeTo: 0
             parameterName: 
-          defaultValue: 0.09
+          defaultValue: 0.06
         useSlider: 0
         sliderMin: 0
         sliderMax: 0
@@ -29700,7 +29700,7 @@ MonoBehaviour:
   advancedFoldout: 1
   hasBeenSerializedOnce: 1
   focusedInstruction: -1
-  safetyForPlaymode: 103
+  safetyForPlaymode: 113
 --- !u!114 &11400000
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -71008,7 +71008,7 @@ MonoBehaviour:
   m_Name: Root Emitter
   m_EditorClassIdentifier: 
   parameterType: 0
-  uniqueIndex: 4734668
+  uniqueIndex: 14719173
   profile: {fileID: 11400000}
   parent: {fileID: 0}
   children:
@@ -78119,7 +78119,7 @@ MonoBehaviour:
   m_Name: Bullet
   m_EditorClassIdentifier: 
   parameterType: 0
-  uniqueIndex: 9493310
+  uniqueIndex: 11968747
   profile: {fileID: 11400000}
   parent: {fileID: 5613726283011589832}
   children: []
@@ -80437,7 +80437,7 @@ MonoBehaviour:
   foldoutVFX: 0
   hideSpriteList: 0
   vfxOpened: 0
-  currentlyDisplayedModule: 0
+  currentlyDisplayedModule: 3
   canMove: 1
   canCollide: 1
   isVisible: 1
@@ -85274,7 +85274,7 @@ MonoBehaviour:
   m_Name: Shot
   m_EditorClassIdentifier: 
   parameterType: 1
-  uniqueIndex: 11655716
+  uniqueIndex: 5387239
   profile: {fileID: 11400000}
   parent: {fileID: -2130421688604317705}
   children:
@@ -86840,7 +86840,7 @@ MonoBehaviour:
           parameterType: 0
           relativeTo: 0
           parameterName: 
-        defaultValue: 125.3
+        defaultValue: 117.1
       useSlider: 0
       sliderMin: 0
       sliderMax: 0
@@ -87754,7 +87754,7 @@ MonoBehaviour:
     selectionRectsVisible: 0
     postEffectBulletSpawns:
     - index: 0
-      bulletOrigin: {x: 0, y: 0, z: 125.3}
+      bulletOrigin: {x: 0, y: 0, z: 117.1}
       useDifferentBullet: 0
       bulletParams: {fileID: 0}
     - index: 1
@@ -87762,15 +87762,15 @@ MonoBehaviour:
       useDifferentBullet: 0
       bulletParams: {fileID: 0}
     - index: 2
-      bulletOrigin: {x: 0, y: 0, z: -125.3}
+      bulletOrigin: {x: 0, y: 0, z: -117.1}
       useDifferentBullet: 0
       bulletParams: {fileID: 0}
     enabled: 1
   bulletParamsRandom: 0
   listOfPossibleBulletParams: []
   possibleBulletParams: 0
-  highestValues: {x: 0, y: 0, z: 125.3}
-  lowestValues: {x: 0, y: 0, z: -125.3}
+  highestValues: {x: 0, y: 0, z: 117.1}
+  lowestValues: {x: 0, y: 0, z: -117.1}
   hasBeenSerializedOnce: 1
   foldout0: 1
   foldout1: 0
@@ -87779,7 +87779,7 @@ MonoBehaviour:
   foldout4: 0
   foldout5: 0
   foldout6: 1
-  foldout7: 1
+  foldout7: 0
   foldout8: 0
   textureSliceRate: 20
   ingameSizeOfTexture: {x: 1, y: 1}

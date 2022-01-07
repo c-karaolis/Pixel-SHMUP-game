@@ -60100,7 +60100,7 @@ PrefabInstance:
     - target: {fileID: 1547231850, guid: f1651bef2186768469e72d2fbcb5b2eb, type: 3}
       propertyPath: emitterProfile
       value: 
-      objectReference: {fileID: 11400000, guid: 28cfa535b4362b74ea6914328c94b4c9, type: 2}
+      objectReference: {fileID: 11400000, guid: e61419e0ccdef82488f977d305a0abe3, type: 2}
     - target: {fileID: 2138346241, guid: f1651bef2186768469e72d2fbcb5b2eb, type: 3}
       propertyPath: serializationData.Prefab
       value: 
@@ -60188,7 +60188,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7d300ed5ba9e29d4ab5cc073c9447704, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  stageData: {fileID: 11400000, guid: c9452a0274f6d0141822ed09ba17fed4, type: 2}
+  stageData: {fileID: 11400000, guid: 5d7249f84b1ea8f43861530e41ad318f, type: 2}
 --- !u!114 &8953087223812486086
 MonoBehaviour:
   m_ObjectHideFlags: 0

@@ -11,67 +11,10 @@ namespace Foxlair.Enemies
 {
     public class BossSpaceship : Spaceship, IEnemy
     {
-        #region Fields
         public BossWave enemyWave;
-        SplineMove splineMove;
-        private BossState state;
-
-        #endregion
-
-
-        enum BossState
-        {
-            Idle,
-            Moving,
-            Attack,
-            SpecialAttack,
-        }
-
-
-        private void Update()
-        {
-            switch (state)
-            {
-                case BossState.Idle:
-                    Idle();
-                    break;
-                case BossState.Moving:
-                    Moving();
-                    break;
-                case BossState.Attack:
-                    Attack();
-                    break;
-                case BossState.SpecialAttack:
-                    SpecialAttack();
-                    break;
-                default:
-                    return;
-            }
-        }
-
-        private void SpecialAttack()
-        {
-            throw new NotImplementedException();
-        }
-
-        private void Attack()
-        {
-            throw new NotImplementedException();
-        }
-
-        private void Moving()
-        {
-            throw new NotImplementedException();
-        }
-
-        private void Idle()
-        {
-            throw new NotImplementedException();
-        }
-
-      
-      
-        #region Methods
+        public SplineMove splineMove;
+        public Transform shootingPosition;
+        
         void Awake()
         {
             splineMove = GetComponent<SplineMove>();
@@ -121,6 +64,4 @@ namespace Foxlair.Enemies
             splineMove.movementEndEvent -= OnMovementEnd;
         }
     }
-    #endregion
 }
-
