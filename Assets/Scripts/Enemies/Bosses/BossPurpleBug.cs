@@ -59,7 +59,7 @@ namespace Foxlair.Enemies
 
         private void ContinueMovement()
         {
-            transform.DOMove(splinePausedPosition, .5f).OnComplete(() => splineMove.Resume());
+            transform.DOMove(splinePausedPosition, 1f).OnComplete(() => splineMove.Resume());
             
         }
 
