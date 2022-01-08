@@ -15,6 +15,8 @@ namespace Foxlair.Enemies
         private float percentileChanceToAttack = 45f;
         public EnemySpaceshipWeapons spaceshipWeapons;
         private Vector3 splinePausedPosition;
+        int currentPoint;
+        public MoveToLocation moveToLocation;
         enum BossPurpleBugState
         {
             Idle,
@@ -25,7 +27,7 @@ namespace Foxlair.Enemies
         private void Start()
         {
             InvokeRepeating("Attack",0f,1f);
-            Invoke("SpecialAttack", 5f);
+            Invoke("SpecialAttack", 3f);
         }
 
         private void Update()
@@ -48,26 +50,36 @@ namespace Foxlair.Enemies
 
         private void SpecialAttack()
         {
-            splineMove.Pause();
-            splinePausedPosition = transform.position;
 
+            splineMove.Pause();
+            currentPoint = splineMove.currentPoint;
+            Debug.Log(currentPoint);
+            splinePausedPosition = transform.position;
+            Debug.Log(splinePausedPosition);
             transform.DOMove(shootingPosition.transform.position, .5f);
 
-            Invoke("ContinueMovement",5f);
+            Invoke("ContinueMovement",3f);
             //
         }
 
         private void ContinueMovement()
         {
-            transform.DOMove(splinePausedPosition, 1f).OnComplete(() => splineMove.Resume());
-            
+            //transform.DOMove(splinePausedPosition, .3f).OnComplete(() => splineMove.Resume());
+            //transform.DOMove(splineMove.waypoints[currentPoint], 1f).OnComplete(() => splineMove.Resume());
+
+            moveToLocation.MoveTo(transform, splinePausedPosition, 5f);
+
+        }
+
+        public void ResumeSplinePath()
+        {
+            splineMove.Resume();
         }
 
         private void Attack()
         {
             if (Randomiser.RandomFixedPercentage(percentileChanceToAttack) && bossStatesThatCanRandomAttack.Contains(state))
             {
-                Debug.Log("SHOOTING");
                 spaceshipWeapons.activeMainWeapon.Play();
                 spaceshipWeapons.activeMainWeapon.Reinitialize();
 

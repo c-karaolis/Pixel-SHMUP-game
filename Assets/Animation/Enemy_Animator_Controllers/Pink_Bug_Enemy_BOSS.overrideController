@@ -6,7 +6,7 @@ AnimatorOverrideController:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: Pink_Bug_Enemy
+  m_Name: Pink_Bug_Enemy_BOSS
   m_Controller: {fileID: 9100000, guid: 31931e3dc38d581409047c39105bfab9, type: 2}
   m_Clips:
   - m_OriginalClip: {fileID: 7400000, guid: 1f6324097bfcfc945b1a4edb72050fb8, type: 2}
@@ -14,4 +14,4 @@ AnimatorOverrideController:
   - m_OriginalClip: {fileID: 7400000, guid: 95bb8f630e10f3a4fac52fdbf55dbcdf, type: 2}
     m_OverrideClip: {fileID: 7400000, guid: 95bb8f630e10f3a4fac52fdbf55dbcdf, type: 2}
   - m_OriginalClip: {fileID: 7400000, guid: 4de9a9a878de62e4089eea966b3dff2b, type: 2}
-    m_OverrideClip: {fileID: 7400000, guid: 4de9a9a878de62e4089eea966b3dff2b, type: 2}
+    m_OverrideClip: {fileID: 7400000, guid: 39e53de1b90677249ab0737f850ac17d, type: 2}
