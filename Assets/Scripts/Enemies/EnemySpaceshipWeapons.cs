@@ -1,4 +1,5 @@
 using BulletPro;
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
@@ -19,6 +20,7 @@ namespace Foxlair.Enemies.Weapons
         [SerializeField] private List<EmitterProfile> mainWeapons;
         [SerializeField] private List<EmitterProfile> availableSpecialWeapons;
         [SerializeField] private int activeMainWeaponIndex = 0;
+        [SerializeField] private int activeSpecialWeaponIndex = 0;
         [SerializeField] private Dictionary<string, EmitterProfile> specialWeapons;
 
         #endregion
@@ -42,7 +44,11 @@ namespace Foxlair.Enemies.Weapons
         void Start()
         {
             activeMainWeaponIndex = 0;
+            activeSpecialWeaponIndex = 0;
             ActivateMainWeapon(mainWeapons[activeMainWeaponIndex], activateWeaponsOnStart);
+            ActivateSpecialWeapon(availableSpecialWeapons[activeSpecialWeaponIndex]);
+
+            DeactivateSpecialWeapon();
         }
 
         public void Shoot(BulletEmitter weapon)
@@ -91,15 +97,14 @@ namespace Foxlair.Enemies.Weapons
             activeMainWeapon = null;
         }
 
-        public void ActivateSpecialWeapon(string specialWeaponType="")
+        public void ActivateSpecialWeapon(EmitterProfile specialWeapon = null)
         {
-            if (specialWeapons.ContainsKey(specialWeaponType))
-            {
-                DeactivateSpecialWeapon();
-                activeMainWeapon.Stop();
-                activeSpecialWeapon.SwitchProfile(specialWeapons[specialWeaponType]);
+         
+
+            activeMainWeapon.Stop();
+                //activeSpecialWeapon.SwitchProfile(specialWeapons[specialWeaponType]);
                 activeSpecialWeapon.Play();
-            }
+            
         }
 
         public void DefaultSpecialWeaponTestActivate()
@@ -114,7 +119,6 @@ namespace Foxlair.Enemies.Weapons
                 activeSpecialWeapon.Stop();
             }
 
-            activeSpecialWeapon = null;
             
             if(hasIdleWeapon)
             activeMainWeapon.Play();
@@ -127,9 +131,5 @@ namespace Foxlair.Enemies.Weapons
             ActivateMainWeapon(mainWeapons[activeMainWeaponIndex], !activeSpecialWeapon);
         }
 
-        public void ResetSpecialWeapon()
-        {
-            activeSpecialWeapon = null;
-        }
     }
 }

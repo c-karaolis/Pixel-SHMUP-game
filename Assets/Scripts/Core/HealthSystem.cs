@@ -1,4 +1,5 @@
 using Foxlair.Interfaces;
+using System;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -21,7 +22,12 @@ namespace Foxlair.Core
         [SerializeField] bool unitHasHealthbar = false;
         public Image healthBar;
 
-
+        public Action onHealthDroppedBelow75;
+        public Action onHealthDroppedBelow50;
+        public Action onHealthDroppedBelow25;
+        bool healthBelow75Invoked = false;
+        bool healthBelow50Invoked = false;
+        bool healthBelow25Invoked = false;
 
         [SerializeField]public IHealthOwner healthOwner;
               
@@ -39,7 +45,7 @@ namespace Foxlair.Core
         {
             if (healthOwner == null)
             {
-                Debug.Log("EMPTY HEALTH OWNER");
+                Debug.LogWarning("EMPTY HEALTH OWNER");
                 return;
             }
             damage -= armor;
@@ -55,6 +61,23 @@ namespace Foxlair.Core
             else
             {
                 health -= damage;
+                if ((health / maxHealth) * 100 <= 25 && !healthBelow25Invoked)
+                {
+                    onHealthDroppedBelow25?.Invoke();
+                    healthBelow25Invoked=true;
+                }
+                else if ((health / maxHealth) * 100 <= 50 && !healthBelow50Invoked)
+                {
+                    onHealthDroppedBelow50?.Invoke();
+                    healthBelow50Invoked=true;
+                }
+                else if ((health / maxHealth) * 100  <= 75 && !healthBelow75Invoked)
+                {
+                    onHealthDroppedBelow75?.Invoke();
+                    healthBelow75Invoked=true;
+                }
+                
+                
                 healthOwner.OnHealthLost(damage);
             }
         }

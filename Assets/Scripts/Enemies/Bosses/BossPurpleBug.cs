@@ -12,11 +12,11 @@ namespace Foxlair.Enemies
     {
         private BossPurpleBugState state = BossPurpleBugState.Moving;
         List<BossPurpleBugState> bossStatesThatCanRandomAttack = new List<BossPurpleBugState>() { BossPurpleBugState.Moving };
-        private float percentileChanceToAttack = 45f;
+        private float percentileChanceToAttack = 80f;
         public EnemySpaceshipWeapons spaceshipWeapons;
         private Vector3 splinePausedPosition;
-        int currentPoint;
         public MoveToLocation moveToLocation;
+        EnemyHealth healthSystem;
         enum BossPurpleBugState
         {
             Idle,
@@ -26,49 +26,59 @@ namespace Foxlair.Enemies
 
         private void Start()
         {
+          healthSystem.onHealthDroppedBelow25  += OnHealthDroppedBelow25;
+          healthSystem.onHealthDroppedBelow50  += OnHealthDroppedBelow50;
+          healthSystem.onHealthDroppedBelow75  += OnHealthDroppedBelow75;
             InvokeRepeating("Attack",0f,1f);
-            Invoke("SpecialAttack", 3f);
+            //Invoke("SpecialAttack", 10f);
         }
 
         private void Update()
         {
-            switch (state)
-            {
-                case BossPurpleBugState.Idle:
-                    Idle();
-                    break;
-                case BossPurpleBugState.Moving:
-                    Moving();
-                    break;
-                case BossPurpleBugState.SpecialAttack:
-                    SpecialAttack();
-                    break;
-                default:
-                    return;
-            }
+            //switch (state)
+            //{
+            //    case BossPurpleBugState.Idle:
+            //        Idle();
+            //        break;
+            //    case BossPurpleBugState.Moving:
+            //        Moving();
+            //        break;
+            //    case BossPurpleBugState.SpecialAttack:
+            //        SpecialAttack();
+            //        break;
+            //    default:
+            //        return;
+            //}
         }
 
         private void SpecialAttack()
         {
+            if (state != BossPurpleBugState.SpecialAttack)
+            {
 
-            splineMove.Pause();
-            currentPoint = splineMove.currentPoint;
-            Debug.Log(currentPoint);
-            splinePausedPosition = transform.position;
-            Debug.Log(splinePausedPosition);
-            transform.DOMove(shootingPosition.transform.position, .5f);
+                ChangeState(BossPurpleBugState.SpecialAttack);
+                splineMove.Pause();
+                splinePausedPosition = transform.position;
+                Debug.Log(splinePausedPosition);
+                transform.DOMove(shootingPosition.transform.position, .5f).
+                    OnComplete(() => { Debug.Log("reached"); spaceshipWeapons.activeSpecialWeapon.Play(); });
+            }
+            else
+            {
+                Debug.Log("Resetting");
+                CancelInvoke("ContinueMovement");
+            }
 
-            Invoke("ContinueMovement",3f);
-            //
+            Invoke("ContinueMovement",15f);
         }
 
         private void ContinueMovement()
         {
+            ChangeState(BossPurpleBugState.Moving);
             //transform.DOMove(splinePausedPosition, .3f).OnComplete(() => splineMove.Resume());
             //transform.DOMove(splineMove.waypoints[currentPoint], 1f).OnComplete(() => splineMove.Resume());
-
+            spaceshipWeapons.DeactivateSpecialWeapon();
             moveToLocation.MoveTo(transform, splinePausedPosition, 5f);
-
         }
 
         public void ResumeSplinePath()
@@ -94,10 +104,39 @@ namespace Foxlair.Enemies
         {
         }
 
+        void ChangeState(BossPurpleBugState newState)
+        {
+            state = newState;
+        }
+
         private void Awake()
         {
+            healthSystem = GetComponent<EnemyHealth>();
             spaceshipWeapons = GetComponent<EnemySpaceshipWeapons>();
         }
+
+
+        private void OnDestroy()
+        {
+            healthSystem.onHealthDroppedBelow25 -= OnHealthDroppedBelow25;
+            healthSystem.onHealthDroppedBelow50 -= OnHealthDroppedBelow50;
+            healthSystem.onHealthDroppedBelow75 -= OnHealthDroppedBelow75;
+        }
+        private void OnHealthDroppedBelow50()
+        {
+            SpecialAttack();
+        }
+
+        private void OnHealthDroppedBelow25()
+        {
+            SpecialAttack();
+        }
+
+        private void OnHealthDroppedBelow75()
+        {
+            SpecialAttack();
+        }
+
 
     }
 }

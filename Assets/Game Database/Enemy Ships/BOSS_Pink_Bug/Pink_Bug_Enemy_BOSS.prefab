@@ -272,7 +272,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   health: 2500
-  maxHealth: 2500
+  maxHealth: 1000
   unitRegeneratesHealth: 0
   healthRegeneration: 0
   unitHasHealthbar: 0
@@ -530,6 +530,7 @@ MonoBehaviour:
   availableSpecialWeapons:
   - {fileID: 11400000, guid: 28cfa535b4362b74ea6914328c94b4c9, type: 2}
   activeMainWeaponIndex: 0
+  activeSpecialWeaponIndex: 0
 --- !u!114 &-7883671667577789380
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -542,6 +543,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1a3b4c49b8ebe77469885349a3c5c3b2, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  reachDestinationDistanceThreshold: 0.001
+  enabledStuckMechanic: 0
+  stuckStrikesTolerance: 5
+  stuckPositionDistanceThreshold: 0.001
   onDestinationReached:
     m_PersistentCalls:
       m_Calls:
@@ -557,3 +562,6 @@ MonoBehaviour:
           m_StringArgument: 
           m_BoolArgument: 0
         m_CallState: 2
+  onStuckPassenger:
+    m_PersistentCalls:
+      m_Calls: []
