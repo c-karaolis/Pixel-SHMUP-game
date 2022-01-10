@@ -1,6 +1,7 @@
 using DG.Tweening;
 using Foxlair.Enemies.Weapons;
 using Foxlair.Tools;
+using Foxlair.Tools.Events;
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -59,13 +60,11 @@ namespace Foxlair.Enemies
                 ChangeState(BossPurpleBugState.SpecialAttack);
                 splineMove.Pause();
                 splinePausedPosition = transform.position;
-                Debug.Log(splinePausedPosition);
                 transform.DOMove(shootingPosition.transform.position, .5f).
-                    OnComplete(() => { Debug.Log("reached"); spaceshipWeapons.activeSpecialWeapon.Play(); });
+                    OnComplete(() => { spaceshipWeapons.activeSpecialWeapon.Play(); });
             }
             else
             {
-                Debug.Log("Resetting");
                 CancelInvoke("ContinueMovement");
             }
 
@@ -115,6 +114,12 @@ namespace Foxlair.Enemies
             spaceshipWeapons = GetComponent<EnemySpaceshipWeapons>();
         }
 
+        public override void OnDeath()
+        {
+            FoxlairEventManager.Instance.EnemyHealthSystem_OnDeath_Event?.Invoke(this, enemyWave);
+            spaceshipWeapons.activeMainWeapon.Kill();
+            spaceshipWeapons.activeSpecialWeapon.Kill();
+        }
 
         private void OnDestroy()
         {

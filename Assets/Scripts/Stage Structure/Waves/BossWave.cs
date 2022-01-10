@@ -31,6 +31,9 @@ namespace Foxlair.StageStructure
 
         private void OnEnemyDeath(IEnemy enemySpaceship, Wave enemyWave)
         {
+            if (enemyWave != this)
+                return;
+
             OnWaveCleared();
         }
 
@@ -38,6 +41,7 @@ namespace Foxlair.StageStructure
         {
             isCleared = true;
             FoxlairEventManager.Instance.EnemyWave_OnWaveCleared_Event?.Invoke(this);
+            Destroy(gameObject, 3f);
         }
 
         IEnumerator SpawnEnemy(PathManager pathManager)

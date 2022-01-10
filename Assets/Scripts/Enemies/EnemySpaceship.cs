@@ -36,7 +36,6 @@ namespace Foxlair.Enemies
             {
                 if (slot.enemySpaceship == null)
                 {
-                    Debug.Log("setting slot: " + slot);
                     occupiedSlot = slot;
                     occupiedSlot.enemySpaceship = this;
                     break;
@@ -85,7 +84,6 @@ namespace Foxlair.Enemies
 
         void OnMovementEnd()
         {
-            Debug.Log("Movement end");
             GoToSlot();
 
 

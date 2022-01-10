@@ -46,15 +46,16 @@ namespace Foxlair.StageStructure
         private void OnEnemyDeath(IEnemy enemySpaceship, Wave enemyWave)
         {
 
-            if (enemyWave != this)
+            if (enemyWave != this || !enemies.Contains(enemySpaceship))
             {
                 return;
             }
 
-            if (!enemiesThatDied.Contains(enemySpaceship))
+            if (!enemiesThatDied.Contains(enemySpaceship) && enemies.Contains(enemySpaceship))
+            {
                 enemiesThatDied.Add(enemySpaceship);
-
-            enemies.Remove(enemySpaceship);
+                enemies.Remove(enemySpaceship);
+            }
             if (enemiesThatDied.Count == numberOfSpawns && !isCleared)
             {
                 OnWaveCleared();
@@ -69,8 +70,6 @@ namespace Foxlair.StageStructure
                 EnemySpaceship enemyComponent = enemy.GetComponent<EnemySpaceship>();
                 SplineMove splineFollower = enemy.GetComponent<SplineMove>();
                 splineFollower.pathContainer = pathManager;
-                Debug.Log(enemyComponent);
-                Debug.Log(enemies);
                 enemies.Add(enemyComponent);
                 enemyComponent.enemyWave = this;
                 //FoxlairEventManager.Instance.Enemy_OnBirth_Event(enemyComponent);
@@ -83,6 +82,7 @@ namespace Foxlair.StageStructure
         {
             isCleared = true;
             FoxlairEventManager.Instance.EnemyWave_OnWaveCleared_Event?.Invoke(this);
+            Destroy(gameObject,1f);
         }
     }
 }
