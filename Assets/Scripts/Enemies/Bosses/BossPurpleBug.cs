@@ -30,7 +30,7 @@ namespace Foxlair.Enemies
           healthSystem.onHealthDroppedBelow25  += OnHealthDroppedBelow25;
           healthSystem.onHealthDroppedBelow50  += OnHealthDroppedBelow50;
           healthSystem.onHealthDroppedBelow75  += OnHealthDroppedBelow75;
-            InvokeRepeating("Attack",0f,1f);
+          InvokeRepeating("Attack",0f,1f);
             //Invoke("SpecialAttack", 10f);
         }
 

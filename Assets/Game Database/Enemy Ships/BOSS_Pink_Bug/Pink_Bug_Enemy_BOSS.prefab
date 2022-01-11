@@ -272,7 +272,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   health: 2500
-  maxHealth: 10
+  maxHealth: 250
   unitRegeneratesHealth: 0
   healthRegeneration: 0
   unitHasHealthbar: 0
