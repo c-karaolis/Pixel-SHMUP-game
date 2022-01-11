@@ -18,4 +18,6 @@ MonoBehaviour:
   - {fileID: 6213898599420476544, guid: bde422f263f60c146a67a3bd8c8a73af, type: 3}
   - {fileID: 6213898599420476544, guid: bde422f263f60c146a67a3bd8c8a73af, type: 3}
   - {fileID: 6213898599420476544, guid: bde422f263f60c146a67a3bd8c8a73af, type: 3}
+  - {fileID: 6213898599420476544, guid: 534c2701908d7034fb95cfc2384bc527, type: 3}
+  - {fileID: 6213898599420476544, guid: 534c2701908d7034fb95cfc2384bc527, type: 3}
   timeBetweenEnemyWaves: 0
