@@ -1,5 +1,54 @@
 %YAML 1.1
 %TAG !u! tag:unity3d.com,2011:
+--- !u!1 &2404302866307400441
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 586523749668865514}
+  - component: {fileID: 7503152848541264180}
+  m_Layer: 0
+  m_Name: MainWeaponEmitter
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &586523749668865514
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2404302866307400441}
+  m_LocalRotation: {x: -0, y: -0, z: 1, w: 0}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 8298695012692290586}
+  m_RootOrder: 0
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 180}
+--- !u!114 &7503152848541264180
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2404302866307400441}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a676b285f069c3c4884c27e78d0fc696, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  emitterProfile: {fileID: 11400000, guid: 90161d3338efbe64aa1a32e8122ee496, type: 2}
+  patternOrigin: {fileID: 586523749668865514}
+  playAtStart: 0
+  useDefaultGizmoColor: 1
+  gizmoColor: {r: 0, g: 1, b: 0, a: 1}
+  gizmoSize: 0.5
 --- !u!1 &8298695012692290563
 GameObject:
   m_ObjectHideFlags: 0
@@ -18,6 +67,7 @@ GameObject:
   - component: {fileID: 887998264417824949}
   - component: {fileID: 1947662400}
   - component: {fileID: 6554546141228826351}
+  - component: {fileID: 3111430585501015654}
   m_Layer: 0
   m_Name: Pink_Bug_Enemy
   m_TagString: Untagged
@@ -35,7 +85,8 @@ Transform:
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 4.843295, y: 1.6393244, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
-  m_Children: []
+  m_Children:
+  - {fileID: 586523749668865514}
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -175,6 +226,8 @@ MonoBehaviour:
   bulletReceiver: {fileID: 0}
   enemyWave: {fileID: 0}
   occupiedSlot: {fileID: 0}
+  spaceshipWeapons: {fileID: 0}
+  percentileChanceToAttack: 20
 --- !u!114 &8298695012692290561
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -402,3 +455,27 @@ PolygonCollider2D:
       - {x: 0.25901163, y: -0.29110438}
       - {x: 0.11487627, y: -0.05004704}
       - {x: 0.34599945, y: -0.13148373}
+--- !u!114 &3111430585501015654
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8298695012692290563}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f8a97d5b9c48d7f44a484feb45e3200f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  activeMainWeapon: {fileID: 7503152848541264180}
+  activeSpecialWeapon: {fileID: 0}
+  hasIdleWeapon: 0
+  mainWeaponsParentObject: {fileID: 0}
+  specialWeaponsParentObject: {fileID: 0}
+  activateWeaponsOnStart: 1
+  mainWeapons:
+  - {fileID: 11400000, guid: 90161d3338efbe64aa1a32e8122ee496, type: 2}
+  availableSpecialWeapons:
+  - {fileID: 11400000, guid: 28cfa535b4362b74ea6914328c94b4c9, type: 2}
+  activeMainWeaponIndex: 0
+  activeSpecialWeaponIndex: 0

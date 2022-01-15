@@ -33,22 +33,29 @@ namespace Foxlair.Enemies.Weapons
 
         private void Awake()
         {
-            specialWeapons = new Dictionary<string, EmitterProfile>();
-
-            for (int i = 0; i < availableSpecialWeapons.Count; i++)
+            if (activeSpecialWeapon)
             {
-                specialWeapons.Add(availableSpecialWeapons[i].name, availableSpecialWeapons[i]);
+                specialWeapons = new Dictionary<string, EmitterProfile>();
+
+                for (int i = 0; i < availableSpecialWeapons.Count; i++)
+                {
+                    specialWeapons.Add(availableSpecialWeapons[i].name, availableSpecialWeapons[i]);
+                }
             }
+           
 
         }
         void Start()
         {
             activeMainWeaponIndex = 0;
-            activeSpecialWeaponIndex = 0;
             ActivateMainWeapon(mainWeapons[activeMainWeaponIndex], activateWeaponsOnStart);
-            ActivateSpecialWeapon(availableSpecialWeapons[activeSpecialWeaponIndex]);
+            if (activeSpecialWeapon)
+            {
+                activeSpecialWeaponIndex = 0;
+                ActivateSpecialWeapon(availableSpecialWeapons[activeSpecialWeaponIndex]);
+                DeactivateSpecialWeapon();
 
-            DeactivateSpecialWeapon();
+            }
         }
 
         public void Shoot(BulletEmitter weapon)

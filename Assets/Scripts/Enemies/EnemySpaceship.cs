@@ -1,6 +1,8 @@
 using DG.Tweening;
+using Foxlair.Enemies.Weapons;
 using Foxlair.Interfaces;
 using Foxlair.StageStructure;
+using Foxlair.Tools;
 using Foxlair.Tools.Events;
 using SWS;
 using System;
@@ -15,6 +17,10 @@ namespace Foxlair.Enemies
         public EnemyFormationWave enemyWave;
         SplineMove splineMove;
         public Slot occupiedSlot;
+
+        public EnemySpaceshipWeapons spaceshipWeapons;
+        public float percentileChanceToAttack = 1f;
+
         #endregion
 
         #region Methods
@@ -22,12 +28,15 @@ namespace Foxlair.Enemies
         {
             splineMove = GetComponent<SplineMove>();
             splineMove.movementEndEvent += OnMovementEnd;
+            spaceshipWeapons = GetComponent<EnemySpaceshipWeapons>();
+
         }
 
         public override void Start()
         {
             base.Start();
             AssignToSlot();
+            InvokeRepeating("Attack", 0f, 1f);
         }
         private void AssignToSlot()
         {
@@ -81,6 +90,17 @@ namespace Foxlair.Enemies
             //TODO: do X amount of damage to Enemies.
             //FoxlairEventManager.Instance.EnemyHealthSystem_OnHealthLost_Event(damage);
         }
+
+        private void Attack()
+        {
+            if (Randomiser.RandomFixedPercentage(percentileChanceToAttack))
+            {
+                spaceshipWeapons.activeMainWeapon.Play();
+                spaceshipWeapons.activeMainWeapon.Reinitialize();
+
+            }
+        }
+
 
         void OnMovementEnd()
         {
