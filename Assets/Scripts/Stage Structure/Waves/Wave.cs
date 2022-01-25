@@ -4,5 +4,5 @@ using UnityEngine;
 
 public class Wave : MonoBehaviour
 {
-    
+       public bool isCleared = false;
 }

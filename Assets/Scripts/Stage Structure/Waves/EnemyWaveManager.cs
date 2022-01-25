@@ -13,7 +13,6 @@ namespace Foxlair.StageStructure
         int currentWave = 0;
         public float waveDelay = 5f;
         Stage stage;
-       
         private void Awake()
         {
             stage = GetComponentInParent<Stage>();
@@ -21,14 +20,12 @@ namespace Foxlair.StageStructure
 
         void OnEnemyWaveCleared(Wave enemyWave)
         {
-            //StartCoroutine(SpawnWave());
             if (currentWave == numberOfWaves)
             {
-                Debug.Log("stage cleared");
                 FoxlairEventManager.Instance.Stage_OnStageCleared_Event?.Invoke(stage, this);
                 return;
             }
-            else
+            else if(currentEnemyWave.GetComponent<Wave>() == enemyWave)
             {
                 Invoke("SpawnWave", 5f);
             }
@@ -36,7 +33,7 @@ namespace Foxlair.StageStructure
 
         void SpawnWave()
         {
-            //FoxlairEventManager.Instance.WaveManager_OnSpawnProcedureStarted_Event?.Invoke(delay);
+
             if (currentWave < numberOfWaves)
             {
                 Debug.Log("Current Wave: " + (currentWave + 1) + "/" + numberOfWaves);
@@ -45,36 +42,11 @@ namespace Foxlair.StageStructure
                 Debug.Log("currentWave incremented to: " + currentWave);
             }
         }
-        //IEnumerator SpawnWave(float delay = 5f)
-        //{
-        //    if (currentWave == numberOfWaves)
-        //    {
-        //        Debug.Log("stage cleared");
-        //        FoxlairEventManager.Instance.Stage_OnStageCleared_Event?.Invoke(stage, this);
-        //        yield break;
-        //    }
-        //    Debug.Log("Current Wave: " + (currentWave + 1) + "/" + numberOfWaves);
-
-        //    //FoxlairEventManager.Instance.WaveManager_OnSpawnProcedureStarted_Event?.Invoke(delay);
-
-        //    //if (currentWave != numberOfWaves)
-
-        //    if (currentWave < numberOfWaves)
-        //    {
-        //        yield return new WaitForSeconds(delay);
-
-        //        currentEnemyWave = Instantiate(enemyWaves[currentWave]);
-        //        currentWave++;
-        //        Debug.Log("currentWave incremented to: " + currentWave);
-        //    }
-
-        //}
 
         public void ResetStage()
         {
             FoxlairEventManager.Instance.Stage_OnStageRestart_Event?.Invoke(stage, this);
             currentWave = 0;
-            //StartCoroutine(SpawnWave());
             Invoke("SpawnWave", 5f);
         }
 
@@ -82,7 +54,6 @@ namespace Foxlair.StageStructure
         {
             FoxlairEventManager.Instance.EnemyWave_OnWaveCleared_Event += OnEnemyWaveCleared;
             numberOfWaves = enemyWaves.Count;
-            //StartCoroutine(SpawnWave(1f));
             Invoke("SpawnWave", 2f);
         }
         private void OnDestroy()

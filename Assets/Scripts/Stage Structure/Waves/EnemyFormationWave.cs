@@ -12,7 +12,6 @@ namespace Foxlair.StageStructure
     public class EnemyFormationWave : Wave
     {
         public Formation formation;
-
         private List<IEnemy> enemies;
         public int numberOfEnemies = 0;
         private List<IEnemy> enemiesThatDied;
@@ -20,7 +19,6 @@ namespace Foxlair.StageStructure
         public float spawnInterval;
         public GameObject enemyPrefab;
         public Vector2 spawnPosition;
-        bool isCleared = false;
         public int numberOfSpawns;
         int spawnsPerPath;
 
@@ -75,6 +73,7 @@ namespace Foxlair.StageStructure
                 //FoxlairEventManager.Instance.Enemy_OnBirth_Event(enemyComponent);
                 yield return new WaitForSeconds(spawnInterval);
             }
+            Debug.Log("finished Spawning");
             //yield return null;
         }
 

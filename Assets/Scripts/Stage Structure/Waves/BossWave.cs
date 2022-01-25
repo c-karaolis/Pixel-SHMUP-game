@@ -11,11 +11,9 @@ namespace Foxlair.StageStructure
 
     public class BossWave : Wave
     {
-
         private List<BossSpaceship> enemies = new List<BossSpaceship>();
         public List<BossSpaceship> enemiesThatDied;
         public List<PathManager> pathContainers;
-        bool isCleared = false;
         public GameObject enemyPrefab;
         public Transform shootingPosition;
         void Start()
@@ -34,7 +32,10 @@ namespace Foxlair.StageStructure
             if (enemyWave != this)
                 return;
 
-            OnWaveCleared();
+            if (!isCleared)
+            {
+                OnWaveCleared();
+            }
         }
 
         private void OnWaveCleared()
@@ -45,18 +46,19 @@ namespace Foxlair.StageStructure
         }
 
         IEnumerator SpawnEnemy(PathManager pathManager)
-        {
-            
+        {          
                 GameObject enemy = Instantiate(enemyPrefab, new Vector3(100, 100, 0), transform.rotation);
                 BossSpaceship enemyComponent = enemy.GetComponent<BossSpaceship>();
                 SplineMove splineFollower = enemy.GetComponent<SplineMove>();
                 splineFollower.pathContainer = pathManager;
                 enemyComponent.shootingPosition = shootingPosition;
-            enemyComponent.splineMove = splineFollower;
+                enemyComponent.splineMove = splineFollower;
                 enemies.Add(enemyComponent);
                 enemyComponent.enemyWave = this;
                 //FoxlairEventManager.Instance.Enemy_OnBirth_Event(enemyComponent);
                 yield return null;
+                Debug.Log("finished Spawning");
+
         }
 
     }
